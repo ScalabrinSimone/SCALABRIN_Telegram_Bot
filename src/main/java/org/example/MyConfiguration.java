@@ -26,7 +26,7 @@ public class MyConfiguration {
         return instance;
     }
 
-    public String getProperty(String key){
+    public String getProperty(String key) {
         return config.getString(key);
     }
 }
