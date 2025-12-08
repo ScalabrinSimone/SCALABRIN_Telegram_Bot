@@ -2,7 +2,6 @@
 # Username: @SimOneSpeedBot
 # API Utilizzate
 
----
 
 ### All seasons data:
 
