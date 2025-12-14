@@ -1,5 +1,7 @@
 package org.example.commands;
 
+import org.example.Main;
+import org.example.keyboard.MainMenuKeyboard;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
@@ -35,5 +37,9 @@ public class StartCommand implements Command {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        //Invio i pulsanti per una miglior UI
+        MainMenuKeyboard mainMenuKeyboard = new MainMenuKeyboard(client);
+        mainMenuKeyboard.sendInlineKeyboard(chatId);
     }
 }
