@@ -8,23 +8,24 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.List;
 
-public class MainMenuKeyboard {
+public class MainMenuKeyboard implements  MenuKeyboard {
 
     private final TelegramClient client;
 
     public MainMenuKeyboard(TelegramClient client) {this.client = client;}
 
+    @Override
     public void sendInlineKeyboard(long chatId) {
 
         //Crea i bottoni
         InlineKeyboardButton utilsButton = InlineKeyboardButton.builder()
                 .text("Utils ⚙")
-                .callbackData("menu_utils")
+                .callbackData("menu:utils")
                 .build();
 
         InlineKeyboardButton raceButton = InlineKeyboardButton.builder()
                 .text("Let's race 🏎")
-                .callbackData("menu_race")
+                .callbackData("menu:race")
                 .build();
 
         //Crea una riga di bottoni
@@ -49,5 +50,27 @@ public class MainMenuKeyboard {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public InlineKeyboardMarkup getKeyboard() {
+        // Crea i bottoni
+        InlineKeyboardButton utilsButton = InlineKeyboardButton.builder()
+                .text("Utils ⚙")
+                .callbackData("menu:utils")
+                .build();
+
+        InlineKeyboardButton raceButton = InlineKeyboardButton.builder()
+                .text("Let's race 🏎")
+                .callbackData("menu:race")
+                .build();
+
+        // Crea una riga di bottoni
+        InlineKeyboardRow row = new InlineKeyboardRow(
+                List.of(utilsButton, raceButton)
+        );
+
+        // Crea e ritorna la tastiera
+        return InlineKeyboardMarkup.builder()
+                .keyboard(List.of(row))
+                .build();
     }
 }

@@ -1,5 +1,7 @@
 package org.example.bot;
 
+import org.example.callback.CallbackHandler;
+import org.example.callback.MainMenuCallbackHandler;
 import org.example.commands.CommandHub;
 import org.example.commands.InfoCommand;
 import org.example.commands.PingCommand;
@@ -8,9 +10,12 @@ import org.example.service.MyConfiguration;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+
+import java.util.List;
 
 public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
     private TelegramClient telegramClient = new OkHttpTelegramClient(MyConfiguration.getInstance().getProperty("BOT_TOKEN"));
@@ -26,6 +31,15 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
     @Override
     public void consume(Update update)
     {
+        if (update.hasCallbackQuery()) {
+            CallbackQuery callbackQuery = update.getCallbackQuery();
+            String data = callbackQuery.getData();
+
+            List<CallbackHandler> handlers = List.of(
+                    new MainMenuCallbackHandler(telegramClient, callbackQuery.getMessage().getMessageId()) // FIX
+            );
+        }
+
         //Se l'update ha un messaggio e quest'ultimo ha un testo:
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
