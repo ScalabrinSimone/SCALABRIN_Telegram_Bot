@@ -1,9 +1,11 @@
 package org.example.keyboard;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.List;
@@ -15,7 +17,7 @@ public class MainMenuKeyboard implements  MenuKeyboard {
     public MainMenuKeyboard(TelegramClient client) {this.client = client;}
 
     @Override
-    public void sendInlineKeyboard(long chatId) {
+    public Message sendInlineKeyboard(long chatId) {
 
         //Crea i bottoni
         InlineKeyboardButton utilsButton = InlineKeyboardButton.builder()
@@ -46,13 +48,15 @@ public class MainMenuKeyboard implements  MenuKeyboard {
                 .build();
 
         try {
-            client.execute(message);
+            return client.execute(message);
         } catch (Exception e) {
             e.printStackTrace();
+            return null; //Se non viene modificato il messaggio
         }
+
     }
     public InlineKeyboardMarkup getKeyboard() {
-        // Crea i bottoni
+        //Crea i bottoni
         InlineKeyboardButton utilsButton = InlineKeyboardButton.builder()
                 .text("Utils ⚙")
                 .callbackData("menu:utils")
@@ -63,12 +67,12 @@ public class MainMenuKeyboard implements  MenuKeyboard {
                 .callbackData("menu:race")
                 .build();
 
-        // Crea una riga di bottoni
+        //Crea una riga di bottoni
         InlineKeyboardRow row = new InlineKeyboardRow(
                 List.of(utilsButton, raceButton)
         );
 
-        // Crea e ritorna la tastiera
+        //Crea e ritorna la tastiera
         return InlineKeyboardMarkup.builder()
                 .keyboard(List.of(row))
                 .build();

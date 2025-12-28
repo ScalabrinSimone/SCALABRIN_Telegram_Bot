@@ -9,11 +9,10 @@ public class Main {
     public static void main(String[] args) {
         //Recupero la configurazione
         MyConfiguration myConfiguration = MyConfiguration.getInstance();
-        //System.out.println("Api key = " + myConfiguration.getProperty("API_KEY"));
 
         //Registro il bot Telegram
         try {
-            String botToken = myConfiguration.getProperty("BOT_TOKEN");
+            String botToken = myConfiguration.getProperty("BOT_TOKEN"); //Recupero il contenuto dalla configuration.
             TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication();
             botsApplication.registerBot(botToken, new SimOneSpeedBot());
             System.out.println("SimOneSpeedBot successfully started!");

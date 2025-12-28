@@ -3,10 +3,14 @@ package org.example.commands;
 import org.example.Main;
 import org.example.keyboard.MainMenuKeyboard;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+
+import java.util.Map;
 
 public class StartCommand implements Command {
     private final TelegramClient client;
+    private final Map<Long, Integer> menuMessageIds; //Mappa per memorizzare il primo comando mandato
     private final String messageToSend = """
             Bevenuto nel bot di Telegram della formula 1 creato da Scalabrin Simone!
             
@@ -21,7 +25,8 @@ public class StartCommand implements Command {
             Questo bot è gratis da utilizzare e non servono permessi di alcun tipo. Importalo nelle tue chat e chiunque
             potrà usarlo!""";
 
-    public StartCommand(TelegramClient client) {
+    public StartCommand(TelegramClient client,  Map<Long, Integer> menuMessageIds) {
+        this.menuMessageIds = menuMessageIds;
         this.client = client;
     }
 
@@ -40,6 +45,11 @@ public class StartCommand implements Command {
 
         //Invio i pulsanti per una miglior UI
         MainMenuKeyboard mainMenuKeyboard = new MainMenuKeyboard(client);
-        mainMenuKeyboard.sendInlineKeyboard(chatId);
+        try {
+            Message sent = mainMenuKeyboard.sendInlineKeyboard(chatId);
+            menuMessageIds.put(chatId, sent.getMessageId()); //Salvo il messageId
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -2,9 +2,11 @@ package org.example.keyboard;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.List;
@@ -16,8 +18,11 @@ public class UtilsMenuKeyboard implements MenuKeyboard {
     public UtilsMenuKeyboard(TelegramClient client, int messageId) {this.client = client; this.messageId = messageId;}
 
     @Override
-    public void sendInlineKeyboard(long chatId) {
+    public Message sendInlineKeyboard(long chatId) {
+        return editInlineKeyboard(chatId); //Chiama il metodo che modifica
+    }
 
+    public Message editInlineKeyboard(long chatId) {
         //Crea i bottoni
         InlineKeyboardButton utilsButton = InlineKeyboardButton.builder()
                 .text("Info ❓")
@@ -56,9 +61,13 @@ public class UtilsMenuKeyboard implements MenuKeyboard {
                 .build();
 
         try {
-            client.execute(edit);
+            return (Message) client.execute(edit);
         } catch (Exception e) {
-            e.printStackTrace();
+            //Ignora l'errore se il messaggio è già uguale
+            if (!e.getMessage().contains("message is not modified")) {
+                e.printStackTrace();
+            }
+            return null; //Ritorna null se non è stato modificato
         }
     }
 }

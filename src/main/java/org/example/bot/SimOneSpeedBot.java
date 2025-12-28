@@ -9,21 +9,27 @@ import org.example.commands.StartCommand;
 import org.example.service.MyConfiguration;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
     private TelegramClient telegramClient = new OkHttpTelegramClient(MyConfiguration.getInstance().getProperty("BOT_TOKEN"));
     private final CommandHub hub = new CommandHub();
+    private final Map<Long, Integer> menuMessageIds = new HashMap<>(); //chatId -> messageId. Serve per modificare
+                                                                      //il messaggio invece che inviarne di nuovi.
+                                                                     //Usato per la prima volta in classe StartCommand
 
     public SimOneSpeedBot() //Qui registro i vari comandi
     {
-        hub.register("start", new StartCommand(telegramClient));
+        hub.register("start", new StartCommand(telegramClient, menuMessageIds));
         hub.register("info", new InfoCommand(telegramClient));
         hub.register("ping", new PingCommand(telegramClient));
     }
@@ -33,11 +39,37 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
     {
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
-            String data = callbackQuery.getData();
+            long chatId = callbackQuery.getMessage().getChatId();
+            Integer savedMessageId = menuMessageIds.get(chatId);
 
             List<CallbackHandler> handlers = List.of(
-                    new MainMenuCallbackHandler(telegramClient, callbackQuery.getMessage().getMessageId()) // FIX
+                    new MainMenuCallbackHandler(telegramClient, savedMessageId != null ?
+                            savedMessageId : callbackQuery.getMessage().getMessageId())
             );
+
+            boolean handled = false;
+            //Ciclo per gestire il callback
+            for (CallbackHandler handler : handlers) {
+                if (handler.handle(callbackQuery)) {
+                    handled = true;
+                    break; //Se un handler ha gestito il callback esco
+                }
+            }
+
+            //Se nessun handler ha gestito il callback
+            if (!handled) {
+                try {
+                    telegramClient.execute(
+                            AnswerCallbackQuery.builder()
+                                    .callbackQueryId(callbackQuery.getId())
+                                    .text("❗Avviso❗\n\nSpiacenti, la funzione non é ancora disponibile")
+                                    .showAlert(true) //Mostra un popup invece del messaggio o la keyboard
+                                    .build()
+                    );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         //Se l'update ha un messaggio e quest'ultimo ha un testo:
@@ -56,7 +88,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                         .build();
 
                 try {
-                    telegramClient.execute(message); // Sending our message object to user
+                    telegramClient.execute(message);
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }

@@ -50,10 +50,19 @@ public class MainMenuCallbackHandler implements CallbackHandler {
             }
             case "menu:utils:info" -> {
                 new InfoCommand(client).execute(chatId, new String[]{});
+
+                //Modifica il messaggio del menu per tornare al menu utils
+                UtilsMenuKeyboard utilsMenu = new UtilsMenuKeyboard(client, messageId);
+                utilsMenu.editInlineKeyboard(chatId);
             }
             case "menu:utils:ping" -> {
                 new PingCommand(client).execute(chatId, new String[]{});
+
+                //Modifica il messaggio del menu per tornare al menu utils
+                UtilsMenuKeyboard utilsMenu = new UtilsMenuKeyboard(client, messageId);
+                utilsMenu.editInlineKeyboard(chatId);
             }
+            default -> {return false;} //Se non inizia per queste, non riesce a gestirlo e ritorna false
         }
 
         answerCallback(callbackQuery);
