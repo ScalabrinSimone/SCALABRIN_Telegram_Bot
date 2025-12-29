@@ -3,6 +3,7 @@ package org.example.callback;
 import org.example.commands.InfoCommand;
 import org.example.commands.PingCommand;
 import org.example.keyboard.MainMenuKeyboard;
+import org.example.keyboard.RaceMenuKeyboard;
 import org.example.keyboard.UtilsMenuKeyboard;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -47,6 +48,7 @@ public class MainMenuCallbackHandler implements CallbackHandler {
                     }
                 }
             }
+
             case "menu:utils" -> {
                 //System.out.println("messageId salvato: " + messageId); //Debug per il message Id salvato
                 UtilsMenuKeyboard keyboard = new UtilsMenuKeyboard(client, messageId);
@@ -58,6 +60,12 @@ public class MainMenuCallbackHandler implements CallbackHandler {
             case "menu:utils:ping" -> {
                 new PingCommand(client).executeEdit(chatId, messageId);
             }
+
+            case "menu:race" -> {
+                RaceMenuKeyboard keyboard = new RaceMenuKeyboard(client, messageId);
+                keyboard.editInlineKeyboard(chatId);
+            }
+
             default -> {return false;} //Se non inizia per queste, non riesce a gestirlo e ritorna false
         }
 
