@@ -36,31 +36,27 @@ public class MainMenuCallbackHandler implements CallbackHandler {
                         .chatId(chatId)
                         .messageId(messageId)
                         .text("Seleziona una categoria per iniziare:")
-                        .replyMarkup(mainMenuKeyboard.getKeyboard()) // Metodo da creare
+                        .replyMarkup(mainMenuKeyboard.getKeyboard())
                         .build();
                 try {
                     client.execute(edit);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //Ignora l'errore se il messaggio è già uguale
+                    if (!e.getMessage().contains("message is not modified")) {
+                        e.printStackTrace();
+                    }
                 }
             }
             case "menu:utils" -> {
+                //System.out.println("messageId salvato: " + messageId); //Debug per il message Id salvato
                 UtilsMenuKeyboard keyboard = new UtilsMenuKeyboard(client, messageId);
-                keyboard.sendInlineKeyboard(chatId);
+                keyboard.editInlineKeyboard(chatId);
             }
             case "menu:utils:info" -> {
-                new InfoCommand(client).execute(chatId, new String[]{});
-
-                //Modifica il messaggio del menu per tornare al menu utils
-                UtilsMenuKeyboard utilsMenu = new UtilsMenuKeyboard(client, messageId);
-                utilsMenu.editInlineKeyboard(chatId);
+                new InfoCommand(client).executeEdit(chatId, messageId);
             }
             case "menu:utils:ping" -> {
-                new PingCommand(client).execute(chatId, new String[]{});
-
-                //Modifica il messaggio del menu per tornare al menu utils
-                UtilsMenuKeyboard utilsMenu = new UtilsMenuKeyboard(client, messageId);
-                utilsMenu.editInlineKeyboard(chatId);
+                new PingCommand(client).executeEdit(chatId, messageId);
             }
             default -> {return false;} //Se non inizia per queste, non riesce a gestirlo e ritorna false
         }

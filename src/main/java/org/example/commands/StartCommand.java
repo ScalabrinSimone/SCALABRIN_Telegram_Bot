@@ -47,7 +47,13 @@ public class StartCommand implements Command {
         MainMenuKeyboard mainMenuKeyboard = new MainMenuKeyboard(client);
         try {
             Message sent = mainMenuKeyboard.sendInlineKeyboard(chatId);
-            menuMessageIds.put(chatId, sent.getMessageId()); //Salvo il messageId
+            /*//Debug per controllare il messaggio salvato
+            if (sent != null) {
+                menuMessageIds.put(chatId, sent.getMessageId());
+                System.out.println("Salvato messageId: " + sent.getMessageId() + " per chatId: " + chatId);
+            } else {
+                System.out.println("ERRORE: sent è null!");
+            }*/
         } catch (Exception e) {
             e.printStackTrace();
         }
