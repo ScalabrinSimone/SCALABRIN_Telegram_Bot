@@ -1,4 +1,4 @@
-package org.example.commands;
+package org.SimOneSpeedBot.commands;
 
 //Interfaccia per implementare i comandi
 public interface Command {

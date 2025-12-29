@@ -1,4 +1,4 @@
-package org.example.callback;
+package org.SimOneSpeedBot.callback;
 
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 

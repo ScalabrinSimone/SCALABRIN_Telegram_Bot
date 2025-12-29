@@ -1,7 +1,7 @@
-package org.example;
+package org.SimOneSpeedBot;
 
-import org.example.bot.SimOneSpeedBot;
-import org.example.service.MyConfiguration;
+import org.SimOneSpeedBot.bot.SimOneSpeedBot;
+import org.SimOneSpeedBot.service.MyConfiguration;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 

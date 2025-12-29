@@ -1,21 +1,19 @@
-package org.example.keyboard;
+package org.SimOneSpeedBot.keyboard;
 
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.List;
 
-public class UtilsMenuKeyboard implements MenuKeyboard {
+public class RaceMenuKeyboard implements MenuKeyboard {
     private final TelegramClient client;
     private final int messageId;
 
-    public UtilsMenuKeyboard(TelegramClient client, int messageId) {this.client = client; this.messageId = messageId;}
+    public RaceMenuKeyboard(TelegramClient client, int messageId) {this.client = client; this.messageId = messageId;}
 
     @Override
     public Message sendInlineKeyboard(long chatId) {
@@ -24,15 +22,26 @@ public class UtilsMenuKeyboard implements MenuKeyboard {
 
     public Message editInlineKeyboard(long chatId) {
         //Crea i bottoni
-        InlineKeyboardButton utilsButton = InlineKeyboardButton.builder()
-                .text("Info ❓")
-                .callbackData("menu:utils:info")
+        InlineKeyboardButton postButton = InlineKeyboardButton.builder()
+                .text("Stagioni post 2023 ⌚")
+                .callbackData("race:after2023")
                 .build();
 
-        InlineKeyboardButton raceButton = InlineKeyboardButton.builder()
-                .text("Ping 🏓")
-                .callbackData("menu:utils:ping")
+        InlineKeyboardButton preButton = InlineKeyboardButton.builder()
+                .text("Stagioni pre 2023 🕰")
+                .callbackData("race:pre2023")
                 .build();
+
+        InlineKeyboardButton pilotaButton = InlineKeyboardButton.builder()
+                .text("Piloti 🧑")
+                .callbackData("race:drivers")
+                .build();
+
+        InlineKeyboardButton teamButton = InlineKeyboardButton.builder()
+                .text("Scuderie 🏠")
+                .callbackData("race:teams")
+                .build();
+
         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
                 .text("⬅️ Back To Main Menu")
                 .callbackData("menu:home")
@@ -40,23 +49,27 @@ public class UtilsMenuKeyboard implements MenuKeyboard {
 
         //Crea la riga dei primi bottoni
         InlineKeyboardRow upperRow = new InlineKeyboardRow(
-                List.of(utilsButton, raceButton)
+                List.of(postButton, preButton)
         );
         //Crea la seconda riga di bottoni
+        InlineKeyboardRow middleRow = new InlineKeyboardRow(
+                List.of(pilotaButton, teamButton)
+        );
+        //Crea la terza riga di bottoni
         InlineKeyboardRow bottomRow = new InlineKeyboardRow(
                 List.of(backButton)
         );
 
         //Crea la tastiera
         InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                .keyboard(List.of(upperRow, bottomRow))
+                .keyboard(List.of(upperRow, middleRow, bottomRow))
                 .build();
 
         //Modifica il messaggio
         EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
                 .messageId(messageId)
-                .text("ℹ️Seleziona una utility:")
+                .text("ℹ️Seleziona la categoria di informazioni da ottenere:")
                 .replyMarkup(keyboard)
                 .build();
 

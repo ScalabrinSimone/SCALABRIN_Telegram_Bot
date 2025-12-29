@@ -1,10 +1,6 @@
-package org.example.callback;
+package org.SimOneSpeedBot.callback;
 
-import org.example.commands.InfoCommand;
-import org.example.commands.PingCommand;
-import org.example.keyboard.MainMenuKeyboard;
-import org.example.keyboard.RaceMenuKeyboard;
-import org.example.keyboard.UtilsMenuKeyboard;
+import org.SimOneSpeedBot.keyboard.MainMenuKeyboard;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;

@@ -1,7 +1,6 @@
-package org.example.commands;
+package org.SimOneSpeedBot.commands;
 
-import org.example.Main;
-import org.example.keyboard.MainMenuKeyboard;
+import org.SimOneSpeedBot.keyboard.MainMenuKeyboard;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.generics.TelegramClient;

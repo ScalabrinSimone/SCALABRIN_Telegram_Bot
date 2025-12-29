@@ -1,4 +1,4 @@
-package org.example.service;
+package org.SimOneSpeedBot.service;
 
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;

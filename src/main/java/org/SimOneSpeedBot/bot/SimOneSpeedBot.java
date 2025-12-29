@@ -1,13 +1,13 @@
-package org.example.bot;
+package org.SimOneSpeedBot.bot;
 
-import org.example.callback.CallbackHandler;
-import org.example.callback.MainMenuCallbackHandler;
-import org.example.callback.RaceCallbackHandler;
-import org.example.commands.CommandHub;
-import org.example.commands.InfoCommand;
-import org.example.commands.PingCommand;
-import org.example.commands.StartCommand;
-import org.example.service.MyConfiguration;
+import org.SimOneSpeedBot.callback.CallbackHandler;
+import org.SimOneSpeedBot.callback.MainMenuCallbackHandler;
+import org.SimOneSpeedBot.callback.RaceCallbackHandler;
+import org.SimOneSpeedBot.commands.CommandHub;
+import org.SimOneSpeedBot.commands.InfoCommand;
+import org.SimOneSpeedBot.commands.PingCommand;
+import org.SimOneSpeedBot.commands.StartCommand;
+import org.SimOneSpeedBot.service.MyConfiguration;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;

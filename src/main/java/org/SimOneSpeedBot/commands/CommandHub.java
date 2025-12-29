@@ -1,4 +1,4 @@
-package org.example.commands;
+package org.SimOneSpeedBot.commands;
 
 import java.util.HashMap;
 import java.util.Map;
