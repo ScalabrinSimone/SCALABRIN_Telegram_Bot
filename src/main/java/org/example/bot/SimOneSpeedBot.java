@@ -2,6 +2,7 @@ package org.example.bot;
 
 import org.example.callback.CallbackHandler;
 import org.example.callback.MainMenuCallbackHandler;
+import org.example.callback.RaceCallbackHandler;
 import org.example.commands.CommandHub;
 import org.example.commands.InfoCommand;
 import org.example.commands.PingCommand;
@@ -44,6 +45,8 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
 
             List<CallbackHandler> handlers = List.of(
                     new MainMenuCallbackHandler(telegramClient, savedMessageId != null ?
+                            savedMessageId : callbackQuery.getMessage().getMessageId()),
+                    new RaceCallbackHandler(telegramClient, savedMessageId != null ?
                             savedMessageId : callbackQuery.getMessage().getMessageId())
             );
 

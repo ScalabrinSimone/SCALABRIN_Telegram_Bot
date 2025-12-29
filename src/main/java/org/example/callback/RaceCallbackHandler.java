@@ -10,12 +10,12 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-public class MainMenuCallbackHandler implements CallbackHandler {
+public class RaceCallbackHandler implements CallbackHandler{
     private final TelegramClient client;
     private final MainMenuKeyboard mainMenuKeyboard;
     private final int messageId;
 
-    public MainMenuCallbackHandler(TelegramClient client, int messageId) {
+    public RaceCallbackHandler(TelegramClient client, int messageId) {
         this.client = client;
         this.mainMenuKeyboard = new MainMenuKeyboard(client);
         this.messageId = messageId;
@@ -26,8 +26,6 @@ public class MainMenuCallbackHandler implements CallbackHandler {
 
         String data = callbackQuery.getData();
         long chatId = callbackQuery.getMessage().getChatId();
-
-        if (!data.startsWith("menu:")) return false;
 
         switch (data) {
             case "menu:home" -> {
@@ -48,21 +46,20 @@ public class MainMenuCallbackHandler implements CallbackHandler {
                 }
             }
 
-            case "menu:utils" -> {
-                //System.out.println("messageId salvato: " + messageId); //Debug per il message Id salvato
-                UtilsMenuKeyboard keyboard = new UtilsMenuKeyboard(client, messageId);
-                keyboard.editInlineKeyboard(chatId);
+            case "race:after2023" -> {
+                /*UtilsMenuKeyboard keyboard = new UtilsMenuKeyboard(client, messageId);
+                keyboard.editInlineKeyboard(chatId);*/
             }
-            case "menu:utils:info" -> {
-                new InfoCommand(client).executeEdit(chatId, messageId);
+            case "race:pre2023" -> {
+                /*new InfoCommand(client).executeEdit(chatId, messageId);*/
             }
-            case "menu:utils:ping" -> {
-                new PingCommand(client).executeEdit(chatId, messageId);
+            case "race:drivers" -> {
+
             }
 
-            case "menu:race" -> {
-                RaceMenuKeyboard keyboard = new RaceMenuKeyboard(client, messageId);
-                keyboard.editInlineKeyboard(chatId);
+            case "race:teams" -> {
+                /*RaceMenuKeyboard keyboard = new RaceMenuKeyboard(client, messageId);
+                keyboard.editInlineKeyboard(chatId);*/
             }
 
             default -> {return false;} //Se non inizia per queste, non riesce a gestirlo e ritorna false

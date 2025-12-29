@@ -24,22 +24,22 @@ public class RaceMenuKeyboard implements MenuKeyboard {
         //Crea i bottoni
         InlineKeyboardButton postButton = InlineKeyboardButton.builder()
                 .text("Stagioni post 2023 ⌚")
-                .callbackData("menu:race:after2023")
+                .callbackData("race:after2023")
                 .build();
 
         InlineKeyboardButton preButton = InlineKeyboardButton.builder()
                 .text("Stagioni pre 2023 🕰")
-                .callbackData("menu:race:pre2023")
+                .callbackData("race:pre2023")
                 .build();
 
         InlineKeyboardButton pilotaButton = InlineKeyboardButton.builder()
                 .text("Piloti 🧑")
-                .callbackData("menu:race:drivers")
+                .callbackData("race:drivers")
                 .build();
 
         InlineKeyboardButton teamButton = InlineKeyboardButton.builder()
                 .text("Scuderie 🏠")
-                .callbackData("menu:race:teams")
+                .callbackData("race:teams")
                 .build();
 
         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
