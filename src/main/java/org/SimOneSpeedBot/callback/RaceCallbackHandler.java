@@ -1,6 +1,7 @@
 package org.SimOneSpeedBot.callback;
 
 import org.SimOneSpeedBot.keyboard.MainMenuKeyboard;
+import org.SimOneSpeedBot.keyboard.RaceKeyboards.*;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -43,19 +44,21 @@ public class RaceCallbackHandler implements CallbackHandler{
             }
 
             case "race:after2023" -> {
-                /*UtilsMenuKeyboard keyboard = new UtilsMenuKeyboard(client, messageId);
-                keyboard.editInlineKeyboard(chatId);*/
+                RaceAfter2023Keyboard keyboard = new RaceAfter2023Keyboard(client, messageId);
+                keyboard.editInlineKeyboard(chatId);
             }
             case "race:pre2023" -> {
-                /*new InfoCommand(client).executeEdit(chatId, messageId);*/
+                RacePre2023Keyboard keyboard = new RacePre2023Keyboard(client, messageId);
+                keyboard.editInlineKeyboard(chatId);
             }
             case "race:drivers" -> {
-
+                RaceDriversKeyboard keyboard = new RaceDriversKeyboard(client, messageId);
+                keyboard.editInlineKeyboard(chatId);
             }
 
             case "race:teams" -> {
-                /*RaceMenuKeyboard keyboard = new RaceMenuKeyboard(client, messageId);
-                keyboard.editInlineKeyboard(chatId);*/
+                RaceTeamsKeyboard keyboard = new RaceTeamsKeyboard(client, messageId);
+                keyboard.editInlineKeyboard(chatId);
             }
 
             default -> {return false;} //Se non inizia per queste, non riesce a gestirlo e ritorna false
