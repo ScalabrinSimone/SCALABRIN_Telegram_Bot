@@ -15,7 +15,7 @@ public class ErgastAPI {
     private final HttpClient client;
 
     public ErgastAPI() {
-        this.baseUrl = MyConfiguration.getInstance().getProperty("API_KEY_Ergast");
+        this.baseUrl = MyConfiguration.getInstance().getProperty("API_KEY_Ergast") + "f1/";
         this.client = HttpClient.newHttpClient();
     }
 
@@ -23,7 +23,7 @@ public class ErgastAPI {
     public String fetchDriver(String driverSurname)
     {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + "f1/drivers/" + driverSurname))
+                .uri(URI.create(baseUrl + "drivers/" + driverSurname))
                 .GET()
                 .build();
 
