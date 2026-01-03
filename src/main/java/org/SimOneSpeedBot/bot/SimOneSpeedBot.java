@@ -3,10 +3,7 @@ package org.SimOneSpeedBot.bot;
 import org.SimOneSpeedBot.callback.CallbackHandler;
 import org.SimOneSpeedBot.callback.MainMenuCallbackHandler;
 import org.SimOneSpeedBot.callback.RaceCallbackHandler;
-import org.SimOneSpeedBot.commands.CommandHub;
-import org.SimOneSpeedBot.commands.InfoCommand;
-import org.SimOneSpeedBot.commands.PingCommand;
-import org.SimOneSpeedBot.commands.StartCommand;
+import org.SimOneSpeedBot.commands.*;
 import org.SimOneSpeedBot.service.MyConfiguration;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
@@ -14,6 +11,9 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
@@ -26,18 +26,23 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
     private final CommandHub hub = new CommandHub();
     private final Map<Long, Integer> menuMessageIds = new HashMap<>(); //chatId -> messageId. Serve per modificare
                                                                       //il messaggio invece che inviarne di nuovi.
-                                                                     //Usato per la prima volta in classe StartCommand
+                                                                     //Usato per la prima volta in classe StartCommand.
+
+    private final Map<Long, String> userStates = new HashMap<>(); //chatId -> stato attuale. Serve per aspettare un
+                                                                 //input dall'utente.
 
     public SimOneSpeedBot() //Qui registro i vari comandi
     {
         hub.register("start", new StartCommand(telegramClient, menuMessageIds));
         hub.register("info", new InfoCommand(telegramClient));
         hub.register("ping", new PingCommand(telegramClient));
+        hub.register("driver", new DriverCommand(telegramClient, userStates));
     }
 
     @Override
     public void consume(Update update)
     {
+        //Se l'update ha un callback
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             long chatId = callbackQuery.getMessage().getChatId();
@@ -47,7 +52,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                     new MainMenuCallbackHandler(telegramClient, savedMessageId != null ?
                             savedMessageId : callbackQuery.getMessage().getMessageId()),
                     new RaceCallbackHandler(telegramClient, savedMessageId != null ?
-                            savedMessageId : callbackQuery.getMessage().getMessageId())
+                            savedMessageId : callbackQuery.getMessage().getMessageId(), hub)
             );
 
             boolean handled = false;
@@ -79,6 +84,18 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
+
+            //Controlla se l'utente é in uno stato particolare
+            String currentState = userStates.get(chatId);
+            if ("AWAITING_DRIVER_NAME".equals(currentState)) {
+                //Chiama il comando driver con il nome come argomento
+                DriverCommand driverCmd = (DriverCommand) hub.getCommand("driver");
+
+                if (driverCmd != null) {
+                    driverCmd.processDriverName(chatId, messageText, null);
+                }
+                return;
+            }
 
             boolean handled = hub.handle(messageText, chatId);
 

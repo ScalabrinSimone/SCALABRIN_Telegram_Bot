@@ -1,5 +1,8 @@
 package org.SimOneSpeedBot.callback;
 
+import org.SimOneSpeedBot.commands.Command;
+import org.SimOneSpeedBot.commands.CommandHub;
+import org.SimOneSpeedBot.commands.DriverCommand;
 import org.SimOneSpeedBot.keyboard.MainMenuKeyboard;
 import org.SimOneSpeedBot.keyboard.RaceKeyboards.*;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
@@ -11,11 +14,13 @@ public class RaceCallbackHandler implements CallbackHandler{
     private final TelegramClient client;
     private final MainMenuKeyboard mainMenuKeyboard;
     private final int messageId;
+    private final CommandHub hub;
 
-    public RaceCallbackHandler(TelegramClient client, int messageId) {
+    public RaceCallbackHandler(TelegramClient client, int messageId, CommandHub hub) {
         this.client = client;
         this.mainMenuKeyboard = new MainMenuKeyboard(client);
         this.messageId = messageId;
+        this.hub = hub;
     }
 
     @Override
@@ -52,8 +57,10 @@ public class RaceCallbackHandler implements CallbackHandler{
                 keyboard.editInlineKeyboard(chatId);
             }
             case "race:driver" -> {
-                RaceDriversKeyboard keyboard = new RaceDriversKeyboard(client, messageId);
-                keyboard.editInlineKeyboard(chatId);
+                DriverCommand driverCommand = (DriverCommand) hub.getCommand("driver");
+                if(driverCommand != null) {
+                    driverCommand.execute(chatId, new String[0]); //Senza args
+                }
             }
 
             case "race:team" -> {

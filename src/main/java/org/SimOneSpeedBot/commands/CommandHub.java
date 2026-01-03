@@ -26,4 +26,8 @@ public class CommandHub {
         command.execute(chatId, args); //Esegue in classe driver execute(chatId, ["leclerc", "2023"])
         return true; //Gestito correttamente il comando
     }
+
+    public Command getCommand(String cmdName) {
+        return commands.get(cmdName);
+    }
 }

@@ -22,7 +22,7 @@ public class F1APIs {
 
     //Metodi
 
-    public String fetchDriversCurrentYear() //MODIFICA: CAPIRE L'ANNO ATTUALE
+    public void fetchDriversCurrentYear() //MODIFICA: CAPIRE L'ANNO ATTUALE
     {
 
     }
