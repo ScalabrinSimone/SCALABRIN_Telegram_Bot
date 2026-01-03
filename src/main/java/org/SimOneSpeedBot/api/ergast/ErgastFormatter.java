@@ -1,5 +1,4 @@
 package org.SimOneSpeedBot.api.ergast;
 
-
-public class Ergast {
+public class ErgastFormatter {
 }

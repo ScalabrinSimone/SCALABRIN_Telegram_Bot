@@ -17,7 +17,9 @@ public class DriverCommand implements Command {
     private final Map<Long, String> userStates; //chatId -> stato attuale. Serve per aspettare un
                                                //input dall'utente.
     private final String textToSend = """
-                                ℹ️ Inserisci il nome del pilota Puoi scrivere nome e cognome separati 
+                                🏁 Inserisci il nome del pilota 
+                                
+                                ℹ️ Puoi scrivere nome e cognome separati 
                                 (es: Max Verstappen) oppure il cognome del pilota (es: Verstappen)
                                 """;
 
