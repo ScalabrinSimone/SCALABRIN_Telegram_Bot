@@ -1,6 +1,5 @@
 package org.SimOneSpeedBot.commands;
 
-import org.SimOneSpeedBot.bot.SimOneSpeedBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -8,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -19,8 +18,7 @@ public class DriverCommand implements Command {
     private final String textToSend = """
                                 🏁 Inserisci il nome del pilota 
                                 
-                                ℹ️ Puoi scrivere nome e cognome separati 
-                                (es: Max Verstappen) oppure il cognome del pilota (es: Verstappen)
+                                ℹ️ Puoi scrivere nome e cognome separati (es: Max Verstappen) oppure il cognome del pilota (es: Verstappen)
                                 """;
 
     public DriverCommand(TelegramClient client, Map<Long, String> userStates) {
