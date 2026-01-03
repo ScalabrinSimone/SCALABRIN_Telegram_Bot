@@ -44,8 +44,8 @@ public class RaceTeamsKeyboard implements MenuKeyboard {
                 .build();
 
         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                .text("⬅️ Back To Main Menu")
-                .callbackData("menu:home")
+                .text("⬅️ Back To Race Menu")
+                .callbackData("menu:race")
                 .build();
 
         //Crea la riga dei primi bottoni

@@ -33,13 +33,13 @@ public class RaceMenuKeyboard implements MenuKeyboard {
                 .build();
 
         InlineKeyboardButton pilotaButton = InlineKeyboardButton.builder()
-                .text("Piloti 🧑")
-                .callbackData("race:drivers")
+                .text("Pilota 🧑")
+                .callbackData("race:driver")
                 .build();
 
         InlineKeyboardButton teamButton = InlineKeyboardButton.builder()
-                .text("Scuderie 🏠")
-                .callbackData("race:teams")
+                .text("Scuderia 🏠")
+                .callbackData("race:team")
                 .build();
 
         InlineKeyboardButton backButton = InlineKeyboardButton.builder()

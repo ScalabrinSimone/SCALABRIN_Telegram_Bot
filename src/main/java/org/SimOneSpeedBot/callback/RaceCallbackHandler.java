@@ -51,12 +51,12 @@ public class RaceCallbackHandler implements CallbackHandler{
                 RacePre2023Keyboard keyboard = new RacePre2023Keyboard(client, messageId);
                 keyboard.editInlineKeyboard(chatId);
             }
-            case "race:drivers" -> {
+            case "race:driver" -> {
                 RaceDriversKeyboard keyboard = new RaceDriversKeyboard(client, messageId);
                 keyboard.editInlineKeyboard(chatId);
             }
 
-            case "race:teams" -> {
+            case "race:team" -> {
                 RaceTeamsKeyboard keyboard = new RaceTeamsKeyboard(client, messageId);
                 keyboard.editInlineKeyboard(chatId);
             }

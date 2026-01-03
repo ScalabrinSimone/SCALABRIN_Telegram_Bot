@@ -1,5 +1,6 @@
 package org.SimOneSpeedBot.keyboard.RaceKeyboards;
 
+import org.SimOneSpeedBot.api.F1APIs;
 import org.SimOneSpeedBot.keyboard.MenuKeyboard;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
@@ -22,55 +23,28 @@ public class RaceDriversKeyboard implements MenuKeyboard {
     }
 
     public Message editInlineKeyboard(long chatId) {
-        //Crea i bottoni
-        InlineKeyboardButton postButton = InlineKeyboardButton.builder()
-                .text("Stagioni post 2023 ⌚")
-                .callbackData("race:after2023")
-                .build();
-
-        InlineKeyboardButton preButton = InlineKeyboardButton.builder()
-                .text("Stagioni pre 2023 🕰")
-                .callbackData("race:pre2023")
-                .build();
-
-        InlineKeyboardButton pilotaButton = InlineKeyboardButton.builder()
-                .text("Piloti 🧑")
-                .callbackData("race:drivers")
-                .build();
-
-        InlineKeyboardButton teamButton = InlineKeyboardButton.builder()
-                .text("Scuderie 🏠")
-                .callbackData("race:teams")
-                .build();
+        F1APIs api = new  F1APIs(); //Volgio prendere  il driver
 
         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                .text("⬅️ Back To Main Menu")
-                .callbackData("menu:home")
+                .text("⬅️ Back To Race Menu")
+                .callbackData("menu:race")
                 .build();
 
-        //Crea la riga dei primi bottoni
-        InlineKeyboardRow upperRow = new InlineKeyboardRow(
-                List.of(postButton, preButton)
-        );
-        //Crea la seconda riga di bottoni
-        InlineKeyboardRow middleRow = new InlineKeyboardRow(
-                List.of(pilotaButton, teamButton)
-        );
-        //Crea la terza riga di bottoni
-        InlineKeyboardRow bottomRow = new InlineKeyboardRow(
+        //Crea la riga di bottoni
+        InlineKeyboardRow Row = new InlineKeyboardRow(
                 List.of(backButton)
         );
 
         //Crea la tastiera
         InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                .keyboard(List.of(upperRow, middleRow, bottomRow))
+                .keyboard(List.of(Row))
                 .build();
 
         //Modifica il messaggio
         EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
                 .messageId(messageId)
-                .text("ℹ️Seleziona la categoria di informazioni da ottenere:")
+                .text("ℹ️ Inserisci il nome del pilota:")
                 .replyMarkup(keyboard)
                 .build();
 
