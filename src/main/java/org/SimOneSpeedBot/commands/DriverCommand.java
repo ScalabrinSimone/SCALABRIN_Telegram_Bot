@@ -2,6 +2,7 @@ package org.SimOneSpeedBot.commands;
 
 import org.SimOneSpeedBot.bot.SimOneSpeedBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
@@ -42,41 +43,88 @@ public class DriverCommand implements Command {
                 e.printStackTrace();
             }
         }
-        else { //Processa il nome del pilota
-            processDriverName(chatId, String.join(" ", args), null); //Guarda come deve essere per l'api.
+        else { //Processa il nome del pilota se ci sono args
+            String driverName = String.join(" ", args); //Guarda come lo vuole l'api
+            String driverInfo = ""; //= //API!!!
+
+            SendMessage message = SendMessage.builder()
+                    .chatId(chatId)
+                    .text(driverInfo)
+                    .build();
+
+            try {
+                client.execute(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public void processDriverName(long chatId, String driverName, InlineKeyboardMarkup keyboard) {
-        userStates.remove(chatId);
+    @Override
+    public void executeEdit(long chatId, int messageId) {
+        //Chiamato dal menu, imposta uno stato speciale
+        userStates.put(chatId, "AWAITING_DRIVER_NAME_EDIT:" + messageId); //Stato speciale che contiene il messageId
 
-        //String driverInfo = fetchDriverInfo(driverName); CHIAMA API!!!
-
-        SendMessage message = SendMessage.builder()
+        EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
-                .text(driverInfo)
-                .replyMarkup(createBackToRaceMenuButton())
+                .messageId(messageId)
+                .text(textToSend)
                 .build();
 
         try {
-            client.execute(message);
+            client.execute(edit);
         } catch (Exception e) {
-            e.printStackTrace();
+            if (!e.getMessage().contains("message is not modified")) {
+                e.printStackTrace();
+            }
         }
     }
 
-    //Metodo per creare il bottone per tornare al menu race
-    private InlineKeyboardMarkup createBackToRaceMenuButton()
-    {
-        InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                .text("⬅️ Back To Race Menu")
-                .callbackData("menu:race")
-                .build();
+    public void processDriverName(long chatId, String driverName, Integer messageId) {
+        userStates.remove(chatId);
+        String driverInfo = ""; //= fetchDriverInfo(driverName); CHIAMA API!!!
 
-        InlineKeyboardRow row = new InlineKeyboardRow(List.of(backButton));
+        if (messageId != null) {
+            //Menu -> edita il messaggio con bottone back
+            InlineKeyboardButton backButton = InlineKeyboardButton.builder()
+                    .text("⬅️ Back To Race Menu")
+                    .callbackData("menu:race")
+                    .build();
 
-        return InlineKeyboardMarkup.builder()
-                .keyboard(List.of(row))
-                .build();
+            //Bottone
+            InlineKeyboardRow row = new InlineKeyboardRow(List.of(backButton));
+
+            InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
+                    .keyboard(List.of(row))
+                    .build();
+
+            EditMessageText edit = EditMessageText.builder()
+                    .chatId(chatId)
+                    .messageId(messageId)
+                    .text(driverInfo)
+                    .replyMarkup(keyboard)
+                    .build();
+
+            try {
+                client.execute(edit);
+            } catch (Exception e) {
+                if (!e.getMessage().contains("message is not modified")) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        else {
+            //Comando -> manda nuovo messaggio senza bottoni
+            SendMessage message = SendMessage.builder()
+                    .chatId(chatId)
+                    .text(driverInfo)
+                    .build();
+
+            try {
+                client.execute(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

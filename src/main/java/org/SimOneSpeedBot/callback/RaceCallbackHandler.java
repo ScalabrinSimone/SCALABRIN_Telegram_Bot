@@ -59,7 +59,7 @@ public class RaceCallbackHandler implements CallbackHandler{
             case "race:driver" -> {
                 DriverCommand driverCommand = (DriverCommand) hub.getCommand("driver");
                 if(driverCommand != null) {
-                    driverCommand.execute(chatId, new String[0]); //Senza args
+                    driverCommand.executeEdit(chatId, messageId);
                 }
             }
 

@@ -87,12 +87,20 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
 
             //Controlla se l'utente é in uno stato particolare
             String currentState = userStates.get(chatId);
-            if ("AWAITING_DRIVER_NAME".equals(currentState)) {
+            if (currentState!= null && currentState.startsWith("AWAITING_DRIVER_NAME")) {
                 //Chiama il comando driver con il nome come argomento
                 DriverCommand driverCmd = (DriverCommand) hub.getCommand("driver");
 
                 if (driverCmd != null) {
-                    driverCmd.processDriverName(chatId, messageText, null);
+                    //Controlla se devo editare o mandare un nuovo messaggio
+                    if (currentState.contains("EDIT:")) {
+                        //Estrae il messageId dallo stato
+                        int messageId = Integer.parseInt(messageText.split(":")[2]);
+                        driverCmd.processDriverName(chatId, messageText, messageId);
+                    }
+                    else {
+                        driverCmd.processDriverName(chatId, messageText, null);
+                    }
                 }
                 return;
             }
