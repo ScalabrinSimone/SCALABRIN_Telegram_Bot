@@ -1,5 +1,6 @@
 package org.SimOneSpeedBot.commands;
 
+import org.SimOneSpeedBot.api.ergast.ErgastAPI;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -44,8 +45,9 @@ public class DriverCommand implements Command {
             }
         }
         else { //Processa il nome del pilota se ci sono args
-            String driverName = String.join(" ", args); //Guarda come lo vuole l'api
-            String driverInfo = ""; //= //API!!!
+            //Controlla quanti args ha lo string[]
+            String driverName = String.join(" ", args); //Ergast -> Solo cognome in minuscolo
+            String driverInfo = new ErgastAPI().fetchDriver(driverName); //= //API!!!
 
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
@@ -80,9 +82,10 @@ public class DriverCommand implements Command {
         }
     }
 
-    public void processDriverName(long chatId, String driverName, Integer messageId) {
+    public void processDriver(long chatId, String driverSurname, Integer messageId) {
         userStates.remove(chatId);
-        String driverInfo = ""; //= fetchDriverInfo(driverName); CHIAMA API!!!
+        //Gestisci nome driver --> solo cognome in minuscolo. (il messaggio che arriva puó essere scritto in piú modi)
+        String driverInfo = new ErgastAPI().fetchDriver(driverSurname);
 
         if (messageId != null) {
             //Menu -> edita il messaggio con bottone back

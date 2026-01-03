@@ -93,10 +93,10 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                     if (currentState.contains("EDIT:")) {
                         //Estrae il messageId dallo stato
                         int messageId = Integer.parseInt(currentState.split(":")[2]);
-                        driverCmd.processDriverName(chatId, messageText, messageId);
+                        driverCmd.processDriver(chatId, messageText, messageId);
                     }
                     else {
-                        driverCmd.processDriverName(chatId, messageText, null);
+                        driverCmd.processDriver(chatId, messageText, null);
                     }
                 }
                 return;
