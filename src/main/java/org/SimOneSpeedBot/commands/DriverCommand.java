@@ -47,8 +47,11 @@ public class DriverCommand implements Command {
         }
         else { //Processa il nome del pilota se ci sono args
             //Controlla quanti args ha lo string[] (deve avere solo il cognome)
-            String driverName = String.join(" ", args[0]).toLowerCase(); //Ergast -> Solo cognome in minuscolo
-            String driverInfo = new ErgastAPI().fetchDriver(driverName);
+
+            //Ergast -> nome e cognome in minuscolo
+            String driverName = args.length > 1 ? String.join(" ", args[0]).toLowerCase() : "";
+            String driverSurname = args.length == 1 ? String.join(" ", args[0]).toLowerCase() : String.join(" ", args[args.length - 1]).toLowerCase();
+            String driverInfo = new ErgastAPI().fetchDriver(driverName, driverSurname);
 
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
@@ -83,11 +86,13 @@ public class DriverCommand implements Command {
         }
     }
 
-    public void processDriver(long chatId, String driverSurname, Integer messageId) {
+    public void processDriver(long chatId, String driverName, String driverSurname, Integer messageId) {
         userStates.remove(chatId);
-        //Gestisci nome driver --> solo cognome in minuscolo.
+        //Gestisci nome driver --> nome_cognome in minuscolo.
+        driverName = driverName.toLowerCase();
         driverSurname = driverSurname.toLowerCase();
-        String driverInfo = new ErgastAPI().fetchDriver(driverSurname);
+
+        String driverInfo = new ErgastAPI().fetchDriver(driverName, driverSurname);
 
         if (messageId != null) {
             //Menu -> edita il messaggio con bottone back

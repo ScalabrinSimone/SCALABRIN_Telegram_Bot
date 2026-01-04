@@ -79,7 +79,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
 
         //Se l'update ha un messaggio e quest'ultimo ha un testo:
         if (update.hasMessage() && update.getMessage().hasText()) {
-            String messageText = update.getMessage().getText();
+            String messageText = update.getMessage().getText(); //Ha sia il nome che il cognome
             long chatId = update.getMessage().getChatId();
 
             //Controlla se l'utente é in uno stato particolare
@@ -89,14 +89,21 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                 DriverCommand driverCmd = (DriverCommand) hub.getCommand("driver");
 
                 if (driverCmd != null) {
+                    //Prendo il messaggio in modo da separare nome e cognome
+                    String text = messageText.trim(); //Togliamo spazi inutili.
+                    String[] parts = text.split(" "); //Separa per spazi.
+
+                    String givenName = parts.length > 1 ? parts[0] : ""; //Nome
+                    String familyName = parts.length == 1 ? parts[0] : parts[parts.length - 1]; //Cognome
+
                     //Controlla se devo editare o mandare un nuovo messaggio
-                    if (currentState.contains("EDIT:")) {
+                    if (currentState.contains("EDIT:")) { //Da menu
                         //Estrae il messageId dallo stato
                         int messageId = Integer.parseInt(currentState.split(":")[1]);
-                        driverCmd.processDriver(chatId, messageText, messageId);
+                        driverCmd.processDriver(chatId, givenName, familyName, messageId);
                     }
-                    else {
-                        driverCmd.processDriver(chatId, messageText, null);
+                    else { //Nuovo messaggio
+                        driverCmd.processDriver(chatId, givenName, familyName, null);
                     }
                 }
                 return;

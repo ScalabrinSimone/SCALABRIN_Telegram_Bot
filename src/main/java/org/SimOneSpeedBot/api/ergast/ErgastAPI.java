@@ -24,10 +24,11 @@ public class ErgastAPI {
     }
 
     //Metodi
-    public String fetchDriver(String driverSurname)
+    public String fetchDriver(String driverName, String driverSurname)
     {
+        String driverId = driverName.equals("") ? driverSurname : driverName + "_" + driverSurname; //nome_cognome per api e se non funziona solo cognome e se non funziona allora non esiste
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + "drivers/" + driverSurname + "/"))
+                .uri(URI.create(baseUrl + "drivers/" + driverId + "/"))
                 .GET()
                 .build();
 
@@ -35,15 +36,16 @@ public class ErgastAPI {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             Gson deserializzatore = new Gson();
-            //Debug utile
-            System.out.println("JSON ricevuto: " + response.body());
+
+            //System.out.println("JSON ricevuto: " + response.body()); //Debug
+
             RootResponse root = deserializzatore.fromJson(response.body(), RootResponse.class);
 
             MRData mrData = root.getMRData();
             if (mrData == null || mrData.getDriverTable() == null ||
                     mrData.getDriverTable().getDrivers() == null ||
                     mrData.getDriverTable().getDrivers().isEmpty()) {
-                return "Nessun pilota trovato con il cognome " + mrData.getDriverTable().getDriverId() + ".";
+                return "Nessun pilota trovato con l'id " + mrData.getDriverTable().getDriverId() + ".";
             }
             else {
                 Driver pilota = mrData.getDriverTable().getDrivers().getFirst(); //Prende il primo (= get(0))
