@@ -31,6 +31,12 @@ public class UtilsMenuKeyboard implements MenuKeyboard {
                 .text("Ping 🏓")
                 .callbackData("menu:utils:ping")
                 .build();
+
+        InlineKeyboardButton testErrorPopupButton = InlineKeyboardButton.builder()
+                .text("Test errore ❗")
+                .callbackData("menu:utils:error")
+                .build();
+
         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
                 .text("⬅️ Back To Main Menu")
                 .callbackData("menu:home")
@@ -38,7 +44,7 @@ public class UtilsMenuKeyboard implements MenuKeyboard {
 
         //Crea la riga dei primi bottoni
         InlineKeyboardRow upperRow = new InlineKeyboardRow(
-                List.of(utilsButton, raceButton)
+                List.of(utilsButton, raceButton,  testErrorPopupButton)
         );
         //Crea la seconda riga di bottoni
         InlineKeyboardRow bottomRow = new InlineKeyboardRow(
