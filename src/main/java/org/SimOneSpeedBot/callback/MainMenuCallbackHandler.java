@@ -10,15 +10,19 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.util.Map;
+
 public class MainMenuCallbackHandler implements CallbackHandler {
     private final TelegramClient client;
     private final MainMenuKeyboard mainMenuKeyboard;
     private final int messageId;
+    private final Map<Long, String> userStates;
 
-    public MainMenuCallbackHandler(TelegramClient client, int messageId) {
+    public MainMenuCallbackHandler(TelegramClient client, int messageId, Map<Long, String> userStates) {
         this.client = client;
         this.mainMenuKeyboard = new MainMenuKeyboard(client);
         this.messageId = messageId;
+        this.userStates = userStates;
     }
 
     @Override
@@ -61,6 +65,12 @@ public class MainMenuCallbackHandler implements CallbackHandler {
             }
 
             case "menu:race" -> {
+                //Rimuove lo stato per continuare a scrivere il driver se attivo
+                if (userStates.get(chatId) != null &&
+                userStates.get(chatId).startsWith("AWAITING_DRIVER_NAME")){
+                    userStates.remove(chatId);
+                }
+
                 RaceMenuKeyboard keyboard = new RaceMenuKeyboard(client, messageId);
                 keyboard.editInlineKeyboard(chatId);
             }

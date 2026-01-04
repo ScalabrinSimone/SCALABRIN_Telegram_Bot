@@ -49,7 +49,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
 
             List<CallbackHandler> handlers = List.of(
                     new MainMenuCallbackHandler(telegramClient, savedMessageId != null ?
-                            savedMessageId : callbackQuery.getMessage().getMessageId()),
+                            savedMessageId : callbackQuery.getMessage().getMessageId(), userStates), //Passp lo userStates per permettere di scrivere piú drivers.
                     new RaceCallbackHandler(telegramClient, savedMessageId != null ?
                             savedMessageId : callbackQuery.getMessage().getMessageId(), hub)
             );
@@ -113,10 +113,10 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                     if (currentState.contains("EDIT:")) { //Da menu
                         //Estrae il messageId dallo stato
                         int messageId = Integer.parseInt(currentState.split(":")[1]);
-                        driverCmd.processDriver(chatId, givenName, familyName, messageId);
+                        driverCmd.processDriver(chatId, givenName, familyName, messageId, true); //Possiamo continuare a scrivere piloti.
                     }
                     else { //Nuovo messaggio
-                        driverCmd.processDriver(chatId, givenName, familyName, null);
+                        driverCmd.processDriver(chatId, givenName, familyName, null, false); //Non ".
                     }
                 }
                 return;

@@ -86,8 +86,11 @@ public class DriverCommand implements Command {
         }
     }
 
-    public void processDriver(long chatId, String driverName, String driverSurname, Integer messageId) {
-        userStates.remove(chatId);
+    public void processDriver(long chatId, String driverName, String driverSurname, Integer messageId, boolean keepState) {
+        if (!keepState) { //Rimuove lo stato solo se specificato, cosí da poter continuare a scrivere piloti
+            userStates.remove(chatId);
+        }
+
         //Gestisci nome driver --> nome_cognome in minuscolo.
         driverName = driverName.toLowerCase();
         driverSurname = driverSurname.toLowerCase();
