@@ -6,6 +6,7 @@ import org.SimOneSpeedBot.api.ergast.DriverAPI.Driver;
 import org.SimOneSpeedBot.api.ergast.DriverAPI.MRData;
 import org.SimOneSpeedBot.api.ergast.DriverAPI.RootResponse;
 import org.SimOneSpeedBot.service.MyConfiguration;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -56,7 +57,8 @@ public class ErgastAPI {
         }
 
         //Se ancora non trova, ritorna messaggio di errore
-        return "❌ Pilota " + (!driverName.equals("") ? driverName + " " : "") + driverSurname + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: Verstappen, Max Verstappen o Verstappen Max).";
+        //StringUtils.capitalize(*stringa*) rende la prima lettera maiuscola.
+        return "❌ Pilota " + (!driverName.equals("") ? StringUtils.capitalize(driverName) + " " : "") + StringUtils.capitalize(driverSurname) + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: Verstappen, Max Verstappen o Verstappen Max).";
 
     }
     private String tryFetchDriver(String driverId) {

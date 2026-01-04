@@ -9,6 +9,7 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -95,6 +96,17 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
 
                     String givenName = parts.length > 1 ? parts[0] : ""; //Nome
                     String familyName = parts.length == 1 ? parts[0] : parts[parts.length - 1]; //Cognome
+
+                    //Elimina il messaggio dell'utente per avere una UI/UX migliore:
+                    DeleteMessage delete = DeleteMessage.builder()
+                            .chatId(chatId)
+                            .messageId(update.getMessage().getMessageId())
+                            .build();
+                    try {
+                        telegramClient.execute(delete);
+                    } catch (Exception e) {
+                        //Se fallisce la cancellazione, continua comunque
+                    }
 
                     //Controlla se devo editare o mandare un nuovo messaggio
                     if (currentState.contains("EDIT:")) { //Da menu
