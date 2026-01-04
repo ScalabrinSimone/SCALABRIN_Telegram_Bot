@@ -27,6 +27,39 @@ public class ErgastAPI {
     public String fetchDriver(String driverName, String driverSurname)
     {
         String driverId = driverName.equals("") ? driverSurname : driverName + "_" + driverSurname; //nome_cognome per api e se non funziona solo cognome e se non funziona allora non esiste
+
+        //Voglio che l'utente sia libero di inserire il pilota come vuole, quindi controllo anche per cognome_nome
+        String result = tryFetchDriver(driverId); //Primo controllo classico.
+        if (result != null) {
+            return result;
+        }
+
+        //Altrimenti non c'é nulla con nome_cognome o con cognome, proviamo con altri input come cognome_nome (input invertito da utente).
+        //Tratto il driverName come se fosse il driverSurname
+        else if (!driverName.equals("")) { //Solo il driverName puó essere vuoto ("")
+            driverId = driverSurname + "_" + driverName;
+            result = tryFetchDriver(driverId);
+
+            if (result != null) {
+                return result;
+            }
+
+            result = tryFetchDriver(driverName); //es. Charles Leclerc
+            if (result != null) {
+                return result;
+            }
+
+            result =  tryFetchDriver(driverSurname); //es. Leclerc Charles
+            if (result != null) {
+                return result;
+            }
+        }
+
+        //Se ancora non trova, ritorna messaggio di errore
+        return "❌ Pilota " + (!driverName.equals("") ? driverName + " " : "") + driverSurname + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: Verstappen, Max Verstappen o Verstappen Max).";
+
+    }
+    private String tryFetchDriver(String driverId) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "drivers/" + driverId + "/"))
                 .GET()
@@ -45,7 +78,7 @@ public class ErgastAPI {
             if (mrData == null || mrData.getDriverTable() == null ||
                     mrData.getDriverTable().getDrivers() == null ||
                     mrData.getDriverTable().getDrivers().isEmpty()) {
-                return "Nessun pilota trovato con l'id " + mrData.getDriverTable().getDriverId() + ".";
+                return null; //Pilota non trovato. L'API risponde SEMPRE con 200 anche se il pilota non esiste.
             }
             else {
                 Driver pilota = mrData.getDriverTable().getDrivers().getFirst(); //Prende il primo (= get(0))

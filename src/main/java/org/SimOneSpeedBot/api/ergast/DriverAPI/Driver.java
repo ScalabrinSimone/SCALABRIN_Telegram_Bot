@@ -20,8 +20,8 @@ public class Driver {
                 familyName,
                 nationality,
                 dateOfBirth,
-                permanentNumber,
-                code
+                permanentNumber != null ? permanentNumber : "*dato non disponibile*", //Gestisco caso di dati non disbonibili
+                code != null ? code : "*dato non disponibile*" //es. Verstappen -> Jos Verstappen (no dati).
         );
     }
 }

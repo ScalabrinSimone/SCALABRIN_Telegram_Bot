@@ -20,7 +20,7 @@ public class DriverCommand implements Command {
     private final String textToSend = """
                                 🏁 Inserisci il nome del pilota...
                                 
-                                ℹ️ Scrivi solo il cognome (es: Verstappen).
+                                ℹ️ Puoi scrivere nome e cognome, cognome nome oppure cognome, sconsigliato se esistono piú piloti con lo stesso cognome (es: Verstappen ritorna il padre; max verstappen, Verstappen Max ritorna il figlio).
                                 """;
 
     public DriverCommand(TelegramClient client, Map<Long, String> userStates) {
