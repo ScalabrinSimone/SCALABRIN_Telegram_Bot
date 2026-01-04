@@ -53,6 +53,10 @@ public class StartCommand implements Command {
             } else {
                 System.out.println("ERRORE: sent è null!");
             }*/
+            //Aggiunge a menuMessageIds per far si che venga eliminato anche il primo menui con il comando /showmenu
+            if (sent != null) {
+                menuMessageIds.put(chatId, sent.getMessageId());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
