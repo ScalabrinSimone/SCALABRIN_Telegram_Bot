@@ -35,6 +35,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
         hub.register("info", new InfoCommand(telegramClient));
         hub.register("ping", new PingCommand(telegramClient));
         hub.register("driver", new DriverCommand(telegramClient, userStates));
+        hub.register("showmenu", new ShowMenuCommand(telegramClient, menuMessageIds));
     }
 
     @Override
