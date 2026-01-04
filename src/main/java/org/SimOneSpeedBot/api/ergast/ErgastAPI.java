@@ -1,6 +1,10 @@
 package org.SimOneSpeedBot.api.ergast;
 
 
+import com.google.gson.Gson;
+import org.SimOneSpeedBot.api.ergast.DriverAPI.Driver;
+import org.SimOneSpeedBot.api.ergast.DriverAPI.MRData;
+import org.SimOneSpeedBot.api.ergast.DriverAPI.RootResponse;
 import org.SimOneSpeedBot.service.MyConfiguration;
 
 import java.io.IOException;
@@ -23,7 +27,7 @@ public class ErgastAPI {
     public String fetchDriver(String driverSurname)
     {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + "drivers/" + driverSurname))
+                .uri(URI.create(baseUrl + "drivers/" + driverSurname + "/"))
                 .GET()
                 .build();
 
@@ -31,10 +35,22 @@ public class ErgastAPI {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             Gson deserializzatore = new Gson();
-            Driver pilota = deserializzatore.fromJson(response.body(), Driver.class);
+            //Debug utile
+            System.out.println("JSON ricevuto: " + response.body());
+            RootResponse root = deserializzatore.fromJson(response.body(), RootResponse.class);
 
-            return pilota.toString(); //Oppure qualcosa con la classe formatter
-        } catch (IOException | InterruptedException e) {
+            MRData mrData = root.getMRData();
+            if (mrData == null || mrData.getDriverTable() == null ||
+                    mrData.getDriverTable().getDrivers() == null ||
+                    mrData.getDriverTable().getDrivers().isEmpty()) {
+                return "Nessun pilota trovato con il cognome " + mrData.getDriverTable().getDriverId() + ".";
+            }
+            else {
+                Driver pilota = mrData.getDriverTable().getDrivers().getFirst(); //Prende il primo (= get(0))
+                return pilota.toString();
+            }
+        }
+        catch (IOException | InterruptedException e) {
             System.err.println("Errore in richiesta API per il pilota: " + e.getMessage());
 
             return null;

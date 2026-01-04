@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class DriverCommand implements Command {
@@ -17,9 +18,9 @@ public class DriverCommand implements Command {
     private final Map<Long, String> userStates; //chatId -> stato attuale. Serve per aspettare un
                                                //input dall'utente.
     private final String textToSend = """
-                                🏁 Inserisci il nome del pilota 
+                                🏁 Inserisci il nome del pilota...
                                 
-                                ℹ️ Puoi scrivere nome e cognome separati (es: Max Verstappen) oppure il cognome del pilota (es: Verstappen)
+                                ℹ️ Scrivi solo il cognome (es: Verstappen).
                                 """;
 
     public DriverCommand(TelegramClient client, Map<Long, String> userStates) {
@@ -45,9 +46,9 @@ public class DriverCommand implements Command {
             }
         }
         else { //Processa il nome del pilota se ci sono args
-            //Controlla quanti args ha lo string[]
-            String driverName = String.join(" ", args); //Ergast -> Solo cognome in minuscolo
-            String driverInfo = new ErgastAPI().fetchDriver(driverName); //= //API!!!
+            //Controlla quanti args ha lo string[] (deve avere solo il cognome)
+            String driverName = String.join(" ", args[0]).toLowerCase(); //Ergast -> Solo cognome in minuscolo
+            String driverInfo = new ErgastAPI().fetchDriver(driverName);
 
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
@@ -84,7 +85,8 @@ public class DriverCommand implements Command {
 
     public void processDriver(long chatId, String driverSurname, Integer messageId) {
         userStates.remove(chatId);
-        //Gestisci nome driver --> solo cognome in minuscolo. (il messaggio che arriva puó essere scritto in piú modi)
+        //Gestisci nome driver --> solo cognome in minuscolo.
+        driverSurname = driverSurname.toLowerCase();
         String driverInfo = new ErgastAPI().fetchDriver(driverSurname);
 
         if (messageId != null) {
