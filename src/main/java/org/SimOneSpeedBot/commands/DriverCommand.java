@@ -21,6 +21,7 @@ public class DriverCommand implements Command {
                                 🏁 Inserisci il nome del pilota...
                                 
                                 ℹ️ Puoi scrivere nome e cognome, cognome nome oppure cognome, sconsigliato se esistono piú piloti con lo stesso cognome (es: Verstappen ritorna il padre; max verstappen, Verstappen Max ritorna il figlio).
+                                
                                 Se vieni dal menu puoi continuare a scrivere i nomi dei piloti, per smettere l'inserimento, premere il pulsante "Back To Race Menu".
                                 """;
 
@@ -101,7 +102,7 @@ public class DriverCommand implements Command {
         if (messageId != null) {
             //Menu -> edita il messaggio con bottone back
             InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                    .text("⬅️ Back To Race Menu")
+                    .text("⬅️ Back To Race Menu\n(Concludi Inserimento)")
                     .callbackData("menu:race")
                     .build();
 
