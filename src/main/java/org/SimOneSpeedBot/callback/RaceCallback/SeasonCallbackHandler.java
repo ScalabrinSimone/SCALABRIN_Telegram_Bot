@@ -1,5 +1,6 @@
 package org.SimOneSpeedBot.callback.RaceCallback;
 
+import org.SimOneSpeedBot.api.ergast.ErgastAPI;
 import org.SimOneSpeedBot.callback.CallbackHandler;
 import org.SimOneSpeedBot.commands.CommandHub;
 import org.SimOneSpeedBot.commands.ConstructorCommand;
@@ -10,21 +11,28 @@ import org.SimOneSpeedBot.keyboard.RaceKeyboards.SeasonKeyboard;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 public class SeasonCallbackHandler implements CallbackHandler {
     private final TelegramClient client;
     private final MainMenuKeyboard mainMenuKeyboard;
     private final int messageId;
     private final CommandHub hub;
+    private final Map<Long, String> userStates;
 
-    public SeasonCallbackHandler(TelegramClient client, int messageId, CommandHub hub) {
+    public SeasonCallbackHandler(TelegramClient client, int messageId, CommandHub hub, Map<Long, String> userStates) {
         this.client = client;
         this.mainMenuKeyboard = new MainMenuKeyboard(client);
         this.messageId = messageId;
         this.hub = hub;
+        this.userStates = userStates;
     }
 
     @Override
@@ -53,22 +61,85 @@ public class SeasonCallbackHandler implements CallbackHandler {
             }
 
             case "race:season:now" -> {
-                SeasonCommand seasonCommand = (SeasonCommand) hub.getCommand("season");
-                if (seasonCommand != null) {
-                    seasonCommand.executeEdit(chatId, messageId, LocalDate.now().getYear());
+                int year = LocalDate.now().getYear();
+                String seasonInfo = new ErgastAPI().fetchSeason(year);
+
+                //Edita il messaggio con le info + bottone back
+                InlineKeyboardButton backButton = InlineKeyboardButton.builder()
+                        .text("⬅️ Back To Race Menu")
+                        .callbackData("menu:race")
+                        .build();
+
+                InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
+                        .keyboard(List.of(new InlineKeyboardRow(List.of(backButton))))
+                        .build();
+
+                EditMessageText edit = EditMessageText.builder()
+                        .chatId(chatId)
+                        .messageId(messageId)
+                        .text(seasonInfo)
+                        .replyMarkup(keyboard)
+                        .build();
+
+                try {
+                    client.execute(edit);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             case "race:season:last" -> {
-                SeasonCommand seasonCommand = (SeasonCommand) hub.getCommand("season");
-                if (seasonCommand != null) {
-                    seasonCommand.executeEdit(chatId, messageId, (LocalDate.now().getYear() - 1));
+                int year = LocalDate.now().getYear() - 1;
+                String seasonInfo = new ErgastAPI().fetchSeason(year);
+
+                //Edita il messaggio con le info + bottone back
+                InlineKeyboardButton backButton = InlineKeyboardButton.builder()
+                        .text("⬅️ Back To Race Menu")
+                        .callbackData("menu:race")
+                        .build();
+
+                InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
+                        .keyboard(List.of(new InlineKeyboardRow(List.of(backButton))))
+                        .build();
+
+                EditMessageText edit = EditMessageText.builder()
+                        .chatId(chatId)
+                        .messageId(messageId)
+                        .text(seasonInfo)
+                        .replyMarkup(keyboard)
+                        .build();
+
+                try {
+                    client.execute(edit);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
             case "race:season:select" -> {
-                SeasonCommand seasonCommand = (SeasonCommand) hub.getCommand("season");
-                if (seasonCommand != null) {
-                    seasonCommand.executeEdit(chatId, messageId, selectedYear);
+                //Imposta lo stato per ricevere l'anno
+                userStates.put(chatId, "AWAITING_SEASON_YEAR:EDIT:" + messageId);
+
+                //Edita il messaggio con le istruzioni
+                InlineKeyboardButton backButton = InlineKeyboardButton.builder()
+                        .text("⬅️ Back To Race Menu")
+                        .callbackData("menu:race")
+                        .build();
+
+                InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
+                        .keyboard(List.of(new InlineKeyboardRow(List.of(backButton))))
+                        .build();
+
+                EditMessageText edit = EditMessageText.builder()
+                        .chatId(chatId)
+                        .messageId(messageId)
+                        .text("📅 Inserisci l'anno della stagione (es: 2024, 2023, 1950-" + LocalDate.now().getYear() + "):")
+                        .replyMarkup(keyboard)
+                        .build();
+
+                try {
+                    client.execute(edit);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 

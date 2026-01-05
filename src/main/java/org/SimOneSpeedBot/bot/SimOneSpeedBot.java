@@ -1,5 +1,6 @@
 package org.SimOneSpeedBot.bot;
 
+import org.SimOneSpeedBot.api.ergast.ErgastAPI;
 import org.SimOneSpeedBot.callback.CallbackHandler;
 import org.SimOneSpeedBot.callback.MainMenuCallbackHandler;
 import org.SimOneSpeedBot.callback.RaceCallback.RaceCallbackHandler;
@@ -11,11 +12,16 @@ import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateC
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,12 +43,12 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
         hub.register("ping", new PingCommand(telegramClient));
         hub.register("driver", new DriverCommand(telegramClient, userStates));
         hub.register("constructor", new ConstructorCommand(telegramClient, userStates));
+        hub.register("season", new SeasonCommand(telegramClient));
         hub.register("showmenu", new ShowMenuCommand(telegramClient, menuMessageIds));
     }
 
     @Override
-    public void consume(Update update)
-    {
+    public void consume(Update update) {
         //Se l'update ha un callback
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
@@ -55,7 +61,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                     new RaceCallbackHandler(telegramClient, savedMessageId != null ?
                             savedMessageId : callbackQuery.getMessage().getMessageId(), hub),
                     new SeasonCallbackHandler(telegramClient, savedMessageId != null ?
-                            savedMessageId : callbackQuery.getMessage().getMessageId(), hub)
+                            savedMessageId : callbackQuery.getMessage().getMessageId(), hub, userStates)
             );
 
             boolean handled = false;
@@ -122,8 +128,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                         //Estrae il messageId dallo stato
                         int messageId = Integer.parseInt(currentState.split(":")[1]);
                         driverCmd.processDriver(chatId, givenName, familyName, messageId, true); //Possiamo continuare a scrivere piloti.
-                    }
-                    else { //Nuovo messaggio
+                    } else { //Nuovo messaggio
                         driverCmd.processDriver(chatId, givenName, familyName, null, false); //Non ".
                     }
                 }
@@ -158,28 +163,104 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                         //Estrae il messageId dallo stato
                         int messageId = Integer.parseInt(currentState.split(":")[1]);
                         constructorCmd.processConstructor(chatId, firstName, secondName, messageId, true); //Possiamo continuare a scrivere costruttori.
-                    }
-                    else { //Nuovo messaggio
+                    } else { //Nuovo messaggio
                         constructorCmd.processConstructor(chatId, firstName, secondName, null, false); //Non ".
                     }
                 }
-                return;
-            }
+                //Stato attesa stagione
+                else if (currentState != null && currentState.startsWith("AWAITING_SEASON_YEAR")) {
+                    String year = messageText.trim();
+                    int yearInt = Integer.parseInt(year);
 
-            boolean handled = hub.handle(messageText, chatId);
+                    //Valida l'anno
+                    try {
+                        if (yearInt < 1950 || yearInt > LocalDate.now().getYear()) {
+                            SendMessage errorMsg = SendMessage.builder()
+                                    .chatId(chatId)
+                                    .text("❌ Anno non valido. Inserisci un anno tra 1950 e " + (LocalDate.now().getYear()))
+                                    .build();
 
-            if(!handled)
-            {
-                SendMessage message = SendMessage
-                        .builder()
-                        .chatId(chatId)
-                        .text("Scusa, non riconosco il comando. Riprova")
-                        .build();
+                            try {
+                                telegramClient.execute(errorMsg);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            return;
+                        }
+                    } catch (NumberFormatException e) {
+                        SendMessage errorMsg = SendMessage.builder()
+                                .chatId(chatId)
+                                .text("❌ Inserisci un anno valido (es: 2024, 2023)")
+                                .build();
 
-                try {
-                    telegramClient.execute(message);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
+                        try {
+                            telegramClient.execute(errorMsg);
+                        } catch (Exception er) {
+                            er.printStackTrace();
+                        }
+                        return;
+                    }
+
+                    if (currentState.contains("EDIT:")) {
+                        //Cancella il messaggio dell'utente
+                        DeleteMessage delete = DeleteMessage.builder()
+                                .chatId(chatId)
+                                .messageId(update.getMessage().getMessageId())
+                                .build();
+
+                        try {
+                            telegramClient.execute(delete);
+                        } catch (Exception e) {
+                            //Ignora
+                        }
+
+                        //Recupera le info della stagione
+                        String seasonInfo = new ErgastAPI().fetchSeason(yearInt);
+
+                        //Edita il messaggio con le info
+                        int messageId = Integer.parseInt(currentState.split(":")[1]);
+
+                        InlineKeyboardButton backButton = InlineKeyboardButton.builder()
+                                .text("⬅️ Back To Race Menu")
+                                .callbackData("menu:race")
+                                .build();
+
+                        InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
+                                .keyboard(List.of(new InlineKeyboardRow(List.of(backButton))))
+                                .build();
+
+                        EditMessageText edit = EditMessageText.builder()
+                                .chatId(chatId)
+                                .messageId(messageId)
+                                .text(seasonInfo)
+                                .replyMarkup(keyboard)
+                                .build();
+
+                        try {
+                            telegramClient.execute(edit);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        //NON rimuovere lo stato per permettere ricerche multiple
+                    }
+                    return;
+                }
+
+                boolean handled = hub.handle(messageText, chatId);
+
+                if (!handled) {
+                    SendMessage message = SendMessage
+                            .builder()
+                            .chatId(chatId)
+                            .text("Scusa, non riconosco il comando. Riprova")
+                            .build();
+
+                    try {
+                        telegramClient.execute(message);
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

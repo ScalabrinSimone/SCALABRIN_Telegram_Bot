@@ -5,12 +5,11 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 public class SeasonCommand implements Command {
     private final TelegramClient client;
-    private final Map<Long, String> userStates; //chatId -> stato attuale. Serve per aspettare un
-                                               //input dall'utente.
     private final String textToSend = """
                                 🏁 Inserisci l'anno della stagione...
                                 
@@ -18,64 +17,66 @@ public class SeasonCommand implements Command {
                                 Scrivi solo il numero dell'anno.
                                 """;
 
-    public SeasonCommand(TelegramClient client, Map<Long, String> userStates) {
+    public SeasonCommand(TelegramClient client) {
         this.client = client;
-        this.userStates = userStates;
     }
 
     @Override
     public void execute(long chatId, String[] args) {
-        if(args.length == 0) {
-            //Imposta stato e chiede il nome
-            userStates.put(chatId, "AWAITING_SEASON_YEAR");
+        String year;
 
-            SendMessage message = SendMessage.builder()
-                    .chatId(chatId)
-                    .text(textToSend)
-                    .build();
-
-            try {
-                client.execute(message);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        //Se non ci sono argomenti, usa la stagione corrente
+        if (args.length == 0) {
+            year = String.valueOf(LocalDate.now().getYear());
         }
         else {
+            year = args[0];
+        }
 
-            //Ergast -> nome e cognome in minuscolo
-            String year = String.join(" ", args[0]).toLowerCase();
-            String seasonInfo = new ErgastAPI().fetchSeason(year);
+        int yearInt = Integer.parseInt(year); //anno in int
+        //Valida che sia un anno valido
+        try {
+            if (yearInt < 1950 || yearInt > LocalDate.now().getYear()) {
+                SendMessage message = SendMessage.builder()
+                        .chatId(chatId)
+                        .text("❌ Anno non valido. Inserisci un anno tra 1950 e " + (LocalDate.now().getYear()))
+                        .build();
 
+                try {
+                    client.execute(message);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+        }
+        catch (NumberFormatException e) {
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
-                    .text(seasonInfo)
+                    .text("❌ Inserisci un anno valido (es: 2024, 2023)")
                     .build();
 
             try {
                 client.execute(message);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
+            return;
         }
-    }
 
-    @Override
-    public void executeEdit(long chatId, int messageId) {
-        //Chiamato dal menu, imposta uno stato speciale
-        userStates.put(chatId, "AWAITING_SEASON_YEAR_EDIT:" + messageId); //Stato speciale che contiene il messageId
+        //Recupera le info della stagione
+        String seasonInfo = new ErgastAPI().fetchSeason(yearInt);
 
-        EditMessageText edit = EditMessageText.builder()
+        SendMessage message = SendMessage.builder()
                 .chatId(chatId)
-                .messageId(messageId)
-                .text(textToSend)
+                .text(seasonInfo)
                 .build();
 
         try {
-            client.execute(edit);
+            client.execute(message);
         } catch (Exception e) {
-            if (!e.getMessage().contains("message is not modified")) {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
         }
+
     }
 }

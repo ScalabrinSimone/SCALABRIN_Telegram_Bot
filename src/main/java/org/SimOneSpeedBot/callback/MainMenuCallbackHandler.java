@@ -68,7 +68,8 @@ public class MainMenuCallbackHandler implements CallbackHandler {
                 //Rimuove lo stato per continuare a scrivere il driver o il team se attivo
                 if (userStates.get(chatId) != null &&
                    (userStates.get(chatId).startsWith("AWAITING_DRIVER_NAME") ||
-                    userStates.get(chatId).startsWith("AWAITING_CONSTRUCTOR_NAME"))) {
+                    userStates.get(chatId).startsWith("AWAITING_CONSTRUCTOR_NAME")  ||
+                    userStates.get(chatId).startsWith("AWAITING_SEASON_YEAR"))) {
                     userStates.remove(chatId);
                 }
 

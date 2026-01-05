@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import org.SimOneSpeedBot.api.ergast.DriverAPI.Driver;
 import org.SimOneSpeedBot.api.ergast.ConstructorAPI.Constructor;
 //
+import org.SimOneSpeedBot.api.ergast.SeasonAPI.Race;
 import org.SimOneSpeedBot.service.MyConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,6 +15,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 public class ErgastAPI {
     //Base URLs da configurazione
@@ -26,6 +28,53 @@ public class ErgastAPI {
     }
 
     //Metodi
+
+    //Season
+    public String fetchSeason(int year) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + year + ".json"))
+                .GET()
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            Gson deserializzatore = new Gson();
+
+            org.SimOneSpeedBot.api.ergast.SeasonAPI.RootResponse root =
+                    deserializzatore.fromJson(response.body(), org.SimOneSpeedBot.api.ergast.SeasonAPI.RootResponse.class);
+
+            org.SimOneSpeedBot.api.ergast.SeasonAPI.MRData mrData = root.getMRData();
+            if (mrData == null || mrData.getRaceTable() == null ||
+                    mrData.getRaceTable().getRaces() == null ||
+                    mrData.getRaceTable().getRaces().isEmpty()) {
+                return "❌ Stagione " + year + " non trovata\n\nℹ️ Controlla di aver scritto correttamente l'anno (es: 2024, 2023).";
+            }
+
+            //Formatta le informazioni della stagione
+            List<Race> races = mrData.getRaceTable().getRaces();
+            StringBuilder info = new StringBuilder();
+            info.append("🏎️ **Stagione Formula 1 ").append(year).append("**\n\n");
+            info.append("📊 Totale gare: ").append(races.size()).append("\n\n");
+
+            //Mostra solo le prime 3 gare come anteprima
+            info.append("🏁 **Prime gare:**\n");
+            for (int i = 0; i < Math.min(3, races.size()); i++) {
+                info.append(races.get(i).toString()).append("\n\n");
+            }
+
+            if (races.size() > 3) {
+                info.append("... e altre ").append(races.size() - 3).append(" gare");
+            }
+
+            return info.toString();
+        }
+        catch (IOException | InterruptedException e) {
+            System.err.println("Errore in richiesta API per la stagione " + year + ": " + e.getMessage());
+            return "❌ Errore nel recupero della stagione " + year;
+        }
+    }
+
     //Constructor
     public String fetchConstructor(String firstName, String secondName)
     {
