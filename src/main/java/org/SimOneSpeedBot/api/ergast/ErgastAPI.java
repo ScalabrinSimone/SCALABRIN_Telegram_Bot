@@ -2,8 +2,10 @@ package org.SimOneSpeedBot.api.ergast;
 
 
 import com.google.gson.Gson;
-import org.SimOneSpeedBot.api.ergast.DriverAPI.*;
-import org.SimOneSpeedBot.api.ergast.ConstructorAPI.*;
+//Import non con * perché specificati nei metodi per aiuitare gson a capire quale package prendere. Questi due import NON danno conflitto
+import org.SimOneSpeedBot.api.ergast.DriverAPI.Driver;
+import org.SimOneSpeedBot.api.ergast.ConstructorAPI.Constructor;
+//
 import org.SimOneSpeedBot.service.MyConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
@@ -84,9 +86,11 @@ public class ErgastAPI {
 
             //System.out.println("JSON ricevuto: " + response.body()); //Debug
 
-            RootResponse root = deserializzatore.fromJson(response.body(), RootResponse.class);
+            //Import specificato qui per non avere probelmi nella compilazione
+            org.SimOneSpeedBot.api.ergast.ConstructorAPI.RootResponse root = deserializzatore.fromJson(response.body(),
+                    org.SimOneSpeedBot.api.ergast.ConstructorAPI.RootResponse.class);
 
-            MRData mrData = root.getMRData();
+            org.SimOneSpeedBot.api.ergast.ConstructorAPI.MRData mrData = root.getMRData();
             if (mrData == null || mrData.getConstructorTable() == null ||
                     mrData.getConstructorTable().getConstructors() == null ||
                     mrData.getConstructorTable().getConstructors().isEmpty()) {
@@ -154,9 +158,11 @@ public class ErgastAPI {
 
             //System.out.println("JSON ricevuto: " + response.body()); //Debug
 
-            RootResponse root = deserializzatore.fromJson(response.body(), RootResponse.class);
+            //Import specificato qui per non avere probelmi nella compilazione
+            org.SimOneSpeedBot.api.ergast.DriverAPI.RootResponse root = deserializzatore.fromJson(response.body(),
+                    org.SimOneSpeedBot.api.ergast.DriverAPI.RootResponse.class);
 
-            MRData mrData = root.getMRData();
+            org.SimOneSpeedBot.api.ergast.DriverAPI.MRData mrData = root.getMRData();
             if (mrData == null || mrData.getDriverTable() == null ||
                     mrData.getDriverTable().getDrivers() == null ||
                     mrData.getDriverTable().getDrivers().isEmpty()) {
