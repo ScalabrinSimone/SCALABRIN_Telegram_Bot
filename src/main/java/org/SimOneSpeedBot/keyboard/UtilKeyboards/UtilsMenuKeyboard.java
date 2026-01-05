@@ -1,5 +1,6 @@
-package org.SimOneSpeedBot.keyboard;
+package org.SimOneSpeedBot.keyboard.UtilKeyboards;
 
+import org.SimOneSpeedBot.keyboard.MenuKeyboard;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -60,7 +61,7 @@ public class UtilsMenuKeyboard implements MenuKeyboard {
         EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
                 .messageId(messageId)
-                .text("ℹ️Seleziona una utility:")
+                .text("ℹ️ Seleziona una utility:")
                 .replyMarkup(keyboard)
                 .build();
 

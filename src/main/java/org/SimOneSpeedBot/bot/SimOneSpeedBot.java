@@ -2,7 +2,7 @@ package org.SimOneSpeedBot.bot;
 
 import org.SimOneSpeedBot.callback.CallbackHandler;
 import org.SimOneSpeedBot.callback.MainMenuCallbackHandler;
-import org.SimOneSpeedBot.callback.RaceCallbackHandler;
+import org.SimOneSpeedBot.callback.RaceCallback.RaceCallbackHandler;
 import org.SimOneSpeedBot.commands.*;
 import org.SimOneSpeedBot.service.MyConfiguration;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;

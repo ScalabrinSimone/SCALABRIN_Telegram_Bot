@@ -1,7 +1,6 @@
-package org.SimOneSpeedBot.callback;
+package org.SimOneSpeedBot.callback.RaceCallback;
 
-import org.SimOneSpeedBot.api.ergast.ConstructorAPI.Constructor;
-import org.SimOneSpeedBot.commands.Command;
+import org.SimOneSpeedBot.callback.CallbackHandler;
 import org.SimOneSpeedBot.commands.CommandHub;
 import org.SimOneSpeedBot.commands.ConstructorCommand;
 import org.SimOneSpeedBot.commands.DriverCommand;
@@ -12,7 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-public class RaceCallbackHandler implements CallbackHandler{
+public class RaceCallbackHandler implements CallbackHandler {
     private final TelegramClient client;
     private final MainMenuKeyboard mainMenuKeyboard;
     private final int messageId;
@@ -50,12 +49,8 @@ public class RaceCallbackHandler implements CallbackHandler{
                 }
             }
 
-            case "race:after2023" -> {
-                RaceAfter2023Keyboard keyboard = new RaceAfter2023Keyboard(client, messageId);
-                keyboard.editInlineKeyboard(chatId);
-            }
-            case "race:pre2023" -> {
-                RacePre2023Keyboard keyboard = new RacePre2023Keyboard(client, messageId);
+            case "race:season" -> {
+                SeasonKeyboard keyboard = new SeasonKeyboard(client, messageId);
                 keyboard.editInlineKeyboard(chatId);
             }
             case "race:driver" -> {

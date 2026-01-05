@@ -10,11 +10,11 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.List;
 
-public class RaceAfter2023Keyboard implements MenuKeyboard {
+public class SeasonKeyboard implements MenuKeyboard {
     private final TelegramClient client;
     private final int messageId;
 
-    public RaceAfter2023Keyboard(TelegramClient client, int messageId) {this.client = client; this.messageId = messageId;}
+    public SeasonKeyboard(TelegramClient client, int messageId) {this.client = client; this.messageId = messageId;}
 
     @Override
     public Message sendInlineKeyboard(long chatId) {
@@ -70,7 +70,7 @@ public class RaceAfter2023Keyboard implements MenuKeyboard {
         EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
                 .messageId(messageId)
-                .text("ℹ️Seleziona la categoria di informazioni da ottenere:")
+                .text("ℹ️ Seleziona la categoria di informazioni da ottenere:")
                 .replyMarkup(keyboard)
                 .build();
 
