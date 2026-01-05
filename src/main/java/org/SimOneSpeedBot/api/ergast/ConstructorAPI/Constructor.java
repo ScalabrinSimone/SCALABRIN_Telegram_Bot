@@ -12,7 +12,7 @@ public class Constructor {
                 "ℹ Informazioni:\n\nNome: %s.\nNazionalitá: %s.\n\nUrl (wikipedia): %s.",
                 name,
                 nationality,
-                url
+                url != null ? url : "*dato non disponibile*"
         );
     }
 }

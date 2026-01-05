@@ -91,7 +91,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
             //Stati---
 
             //Stato attesa driver
-            if (currentState!= null && currentState.startsWith("AWAITING_DRIVER_NAME")) {
+            if (currentState != null && currentState.startsWith("AWAITING_DRIVER_NAME")) {
                 //Chiama il comando driver con il nome come argomento
                 DriverCommand driverCmd = (DriverCommand) hub.getCommand("driver");
 
@@ -127,7 +127,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                 return;
             }
             //Stato attesa constructor
-            else if (currentState!= null && currentState.startsWith("AWAITING_CONSTRUCTOR_NAME")) {
+            else if (currentState != null && currentState.startsWith("AWAITING_CONSTRUCTOR_NAME")) {
                 //Chiama il comando constructor con il firstNome come argomento
                 ConstructorCommand constructorCmd = (ConstructorCommand) hub.getCommand("constructor");
 

@@ -75,7 +75,7 @@ public class ErgastAPI {
     }
     private String tryFetchConstructor(String constructorId) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + "constructors/" + constructorId + "/"))
+                .uri(URI.create(baseUrl + "constructors/" + constructorId + ".json"))
                 .GET()
                 .build();
 
@@ -147,7 +147,7 @@ public class ErgastAPI {
     }
     private String tryFetchDriver(String driverId) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + "drivers/" + driverId + "/"))
+                .uri(URI.create(baseUrl + "drivers/" + driverId + ".json"))
                 .GET()
                 .build();
 
