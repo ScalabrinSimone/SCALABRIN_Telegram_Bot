@@ -35,6 +35,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
         hub.register("info", new InfoCommand(telegramClient));
         hub.register("ping", new PingCommand(telegramClient));
         hub.register("driver", new DriverCommand(telegramClient, userStates));
+        hub.register("constructor", new ConstructorCommand(telegramClient, userStates));
         hub.register("showmenu", new ShowMenuCommand(telegramClient, menuMessageIds));
     }
 
@@ -86,6 +87,10 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
 
             //Controlla se l'utente é in uno stato particolare
             String currentState = userStates.get(chatId);
+
+            //Stati---
+
+            //Stato attesa driver
             if (currentState!= null && currentState.startsWith("AWAITING_DRIVER_NAME")) {
                 //Chiama il comando driver con il nome come argomento
                 DriverCommand driverCmd = (DriverCommand) hub.getCommand("driver");
@@ -117,6 +122,42 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                     }
                     else { //Nuovo messaggio
                         driverCmd.processDriver(chatId, givenName, familyName, null, false); //Non ".
+                    }
+                }
+                return;
+            }
+            //Stato attesa constructor
+            else if (currentState!= null && currentState.startsWith("AWAITING_CONSTRUCTOR_NAME")) {
+                //Chiama il comando constructor con il firstNome come argomento
+                ConstructorCommand constructorCmd = (ConstructorCommand) hub.getCommand("constructor");
+
+                if (constructorCmd != null) {
+                    //Prendo il messaggio in modo da separare fisrtNome e secondNome
+                    String text = messageText.trim(); //Togliamo spazi inutili.
+                    String[] parts = text.split(" "); //Separa per spazi.
+
+                    String firstName = parts[0];
+                    String secondName = parts.length != 1 ? parts[parts.length - 1] : "";
+
+                    //Elimina il messaggio dell'utente per avere una UI/UX migliore:
+                    DeleteMessage delete = DeleteMessage.builder()
+                            .chatId(chatId)
+                            .messageId(update.getMessage().getMessageId())
+                            .build();
+                    try {
+                        telegramClient.execute(delete);
+                    } catch (Exception e) {
+                        //Se fallisce la cancellazione, continua comunque
+                    }
+
+                    //Controlla se devo editare o mandare un nuovo messaggio
+                    if (currentState.contains("EDIT:")) { //Da menu
+                        //Estrae il messageId dallo stato
+                        int messageId = Integer.parseInt(currentState.split(":")[1]);
+                        constructorCmd.processConstructor(chatId, firstName, secondName, messageId, true); //Possiamo continuare a scrivere costruttori.
+                    }
+                    else { //Nuovo messaggio
+                        constructorCmd.processConstructor(chatId, firstName, secondName, null, false); //Non ".
                     }
                 }
                 return;

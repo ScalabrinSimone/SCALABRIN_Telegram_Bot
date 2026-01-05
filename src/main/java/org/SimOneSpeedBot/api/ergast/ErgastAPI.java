@@ -2,9 +2,8 @@ package org.SimOneSpeedBot.api.ergast;
 
 
 import com.google.gson.Gson;
-import org.SimOneSpeedBot.api.ergast.DriverAPI.Driver;
-import org.SimOneSpeedBot.api.ergast.DriverAPI.MRData;
-import org.SimOneSpeedBot.api.ergast.DriverAPI.RootResponse;
+import org.SimOneSpeedBot.api.ergast.DriverAPI.*;
+import org.SimOneSpeedBot.api.ergast.ConstructorAPI.*;
 import org.SimOneSpeedBot.service.MyConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,6 +24,87 @@ public class ErgastAPI {
     }
 
     //Metodi
+    //Constructor
+    public String fetchConstructor(String firstName, String secondName)
+    {
+        String constructorId = secondName.equals("") ? firstName : firstName + "_" + secondName; //caso ferrari e aston_martin
+
+        //Voglio che vengano gestiti altri inserimenti
+        String result = tryFetchConstructor(constructorId); //Primo controllo classico.
+        if (result != null) {
+            return result;
+        }
+
+        //caso martin_aston (input invertito da utente).
+        //Tratto in modo contrario al primo
+        else if (!secondName.equals("")) { //Solo il secondName puó essere vuoto ("")
+            constructorId = secondName + "_" + firstName;
+            result = tryFetchConstructor(constructorId);
+
+            if (result != null) {
+                return result;
+            }
+
+            result = tryFetchConstructor(firstName); //es. alfa romeo (api vuole solo alfa)
+            if (result != null) {
+                return result;
+            }
+
+            result = tryFetchConstructor(secondName); //es. romeo alfa
+            if (result != null) {
+                return result;
+            }
+
+            //es. nome-secondo_nome (alcune volte api vuole cosí, ma é il caso meno probabile, quindi in fondo)
+            result = tryFetchConstructor(secondName + "-" + firstName);
+            if (result != null) {
+                return result;
+            }
+            result = tryFetchConstructor(firstName + "-" + secondName); //secondo_nome-nome
+            if (result != null) {
+                return result;
+            }
+        }
+
+        //Se ancora non trova, ritorna messaggio di errore
+        //StringUtils.capitalize(*stringa*) rende la prima lettera maiuscola.
+        return "❌ Scuderia " + (StringUtils.capitalize(firstName) + (!secondName.equals("") ? StringUtils.capitalize(secondName) + " " : "")) + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: ferrari, Alfa romeo o aston Martin).";
+
+    }
+    private String tryFetchConstructor(String constructorId) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "constructors/" + constructorId + "/"))
+                .GET()
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            Gson deserializzatore = new Gson();
+
+            //System.out.println("JSON ricevuto: " + response.body()); //Debug
+
+            RootResponse root = deserializzatore.fromJson(response.body(), RootResponse.class);
+
+            MRData mrData = root.getMRData();
+            if (mrData == null || mrData.getConstructorTable() == null ||
+                    mrData.getConstructorTable().getConstructors() == null ||
+                    mrData.getConstructorTable().getConstructors().isEmpty()) {
+                return null; //Team non trovato. L'API risponde SEMPRE con 200 anche se la scuderia non esiste.
+            }
+            else {
+                Constructor team = mrData.getConstructorTable().getConstructors().getFirst(); //Prende il primo (= get(0))
+                return team.toString();
+            }
+        }
+        catch (IOException | InterruptedException e) {
+            System.err.println("Errore in richiesta API per il team: " + e.getMessage());
+
+            return null;
+        }
+    }
+
+    //Driver
     public String fetchDriver(String driverName, String driverSurname)
     {
         String driverId = driverName.equals("") ? driverSurname : driverName + "_" + driverSurname; //nome_cognome per api e se non funziona solo cognome e se non funziona allora non esiste
@@ -50,7 +130,7 @@ public class ErgastAPI {
                 return result;
             }
 
-            result =  tryFetchDriver(driverSurname); //es. Leclerc Charles
+            result = tryFetchDriver(driverSurname); //es. Leclerc Charles
             if (result != null) {
                 return result;
             }

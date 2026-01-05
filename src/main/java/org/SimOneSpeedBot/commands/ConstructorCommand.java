@@ -8,24 +8,22 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-public class DriverCommand implements Command {
+public class ConstructorCommand implements Command {
     private final TelegramClient client;
-    private final Map<Long, String> userStates; //chatId -> stato attuale. Serve per aspettare un
-                                               //input dall'utente.
+    private final Map<Long, String> userStates;
     private final String textToSend = """
-                                🏁 Inserisci il nome del pilota...
+                                🏁 Inserisci il nome del team...
                                 
-                                ℹ️ Puoi scrivere nome e cognome, cognome nome oppure cognome, sconsigliato se esistono piú piloti con lo stesso cognome (es: Verstappen ritorna il padre; max verstappen, Verstappen Max ritorna il figlio).
+                                ℹ️ Scrivi il nome della squadra come vuoi (solo 2 nomi accettati), se é composto da piú nomi separali con uno spazio. Se il nome della scuderia ha ino sponsor NON metterlo (es. Aston Martin Aramco Formula One Team → Aston Martin)
+                                In caso di "visa cash app red bull racing team" inserisci semplicemente rb.
                                 
                                 Se vieni dal menu puoi continuare a scrivere i nomi dei piloti, per smettere l'inserimento, premere il pulsante "Back To Race Menu".
                                 """;
 
-    public DriverCommand(TelegramClient client, Map<Long, String> userStates) {
+    public ConstructorCommand(TelegramClient client, Map<Long, String> userStates) {
         this.client = client;
         this.userStates = userStates;
     }
@@ -34,7 +32,7 @@ public class DriverCommand implements Command {
     public void execute(long chatId, String[] args) {
         if(args.length == 0) {
             //Imposta stato e chiede il nome
-            userStates.put(chatId, "AWAITING_DRIVER_NAME");
+            userStates.put(chatId, "AWAITING_CONSTRUCTOR_NAME");
 
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
@@ -47,17 +45,18 @@ public class DriverCommand implements Command {
                 e.printStackTrace();
             }
         }
-        else { //Processa il nome del pilota se ci sono args
+        else { //Processa il nome della scuderia se ci sono args (ne gestisce solo 2!!!)
             //Controlla quanti args ha lo string[]
 
-            //Ergast -> nome e cognome in minuscolo
-            String driverName = args.length > 1 ? String.join(" ", args[0]).toLowerCase() : "";
-            String driverSurname = args.length == 1 ? String.join(" ", args[0]).toLowerCase() : String.join(" ", args[args.length - 1]).toLowerCase();
-            String driverInfo = new ErgastAPI().fetchDriver(driverName, driverSurname);
+            //Ergast -> in minuscolo
+            //Funziona come il comando driver, solo che invece di avere nome e congome ha primo nome e secondo nome (input 1 e input 2)
+            String firstName = String.join(" ", args[0]).toLowerCase(); //Ci deve essere un nome
+            String secondName = args.length != 1 ? String.join(" ", args[1]).toLowerCase() : ""; //Non é detto che ci sia il secondo
+            String constructorInfo = new ErgastAPI().fetchConstructor(firstName, secondName);
 
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
-                    .text(driverInfo)
+                    .text(constructorInfo)
                     .build();
 
             try {
@@ -71,7 +70,7 @@ public class DriverCommand implements Command {
     @Override
     public void executeEdit(long chatId, int messageId) {
         //Chiamato dal menu, imposta uno stato speciale
-        userStates.put(chatId, "AWAITING_DRIVER_NAME_EDIT:" + messageId); //Stato speciale che contiene il messageId
+        userStates.put(chatId, "AWAITING_CONSTRUCTOR_NAME_EDIT:" + messageId); //Stato speciale che contiene il messageId
 
         EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
@@ -88,16 +87,16 @@ public class DriverCommand implements Command {
         }
     }
 
-    public void processDriver(long chatId, String driverName, String driverSurname, Integer messageId, boolean keepState) {
+    public void processConstructor(long chatId, String firstName, String secondName, Integer messageId, boolean keepState) {
         if (!keepState) { //Rimuove lo stato solo se specificato, cosí da poter continuare a scrivere piloti
             userStates.remove(chatId);
         }
 
-        //Gestisci nome driver --> nome_cognome in minuscolo.
-        driverName = driverName.toLowerCase();
-        driverSurname = driverSurname.toLowerCase();
+        //Gestisce nome scuderia --> firstName_secondName in minuscolo.
+        firstName = firstName.toLowerCase();
+        secondName = secondName.toLowerCase();
 
-        String driverInfo = new ErgastAPI().fetchDriver(driverName, driverSurname);
+        String constructorInfo = new ErgastAPI().fetchConstructor(firstName, secondName);
 
         if (messageId != null) {
             //Menu -> edita il messaggio con bottone back
@@ -116,7 +115,7 @@ public class DriverCommand implements Command {
             EditMessageText edit = EditMessageText.builder()
                     .chatId(chatId)
                     .messageId(messageId)
-                    .text(driverInfo)
+                    .text(constructorInfo)
                     .replyMarkup(keyboard)
                     .build();
 
@@ -132,7 +131,7 @@ public class DriverCommand implements Command {
             //Comando -> manda nuovo messaggio senza bottoni
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
-                    .text(driverInfo)
+                    .text(constructorInfo)
                     .build();
 
             try {

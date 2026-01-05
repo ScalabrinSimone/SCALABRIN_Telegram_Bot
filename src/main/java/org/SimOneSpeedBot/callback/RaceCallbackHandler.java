@@ -1,7 +1,9 @@
 package org.SimOneSpeedBot.callback;
 
+import org.SimOneSpeedBot.api.ergast.ConstructorAPI.Constructor;
 import org.SimOneSpeedBot.commands.Command;
 import org.SimOneSpeedBot.commands.CommandHub;
+import org.SimOneSpeedBot.commands.ConstructorCommand;
 import org.SimOneSpeedBot.commands.DriverCommand;
 import org.SimOneSpeedBot.keyboard.MainMenuKeyboard;
 import org.SimOneSpeedBot.keyboard.RaceKeyboards.*;
@@ -64,8 +66,10 @@ public class RaceCallbackHandler implements CallbackHandler{
             }
 
             case "race:team" -> {
-                RaceTeamsKeyboard keyboard = new RaceTeamsKeyboard(client, messageId);
-                keyboard.editInlineKeyboard(chatId);
+                ConstructorCommand constructorCommand = (ConstructorCommand) hub.getCommand("constructor");
+                if(constructorCommand != null) {
+                    constructorCommand.executeEdit(chatId, messageId);
+                }
             }
 
             default -> {return false;} //Se non inizia per queste, non riesce a gestirlo e ritorna false
