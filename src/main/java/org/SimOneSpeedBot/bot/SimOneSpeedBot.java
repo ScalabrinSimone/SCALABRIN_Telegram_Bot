@@ -166,6 +166,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                     } else { //Nuovo messaggio
                         constructorCmd.processConstructor(chatId, firstName, secondName, null, false); //Non ".
                     }
+                    return;
                 }
                 //Stato attesa stagione
                 else if (currentState != null && currentState.startsWith("AWAITING_SEASON_YEAR")) {
@@ -242,11 +243,12 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                             e.printStackTrace();
                         }
 
-                        //NON rimuovere lo stato per permettere ricerche multiple
+                        //Non rimuovo stato per ricerche multiple
                     }
                     return;
                 }
 
+                //Gestione comandi normali (se non è in nessuno stato)
                 boolean handled = hub.handle(messageText, chatId);
 
                 if (!handled) {
