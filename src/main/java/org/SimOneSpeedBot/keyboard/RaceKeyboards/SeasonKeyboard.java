@@ -8,6 +8,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 public class SeasonKeyboard implements MenuKeyboard {
@@ -22,55 +24,55 @@ public class SeasonKeyboard implements MenuKeyboard {
     }
 
     public Message editInlineKeyboard(long chatId) {
+        int currentYear = LocalDate.now().getYear(); //Prendo l'anno attuale
         //Crea i bottoni
-        InlineKeyboardButton postButton = InlineKeyboardButton.builder()
-                .text("Stagioni post 2023 ⌚")
-                .callbackData("race:after2023")
+        InlineKeyboardButton nowButton = InlineKeyboardButton.builder()
+                .text("Stagione attuale - " + currentYear + " ⌚")
+                .callbackData("race:season:now")
                 .build();
 
-        InlineKeyboardButton preButton = InlineKeyboardButton.builder()
-                .text("Stagioni pre 2023 🕰")
-                .callbackData("race:pre2023")
+        InlineKeyboardButton lastYearButton = InlineKeyboardButton.builder()
+                .text("Stagione scorsa - " + (currentYear - 1) + " 🕰")
+                .callbackData("race:season:last")
                 .build();
 
-        InlineKeyboardButton pilotaButton = InlineKeyboardButton.builder()
-                .text("Piloti 🧑")
-                .callbackData("race:drivers")
-                .build();
-
-        InlineKeyboardButton teamButton = InlineKeyboardButton.builder()
-                .text("Scuderie 🏠")
-                .callbackData("race:teams")
+        InlineKeyboardButton selectYearButton = InlineKeyboardButton.builder()
+                .text("Seleziona una stagione 📅")
+                .callbackData("race:season:select")
                 .build();
 
         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                .text("⬅️ Back To Main Menu")
-                .callbackData("menu:home")
+                .text("⬅️ Back To Race Menu")
+                .callbackData("menu:race")
                 .build();
 
         //Crea la riga dei primi bottoni
         InlineKeyboardRow upperRow = new InlineKeyboardRow(
-                List.of(postButton, preButton)
+                List.of(nowButton)
         );
         //Crea la seconda riga di bottoni
-        InlineKeyboardRow middleRow = new InlineKeyboardRow(
-                List.of(pilotaButton, teamButton)
+        InlineKeyboardRow firstMiddleRow = new InlineKeyboardRow(
+                List.of(lastYearButton)
         );
         //Crea la terza riga di bottoni
+        InlineKeyboardRow secondMiddleRow = new InlineKeyboardRow(
+                List.of(selectYearButton)
+        );
+        //Crea la quarta riga di bottoni
         InlineKeyboardRow bottomRow = new InlineKeyboardRow(
                 List.of(backButton)
         );
 
         //Crea la tastiera
         InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                .keyboard(List.of(upperRow, middleRow, bottomRow))
+                .keyboard(List.of(upperRow, firstMiddleRow, secondMiddleRow, bottomRow))
                 .build();
 
         //Modifica il messaggio
         EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
                 .messageId(messageId)
-                .text("ℹ️ Seleziona la categoria di informazioni da ottenere:")
+                .text("ℹ️ Seleziona la stagione desiderata (sono giá presenti alcuni shortcut):")
                 .replyMarkup(keyboard)
                 .build();
 

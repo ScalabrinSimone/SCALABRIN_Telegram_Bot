@@ -24,7 +24,7 @@ public class RaceMenuKeyboard implements MenuKeyboard {
     public Message editInlineKeyboard(long chatId) {
         //Crea i bottoni
         InlineKeyboardButton seasonButton = InlineKeyboardButton.builder()
-                .text("Stagione ⌚")
+                .text("Stagione 🏆")
                 .callbackData("race:season")
                 .build();
 
