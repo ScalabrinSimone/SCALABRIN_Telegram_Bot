@@ -3,6 +3,7 @@ package org.SimOneSpeedBot.bot;
 import org.SimOneSpeedBot.callback.CallbackHandler;
 import org.SimOneSpeedBot.callback.MainMenuCallbackHandler;
 import org.SimOneSpeedBot.callback.RaceCallback.RaceCallbackHandler;
+import org.SimOneSpeedBot.callback.RaceCallback.SeasonCallbackHandler;
 import org.SimOneSpeedBot.commands.*;
 import org.SimOneSpeedBot.service.MyConfiguration;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
@@ -52,6 +53,8 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                     new MainMenuCallbackHandler(telegramClient, savedMessageId != null ?
                             savedMessageId : callbackQuery.getMessage().getMessageId(), userStates), //Passp lo userStates per permettere di scrivere piú drivers.
                     new RaceCallbackHandler(telegramClient, savedMessageId != null ?
+                            savedMessageId : callbackQuery.getMessage().getMessageId(), hub),
+                    new SeasonCallbackHandler(telegramClient, savedMessageId != null ?
                             savedMessageId : callbackQuery.getMessage().getMessageId(), hub)
             );
 

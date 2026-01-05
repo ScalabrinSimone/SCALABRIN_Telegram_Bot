@@ -4,6 +4,7 @@ import org.SimOneSpeedBot.callback.CallbackHandler;
 import org.SimOneSpeedBot.commands.CommandHub;
 import org.SimOneSpeedBot.commands.ConstructorCommand;
 import org.SimOneSpeedBot.commands.DriverCommand;
+import org.SimOneSpeedBot.commands.SeasonCommand;
 import org.SimOneSpeedBot.keyboard.MainMenuKeyboard;
 import org.SimOneSpeedBot.keyboard.RaceKeyboards.SeasonKeyboard;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
@@ -11,13 +12,15 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.time.LocalDate;
+
 public class SeasonCallbackHandler implements CallbackHandler {
     private final TelegramClient client;
     private final MainMenuKeyboard mainMenuKeyboard;
     private final int messageId;
     private final CommandHub hub;
 
-    public RaceCallbackHandler(TelegramClient client, int messageId, CommandHub hub) {
+    public SeasonCallbackHandler(TelegramClient client, int messageId, CommandHub hub) {
         this.client = client;
         this.mainMenuKeyboard = new MainMenuKeyboard(client);
         this.messageId = messageId;
@@ -52,13 +55,13 @@ public class SeasonCallbackHandler implements CallbackHandler {
             case "race:season:now" -> {
                 SeasonCommand seasonCommand = (SeasonCommand) hub.getCommand("season");
                 if (seasonCommand != null) {
-                    seasonCommand.executeEdit(chatId, messageId, thisYear);
+                    seasonCommand.executeEdit(chatId, messageId, LocalDate.now().getYear());
                 }
             }
             case "race:season:last" -> {
                 SeasonCommand seasonCommand = (SeasonCommand) hub.getCommand("season");
                 if (seasonCommand != null) {
-                    seasonCommand.executeEdit(chatId, messageId, lastYear);
+                    seasonCommand.executeEdit(chatId, messageId, (LocalDate.now().getYear() - 1));
                 }
             }
 
