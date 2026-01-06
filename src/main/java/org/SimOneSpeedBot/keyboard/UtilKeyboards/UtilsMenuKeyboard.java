@@ -38,23 +38,32 @@ public class UtilsMenuKeyboard implements MenuKeyboard {
                 .callbackData("menu:utils:error")
                 .build();
 
+        InlineKeyboardButton bookMarkButton = InlineKeyboardButton.builder()
+                .text("Visualizza i tuoi BookMarks 🔖")
+                .callbackData("menu:utils:bookMark")
+                .build();
+
         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
                 .text("⬅️ Back To Main Menu")
                 .callbackData("menu:home")
                 .build();
 
-        //Crea la riga dei primi bottoni
+        //Crea la prima riga di bottoni
         InlineKeyboardRow upperRow = new InlineKeyboardRow(
                 List.of(utilsButton, raceButton,  testErrorPopupButton)
         );
         //Crea la seconda riga di bottoni
+        InlineKeyboardRow middelRow = new InlineKeyboardRow(
+                List.of(bookMarkButton)
+        );
+        //Crea la terza riga di bottoni
         InlineKeyboardRow bottomRow = new InlineKeyboardRow(
                 List.of(backButton)
         );
 
         //Crea la tastiera
         InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                .keyboard(List.of(upperRow, bottomRow))
+                .keyboard(List.of(upperRow, middelRow, bottomRow))
                 .build();
 
         //Modifica il messaggio
