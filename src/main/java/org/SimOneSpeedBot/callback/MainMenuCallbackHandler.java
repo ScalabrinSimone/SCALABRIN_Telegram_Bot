@@ -2,12 +2,14 @@ package org.SimOneSpeedBot.callback;
 
 import org.SimOneSpeedBot.commands.InfoCommand;
 import org.SimOneSpeedBot.commands.PingCommand;
+import org.SimOneSpeedBot.keyboard.BookMarkKeyboards.BookMarkKeyboard;
 import org.SimOneSpeedBot.keyboard.MainMenuKeyboard;
 import org.SimOneSpeedBot.keyboard.RaceKeyboards.RaceMenuKeyboard;
 import org.SimOneSpeedBot.keyboard.UtilKeyboards.UtilsMenuKeyboard;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.Map;
@@ -17,12 +19,14 @@ public class MainMenuCallbackHandler implements CallbackHandler {
     private final MainMenuKeyboard mainMenuKeyboard;
     private final int messageId;
     private final Map<Long, String> userStates;
+    private final User user;
 
-    public MainMenuCallbackHandler(TelegramClient client, int messageId, Map<Long, String> userStates) {
+    public MainMenuCallbackHandler(TelegramClient client, int messageId, Map<Long, String> userStates, User user) {
         this.client = client;
         this.mainMenuKeyboard = new MainMenuKeyboard(client);
         this.messageId = messageId;
         this.userStates = userStates;
+        this.user = user;
     }
 
     @Override
@@ -62,6 +66,10 @@ public class MainMenuCallbackHandler implements CallbackHandler {
             }
             case "menu:utils:ping" -> {
                 new PingCommand(client).executeEdit(chatId, messageId);
+            }
+            case "menu:utils:bookMark" -> {
+                BookMarkKeyboard keyboard = new BookMarkKeyboard(client, messageId, user);
+                keyboard.editInlineKeyboard(chatId);
             }
 
             case "menu:race" -> {

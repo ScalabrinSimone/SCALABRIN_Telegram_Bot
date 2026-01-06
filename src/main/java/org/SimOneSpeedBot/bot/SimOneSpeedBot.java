@@ -35,6 +35,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                                                                  //input dall'utente.
 
     private final Database usersDatabase; //Database
+    private User user; //User della chat
 
 
     public SimOneSpeedBot() //Qui registro i vari comandi
@@ -67,7 +68,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
 
             List<CallbackHandler> handlers = List.of(
                     new MainMenuCallbackHandler(telegramClient, savedMessageId != null ?
-                            savedMessageId : callbackQuery.getMessage().getMessageId(), userStates), //Passp lo userStates per permettere di scrivere piú drivers.
+                            savedMessageId : callbackQuery.getMessage().getMessageId(), userStates, user), //Passo lo userStates per permettere di scrivere piú drivers. Passo user per poterlo usare in alcuni comandi
                     new RaceCallbackHandler(telegramClient, savedMessageId != null ?
                             savedMessageId : callbackQuery.getMessage().getMessageId(), hub),
                     new SeasonCallbackHandler(telegramClient, savedMessageId != null ?
@@ -112,7 +113,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
             //Controlla se é all'inizio della chat per registrare l'user (/start). Sarebbe meglio usare una cache per controllare gli utenti giá registrati durante la sessione
             if (messageText.startsWith("/start")){
                 //Inizio chat, registro l'utente se non esiste giá
-                User user = update.getMessage().getFrom();
+                user = update.getMessage().getFrom();
                 try {
 
                     if (!usersDatabase.isUserPresent(user.getId())) { //Controllo se esiste l'utente nel database

@@ -24,6 +24,7 @@ public class Database {
 
 
     //Metodi di inserimento...
+    //User
     public boolean isUserPresent(long userId) throws SQLException {
         try{
             if(!connection.isValid(5)){ //Controlla la connesione con timeout 5
@@ -45,7 +46,6 @@ public class Database {
             }
         }
     }
-
     public void insertUser(User utente) throws SQLException {
         try {
             if (!connection.isValid(5))
@@ -69,5 +69,41 @@ public class Database {
             stmt.executeUpdate();
             System.out.println("User inserito"); //Debug
         }
+    }
+    public User getUser(long userId) throws SQLException {
+        try {
+            if (!connection.isValid(5))
+                throw new SQLException();
+        }
+        catch(SQLException e){
+            System.err.println("Errore di timeout del database: " + e.getMessage());
+            throw new SQLException();
+        }
+
+        String query = "SELECT * FROM users WHERE userId = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setLong(1, userId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getObject(1, User.class); //Se esiste prende l'user
+                }
+
+                return  null;
+            }
+        }
+    }
+
+    //Info User
+    public void getUserInfos(User user) throws SQLException { //Sarebbe da rendere static
+        try {
+            if (!connection.isValid(5))
+                throw new SQLException();
+        } catch (SQLException e) {
+            System.err.println("Errore di timeout del database: " + e.getMessage());
+            throw new SQLException();
+        }
+
+        //Voglio predere tutte le cose che ha salvatao l'user (bookmarks), tramite le foreign ekys.
     }
 }
