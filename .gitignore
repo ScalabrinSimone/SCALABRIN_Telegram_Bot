@@ -3,6 +3,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### DATABASE ###
+/src/main/java/org.SimOneSpeedBot/database/*.db
+*.sqlite
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml

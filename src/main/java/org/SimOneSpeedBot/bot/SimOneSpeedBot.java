@@ -6,6 +6,7 @@ import org.SimOneSpeedBot.callback.MainMenuCallbackHandler;
 import org.SimOneSpeedBot.callback.RaceCallback.RaceCallbackHandler;
 import org.SimOneSpeedBot.callback.RaceCallback.SeasonCallbackHandler;
 import org.SimOneSpeedBot.commands.*;
+import org.SimOneSpeedBot.database.Database;
 import org.SimOneSpeedBot.service.MyConfiguration;
 import org.SimOneSpeedBot.service.UserStateManager;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
@@ -22,6 +23,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,9 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
     private final Map<Long, String> userStates = new HashMap<>(); //chatId -> stato attuale. Serve per aspettare un
                                                                  //input dall'utente.
 
+    private final Database usersDatabase; //Database
+
+
     public SimOneSpeedBot() //Qui registro i vari comandi
     {
         hub.register("start", new StartCommand(telegramClient, menuMessageIds));
@@ -48,6 +53,13 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
         hub.register("showmenu", new ShowMenuCommand(telegramClient, menuMessageIds));
 
         this.stateManager = new UserStateManager(telegramClient, hub, userStates);
+
+        try {
+            this.usersDatabase = Database.getInstance(); //Inizializza/Recupera istanza Database all'avvio del bot
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e); //Va in errore se non riesce a connettersi
+        }
     }
 
     @Override
