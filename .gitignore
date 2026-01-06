@@ -4,7 +4,7 @@ target/
 !**/src/test/**/target/
 
 ### DATABASE ###
-/src/main/java/org.SimOneSpeedBot/database/*.db
+/src/main/java/org/SimOneSpeedBot/database/*.db
 *.sqlite
 
 ### IntelliJ IDEA ###

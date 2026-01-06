@@ -9,7 +9,7 @@ public class Database {
     private Connection connection;
 
     private Database() throws SQLException {
-        String url = "jdbc:sqlite:src/main/java/org.SimOneSpeedBot/database/usersDatabase.db"; //Inserisce il database nella cartella database.
+        String url = "jdbc:sqlite:src/main/java/org/SimOneSpeedBot/database/usersDatabase.db"; //Inserisce il database nella cartella database.
         connection = DriverManager.getConnection(url); //Tabelle create da IntelliJ ultimate
         System.out.println("Connessione di Database"); //Debug
     }
