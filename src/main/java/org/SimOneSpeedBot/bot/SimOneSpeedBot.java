@@ -197,8 +197,8 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                             int messageId = Integer.parseInt(currentState.split(":")[2]);
 
                             InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                                    .text("⬅️ Back To Race Menu")
-                                    .callbackData("menu:race")
+                                    .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
+                                    .callbackData("race:season")
                                     .build();
 
                             InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
@@ -252,8 +252,8 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                         int messageId = Integer.parseInt(currentState.split(":")[2]);
 
                         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                                .text("⬅️ Back To Race Menu")
-                                .callbackData("menu:race")
+                                .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
+                                .callbackData("race:season")
                                 .build();
 
                         InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
@@ -308,8 +308,8 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                         int messageId = Integer.parseInt(currentState.split(":")[2]);
 
                         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                                .text("⬅️ Back To Race Menu")
-                                .callbackData("menu:race")
+                                .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
+                                .callbackData("race:season")
                                 .build();
 
                         InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
@@ -352,7 +352,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                 SendMessage message = SendMessage
                         .builder()
                         .chatId(chatId)
-                        .text("Scusa, non riconosco il comando. Riprova")
+                        .text("ℹ Scusa, non riconosco il comando. Riprova")
                         .build();
 
                 try {
