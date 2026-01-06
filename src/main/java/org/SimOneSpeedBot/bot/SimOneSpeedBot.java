@@ -135,7 +135,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                 return;
             }
             //Stato attesa constructor
-            else if (currentState != null && currentState.startsWith("AWAITING_CONSTRUCTOR_NAME")) {
+            if (currentState != null && currentState.startsWith("AWAITING_CONSTRUCTOR_NAME")) {
                 //Chiama il comando constructor con il firstNome come argomento
                 ConstructorCommand constructorCmd = (ConstructorCommand) hub.getCommand("constructor");
 
@@ -166,42 +166,30 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                     } else { //Nuovo messaggio
                         constructorCmd.processConstructor(chatId, firstName, secondName, null, false); //Non ".
                     }
+
                     return;
                 }
-                //Stato attesa stagione
-                else if (currentState != null && currentState.startsWith("AWAITING_SEASON_YEAR")) {
-                    String year = messageText.trim();
-                    int yearInt = Integer.parseInt(year);
+            }
+            //Stato attesa stagione
+            if (currentState != null && currentState.startsWith("AWAITING_SEASON_YEAR")) {
+                String year = messageText.trim();
+                int yearInt = Integer.parseInt(year);
 
-                    //Valida l'anno
-                    try {
-                        if (yearInt < 1950 || yearInt > LocalDate.now().getYear()) {
-                            SendMessage errorMsg = SendMessage.builder()
-                                    .chatId(chatId)
-                                    .text("❌ Anno non valido. Inserisci un anno tra 1950 e " + (LocalDate.now().getYear()))
-                                    .build();
-
-                            try {
-                                telegramClient.execute(errorMsg);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            return;
-                        }
-                    } catch (NumberFormatException e) {
+                //Valida l'anno
+                try {
+                    if (yearInt < 1950 || yearInt > LocalDate.now().getYear()) {
                         SendMessage errorMsg = SendMessage.builder()
                                 .chatId(chatId)
-                                .text("❌ Inserisci un anno valido (es: 2024, 2023)")
+                                .text("❌ Anno non valido. Inserisci un anno tra 1950 e " + (LocalDate.now().getYear()))
                                 .build();
 
                         try {
                             telegramClient.execute(errorMsg);
-                        } catch (Exception er) {
-                            er.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                         return;
                     }
-
                     if (currentState.contains("EDIT:")) {
                         //Cancella il messaggio dell'utente
                         DeleteMessage delete = DeleteMessage.builder()
@@ -242,27 +230,39 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
                         //Non rimuovo stato per ricerche multiple
+                    }
+                } catch (NumberFormatException e) {
+                    SendMessage errorMsg = SendMessage.builder()
+                            .chatId(chatId)
+                            .text("❌ Inserisci un anno valido (es: 2024, 2023)")
+                            .build();
+
+                    try {
+                        telegramClient.execute(errorMsg);
+                    } catch (Exception er) {
+                        er.printStackTrace();
                     }
                     return;
                 }
 
-                //Gestione comandi normali (se non è in nessuno stato)
-                boolean handled = hub.handle(messageText, chatId);
+                return;
+            }
 
-                if (!handled) {
-                    SendMessage message = SendMessage
-                            .builder()
-                            .chatId(chatId)
-                            .text("Scusa, non riconosco il comando. Riprova")
-                            .build();
+            //Gestione comandi normali (se non è in nessuno stato)
+            boolean handled = hub.handle(messageText, chatId);
 
-                    try {
-                        telegramClient.execute(message);
-                    } catch (TelegramApiException e) {
-                        e.printStackTrace();
-                    }
+            if (!handled) {
+                SendMessage message = SendMessage
+                        .builder()
+                        .chatId(chatId)
+                        .text("Scusa, non riconosco il comando. Riprova")
+                        .build();
+
+                try {
+                    telegramClient.execute(message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
                 }
             }
         }
