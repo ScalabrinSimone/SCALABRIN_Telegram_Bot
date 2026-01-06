@@ -109,20 +109,23 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
             String messageText = update.getMessage().getText(); //Ha sia il nome che il cognome
             long chatId = update.getMessage().getChatId();
 
-            //Controlla se é all'inizio della chat per registrare l'user (/start)
+            //Controlla se é all'inizio della chat per registrare l'user (/start). Sarebbe meglio usare una cache per controllare gli utenti giá registrati durante la sessione
             if (messageText.startsWith("/start")){
                 //Inizio chat, registro l'utente se non esiste giá
                 User user = update.getMessage().getFrom();
                 try {
 
                     if (!usersDatabase.isUserPresent(user.getId())) { //Controllo se esiste l'utente nel database
+                        System.out.println("Utente controllato e nuovo... procedo ad inserirlo nel database"); //Debug
                         usersDatabase.insertUser(user); //Inserisco l'utente se non é giá presente.
+                    }
+                    else {
+                        System.out.println("Utennte controllato e giá esistente"); //Debug
                     }
                 }
                 catch (SQLException e) {
                     throw new RuntimeException(e); //Errore di sql
                 }
-
             }
 
             //Gestione comandi normali (se non è in nessuno stato)
