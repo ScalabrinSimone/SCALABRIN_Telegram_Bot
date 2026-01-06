@@ -22,6 +22,6 @@ public class Race {
     public String toString() {
         return "🏁 Round " + round + ": " + raceName + "\n" +
                 "📍 " + Circuit.getCircuitName() + " (" + Circuit.getLocation().getCountry() + ")\n" +
-                "📅 " + date + (time != null ? " " + time : "");
+                "📅 " + date + (time != null ? "_" + time : "");
     }
 }

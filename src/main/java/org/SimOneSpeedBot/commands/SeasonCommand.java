@@ -2,11 +2,9 @@ package org.SimOneSpeedBot.commands;
 
 import org.SimOneSpeedBot.api.ergast.ErgastAPI;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 public class SeasonCommand implements Command {
     private final TelegramClient client;

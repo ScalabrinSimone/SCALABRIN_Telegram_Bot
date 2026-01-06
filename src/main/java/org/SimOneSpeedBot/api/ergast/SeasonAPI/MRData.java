@@ -10,11 +10,6 @@ public class MRData {
     private RaceTable RaceTable;
 
     //Getter
-    public String getXmlns() { return xmlns; }
-    public String getSeries() { return series; }
-    public String getUrl() { return url; }
-    public String getLimit() { return limit; }
-    public String getOffset() { return offset; }
     public String getTotal() { return total; }
     public RaceTable getRaceTable() { return RaceTable; }
 }

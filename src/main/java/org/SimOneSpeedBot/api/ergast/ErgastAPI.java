@@ -54,11 +54,11 @@ public class ErgastAPI {
             //Formatta le informazioni della stagione
             List<Race> races = mrData.getRaceTable().getRaces();
             StringBuilder info = new StringBuilder();
-            info.append("🏎️ **Stagione Formula 1 ").append(year).append("**\n\n");
+            info.append("🏎️ Stagione Formula 1 ").append(year).append("\n\n");
             info.append("📊 Totale gare: ").append(races.size()).append("\n\n");
 
             //Mostra solo le prime 3 gare come anteprima
-            info.append("🏁 **Prime gare:**\n");
+            info.append("🥇 Prime gare:\n\n");
             for (int i = 0; i < Math.min(3, races.size()); i++) {
                 info.append(races.get(i).toString()).append("\n\n");
             }
