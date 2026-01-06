@@ -23,48 +23,51 @@ public class SeasonCommand implements Command {
 
     @Override
     public void execute(long chatId, String[] args) {
-        String year;
+        String yearString;
 
         //Se non ci sono argomenti, usa la stagione corrente
         if (args.length == 0) {
-            year = String.valueOf(LocalDate.now().getYear());
-        }
-        else {
-            year = args[0];
+            yearString = String.valueOf(LocalDate.now().getYear());
+        } else {
+            yearString = args[0].trim();
         }
 
-        int yearInt = Integer.parseInt(year); //anno in int
-        //Valida che sia un anno valido
+        int yearInt;
+
+        //Controlla che sia un numero
         try {
-            if (yearInt < 1950 || yearInt > LocalDate.now().getYear()) {
-                SendMessage message = SendMessage.builder()
-                        .chatId(chatId)
-                        .text("❌ Anno non valido. Inserisci un anno tra 1950 e " + (LocalDate.now().getYear()))
-                        .build();
-
-                try {
-                    client.execute(message);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return;
-            }
-        }
-        catch (NumberFormatException e) {
-            SendMessage message = SendMessage.builder()
+            yearInt = Integer.parseInt(yearString);
+        } catch (NumberFormatException e) {
+            SendMessage errorMsg = SendMessage.builder()
                     .chatId(chatId)
-                    .text("❌ Inserisci un anno valido (es: 2024, 2023)")
+                    .text("❌ Input errato. Inserisci un anno valido (es: 2024, 2023)")
                     .build();
 
             try {
-                client.execute(message);
+                client.execute(errorMsg);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
             return;
         }
 
-        //Recupera le info della stagione
+        //Controlla il range
+        int currentYear = LocalDate.now().getYear();
+        if (yearInt < 1950 || yearInt > currentYear) {
+            SendMessage errorMsg = SendMessage.builder()
+                    .chatId(chatId)
+                    .text("❌ Anno non valido. Inserisci un anno tra 1950 e " + currentYear)
+                    .build();
+
+            try {
+                client.execute(errorMsg);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return;
+        }
+
+        //Anno valido -> recupera info
         String seasonInfo = new ErgastAPI().fetchSeason(yearInt);
 
         SendMessage message = SendMessage.builder()
@@ -77,6 +80,5 @@ public class SeasonCommand implements Command {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }

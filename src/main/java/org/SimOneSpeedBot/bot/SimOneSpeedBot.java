@@ -7,6 +7,7 @@ import org.SimOneSpeedBot.callback.RaceCallback.RaceCallbackHandler;
 import org.SimOneSpeedBot.callback.RaceCallback.SeasonCallbackHandler;
 import org.SimOneSpeedBot.commands.*;
 import org.SimOneSpeedBot.service.MyConfiguration;
+import org.SimOneSpeedBot.service.UserStateManager;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
@@ -21,7 +22,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +29,7 @@ import java.util.Map;
 public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
     private TelegramClient telegramClient = new OkHttpTelegramClient(MyConfiguration.getInstance().getProperty("BOT_TOKEN"));
     private final CommandHub hub = new CommandHub();
+    private final UserStateManager stateManager;
     private final Map<Long, Integer> menuMessageIds = new HashMap<>(); //chatId -> messageId. Serve per modificare
                                                                       //il messaggio invece che inviarne di nuovi.
                                                                      //Usato per la prima volta in classe StartCommand.
@@ -45,6 +46,8 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
         hub.register("constructor", new ConstructorCommand(telegramClient, userStates));
         hub.register("season", new SeasonCommand(telegramClient));
         hub.register("showmenu", new ShowMenuCommand(telegramClient, menuMessageIds));
+
+        this.stateManager = new UserStateManager(telegramClient, hub, userStates);
     }
 
     @Override
@@ -89,261 +92,15 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
             }
         }
 
+        //Gestione stati
+        if (stateManager.handleMessageState(update)) {
+            return; //lo stato ha gestito il messaggio
+        }
+
         //Se l'update ha un messaggio e quest'ultimo ha un testo:
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText(); //Ha sia il nome che il cognome
             long chatId = update.getMessage().getChatId();
-
-            //Controlla se l'utente é in uno stato particolare
-            String currentState = userStates.get(chatId);
-
-            //Stati---
-
-            //Stato attesa driver
-            if (currentState != null && currentState.startsWith("AWAITING_DRIVER_NAME")) {
-                //Chiama il comando driver con il nome come argomento
-                DriverCommand driverCmd = (DriverCommand) hub.getCommand("driver");
-
-                if (driverCmd != null) {
-                    //Prendo il messaggio in modo da separare nome e cognome
-                    String text = messageText.trim(); //Togliamo spazi inutili.
-                    String[] parts = text.split(" "); //Separa per spazi.
-
-                    String givenName = parts.length > 1 ? parts[0] : ""; //Nome
-                    String familyName = parts.length == 1 ? parts[0] : parts[parts.length - 1]; //Cognome
-
-                    //Elimina il messaggio dell'utente per avere una UI/UX migliore:
-                    DeleteMessage delete = DeleteMessage.builder()
-                            .chatId(chatId)
-                            .messageId(update.getMessage().getMessageId())
-                            .build();
-                    try {
-                        telegramClient.execute(delete);
-                    } catch (Exception e) {
-                        //Se fallisce la cancellazione, continua comunque
-                    }
-
-                    //Controlla se devo editare o mandare un nuovo messaggio
-                    if (currentState.contains("EDIT:")) { //Da menu
-                        //Estrae il messageId dallo stato
-                        int messageId = Integer.parseInt(currentState.split(":")[1]);
-                        driverCmd.processDriver(chatId, givenName, familyName, messageId, true); //Possiamo continuare a scrivere piloti.
-                    } else { //Nuovo messaggio
-                        driverCmd.processDriver(chatId, givenName, familyName, null, false); //Non ".
-                    }
-                }
-                return;
-            }
-            //Stato attesa constructor
-            if (currentState != null && currentState.startsWith("AWAITING_CONSTRUCTOR_NAME")) {
-                //Chiama il comando constructor con il firstNome come argomento
-                ConstructorCommand constructorCmd = (ConstructorCommand) hub.getCommand("constructor");
-
-                if (constructorCmd != null) {
-                    //Prendo il messaggio in modo da separare fisrtNome e secondNome
-                    String text = messageText.trim(); //Togliamo spazi inutili.
-                    String[] parts = text.split(" "); //Separa per spazi.
-
-                    String firstName = parts[0];
-                    String secondName = parts.length != 1 ? parts[parts.length - 1] : "";
-
-                    //Elimina il messaggio dell'utente per avere una UI/UX migliore:
-                    DeleteMessage delete = DeleteMessage.builder()
-                            .chatId(chatId)
-                            .messageId(update.getMessage().getMessageId())
-                            .build();
-                    try {
-                        telegramClient.execute(delete);
-                    } catch (Exception e) {
-                        //Se fallisce la cancellazione, continua comunque
-                    }
-
-                    //Controlla se devo editare o mandare un nuovo messaggio
-                    if (currentState.contains("EDIT:")) { //Da menu
-                        //Estrae il messageId dallo stato
-                        int messageId = Integer.parseInt(currentState.split(":")[1]);
-                        constructorCmd.processConstructor(chatId, firstName, secondName, messageId, true); //Possiamo continuare a scrivere costruttori.
-                    } else { //Nuovo messaggio
-                        constructorCmd.processConstructor(chatId, firstName, secondName, null, false); //Non ".
-                    }
-
-                    return;
-                }
-            }
-            //Stato attesa stagione
-            if (currentState != null && currentState.startsWith("AWAITING_SEASON_YEAR")) {
-                String year = messageText.trim();
-
-                //Valida che sia un numero
-                try {
-                    int yearInt = Integer.parseInt(year);
-
-                    //Valida il range
-                    if (yearInt < 1950 || yearInt > LocalDate.now().getYear()) {
-                        //Anno fuori range
-                        if (currentState.contains("EDIT:")) {
-                            //Dal menu -> edita il messaggio
-                            DeleteMessage delete = DeleteMessage.builder()
-                                    .chatId(chatId)
-                                    .messageId(update.getMessage().getMessageId())
-                                    .build();
-
-                            try {
-                                telegramClient.execute(delete);
-                            } catch (Exception e) {
-                                //Ignora
-                            }
-
-                            int messageId = Integer.parseInt(currentState.split(":")[2]);
-
-                            InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                                    .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
-                                    .callbackData("race:season")
-                                    .build();
-
-                            InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                                    .keyboard(List.of(new InlineKeyboardRow(List.of(backButton))))
-                                    .build();
-
-                            EditMessageText edit = EditMessageText.builder()
-                                    .chatId(chatId)
-                                    .messageId(messageId)
-                                    .text("❌ Anno non valido. Inserisci un anno tra 1950 e " + LocalDate.now().getYear())
-                                    .replyMarkup(keyboard)
-                                    .build();
-
-                            try {
-                                telegramClient.execute(edit);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            //Da comando -> invia nuovo messaggio
-                            SendMessage errorMsg = SendMessage.builder()
-                                    .chatId(chatId)
-                                    .text("❌ Anno non valido. Inserisci un anno tra 1950 e " + LocalDate.now().getYear())
-                                    .build();
-
-                            try {
-                                telegramClient.execute(errorMsg);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        return;
-                    }
-
-                    //Anno valido -> recupera info
-                    if (currentState.contains("EDIT:")) {
-                        //Dal menu
-                        DeleteMessage delete = DeleteMessage.builder()
-                                .chatId(chatId)
-                                .messageId(update.getMessage().getMessageId())
-                                .build();
-
-                        try {
-                            telegramClient.execute(delete);
-                        } catch (Exception e) {
-                            //Ignora
-                        }
-
-                        String seasonInfo = new ErgastAPI().fetchSeason(yearInt);
-
-                        int messageId = Integer.parseInt(currentState.split(":")[2]);
-
-                        InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                                .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
-                                .callbackData("race:season")
-                                .build();
-
-                        InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                                .keyboard(List.of(new InlineKeyboardRow(List.of(backButton))))
-                                .build();
-
-                        EditMessageText edit = EditMessageText.builder()
-                                .chatId(chatId)
-                                .messageId(messageId)
-                                .text(seasonInfo)
-                                .replyMarkup(keyboard)
-                                .build();
-
-                        try {
-                            telegramClient.execute(edit);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        //Da comando -> invia nuovo messaggio
-                        String seasonInfo = new ErgastAPI().fetchSeason(yearInt);
-
-                        SendMessage message = SendMessage.builder()
-                                .chatId(chatId)
-                                .text(seasonInfo)
-                                .build();
-
-                        try {
-                            telegramClient.execute(message);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        userStates.remove(chatId); //Rimuovi lo stato dopo comando
-                    }
-
-                } catch (NumberFormatException e) {
-                    //Input non è un numero
-                    if (currentState.contains("EDIT:")) {
-                        //Dal menu -> edita il messaggio
-                        DeleteMessage delete = DeleteMessage.builder()
-                                .chatId(chatId)
-                                .messageId(update.getMessage().getMessageId())
-                                .build();
-
-                        try {
-                            telegramClient.execute(delete);
-                        } catch (Exception ex) {
-                            //Ignora
-                        }
-
-                        int messageId = Integer.parseInt(currentState.split(":")[2]);
-
-                        InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                                .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
-                                .callbackData("race:season")
-                                .build();
-
-                        InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                                .keyboard(List.of(new InlineKeyboardRow(List.of(backButton))))
-                                .build();
-
-                        EditMessageText edit = EditMessageText.builder()
-                                .chatId(chatId)
-                                .messageId(messageId)
-                                .text("❌ Inserisci un anno valido (es: 2024, 2023)")
-                                .replyMarkup(keyboard)
-                                .build();
-
-                        try {
-                            telegramClient.execute(edit);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    } else {
-                        //Da comando -> invia nuovo messaggio
-                        SendMessage errorMsg = SendMessage.builder()
-                                .chatId(chatId)
-                                .text("❌ Inserisci un anno valido (es: 2024, 2023)")
-                                .build();
-
-                        try {
-                            telegramClient.execute(errorMsg);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-                return;
-            }
 
             //Gestione comandi normali (se non è in nessuno stato)
             boolean handled = hub.handle(messageText, chatId);

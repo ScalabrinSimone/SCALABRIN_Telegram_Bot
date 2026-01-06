@@ -66,8 +66,8 @@ public class SeasonCallbackHandler implements CallbackHandler {
 
                 //Edita il messaggio con le info + bottone back
                 InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                        .text("⬅️ Back To Race Menu")
-                        .callbackData("menu:race")
+                        .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
+                        .callbackData("race:season")
                         .build();
 
                 InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
@@ -93,8 +93,8 @@ public class SeasonCallbackHandler implements CallbackHandler {
 
                 //Edita il messaggio con le info + bottone back
                 InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                        .text("⬅️ Back To Race Menu")
-                        .callbackData("menu:race")
+                        .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
+                        .callbackData("race:season")
                         .build();
 
                 InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
@@ -121,8 +121,8 @@ public class SeasonCallbackHandler implements CallbackHandler {
 
                 //Edita il messaggio con le istruzioni
                 InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                        .text("⬅️ Back To Race Menu")
-                        .callbackData("menu:race")
+                        .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
+                        .callbackData("race:season")
                         .build();
 
                 InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
