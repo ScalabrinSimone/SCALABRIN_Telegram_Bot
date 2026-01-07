@@ -7,11 +7,52 @@ import java.sql.*;
 public class Database {
     private static Database instance; //NON VERSIONATO
     private Connection connection;
+    private static String DbUrl;
+
+    /* Soluzione non adottata perché pattern singleton crea una istanza
+    static {
+        //Eseguito UNA SOLA VOLTA al caricamento della classe
+        initializeDatabase(); //Mi assicuro di creare le tabelle (serve per evitare di creare a mano il database ogni volta che pullo il codice)
+    }*/
 
     private Database() throws SQLException {
-        String url = "jdbc:sqlite:src/main/java/org/SimOneSpeedBot/database/usersDatabase.db"; //Inserisce il database nella cartella database.
-        connection = DriverManager.getConnection(url); //Tabelle create da IntelliJ ultimate
+        DbUrl = "jdbc:sqlite:src/main/java/org/SimOneSpeedBot/database/usersDatabase.db"; //Inserisce il database nella cartella database.
+        connection = DriverManager.getConnection(DbUrl); //Tabelle create da IntelliJ ultimate
         System.out.println("Connessione di Database"); //Debug
+
+        initializeDatabase(); //Viene eseguito una volta sola per pattern singleton
+    }
+    //Metodo per creare il database per la prima volta
+    private static void initializeDatabase() {
+        try (Statement stmt = getConnection().createStatement()) {
+
+            String createUsersTable = """
+                CREATE TABLE IF NOT EXISTS users (
+                    userId INTEGER NOT NULL PRIMARY KEY,
+                    username TEXT,
+                    firstName TEXT NOT NULL,
+                    lastName TEXT,
+                    languageCode TEXT,
+                    isBot INTEGER DEFAULT 0,
+                    isPremium INTEGER DEFAULT 0
+                )
+                """;
+            if(stmt.execute(createUsersTable))
+            {
+                System.out.println("Users table creata correttamente.");
+            }
+            else
+            {
+                System.out.println("Users table giá presente.");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Errore init DB: " + e.getMessage());
+        }
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(DbUrl);
     }
 
     public static Database getInstance() throws SQLException {
