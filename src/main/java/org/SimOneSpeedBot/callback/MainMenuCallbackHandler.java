@@ -2,6 +2,7 @@ package org.SimOneSpeedBot.callback;
 
 import org.SimOneSpeedBot.commands.InfoCommand;
 import org.SimOneSpeedBot.commands.PingCommand;
+import org.SimOneSpeedBot.commands.ProjectCommand;
 import org.SimOneSpeedBot.keyboard.BookMarkKeyboards.BookMarkKeyboard;
 import org.SimOneSpeedBot.keyboard.MainMenuKeyboard;
 import org.SimOneSpeedBot.keyboard.RaceKeyboards.RaceMenuKeyboard;
@@ -66,6 +67,9 @@ public class MainMenuCallbackHandler implements CallbackHandler {
             }
             case "menu:utils:ping" -> {
                 new PingCommand(client).executeEdit(chatId, messageId);
+            }
+            case "menu:utils:project" -> {
+                new ProjectCommand(client).executeEdit(chatId, messageId);
             }
             case "menu:utils:bookMark" -> {
                 BookMarkKeyboard keyboard = new BookMarkKeyboard(client, messageId, user);
