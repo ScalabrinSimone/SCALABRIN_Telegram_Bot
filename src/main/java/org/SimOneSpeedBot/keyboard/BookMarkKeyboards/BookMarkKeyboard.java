@@ -26,6 +26,9 @@ public class BookMarkKeyboard implements MenuKeyboard {
     public Message editInlineKeyboard(long chatId) {
         //Dovrebbe crearli in base a quante info ha l'utente (gli passo il database e il suo metodo) e se ha troppe cose dentro mette frecce per navigare
         //Crea i bottoni
+
+
+
         InlineKeyboardButton modificaButton = InlineKeyboardButton.builder()
                 .text("Errore")
                 .callbackData("bookMark:errore") //Modifica

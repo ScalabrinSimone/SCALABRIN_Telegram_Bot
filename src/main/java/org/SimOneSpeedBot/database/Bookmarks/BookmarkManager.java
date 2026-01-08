@@ -1,4 +1,6 @@
-package org.SimOneSpeedBot.database;
+package org.SimOneSpeedBot.database.Bookmarks;
+
+import org.SimOneSpeedBot.database.Database;
 
 import java.sql.*;
 import java.util.*;

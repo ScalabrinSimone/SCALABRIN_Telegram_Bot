@@ -1,4 +1,4 @@
-package org.SimOneSpeedBot.database;
+package org.SimOneSpeedBot.database.Bookmarks;
 
 public class Bookmark {
     private int id;
