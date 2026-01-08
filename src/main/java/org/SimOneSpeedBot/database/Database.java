@@ -46,7 +46,27 @@ public class Database {
                 System.out.println("Users table giá presente.");
             }
 
-        } catch (SQLException e) {
+            String createBookmarksTable = """
+                CREATE TABLE IF NOT EXISTS bookmarks (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    userId INTEGER NOT NULL,
+                    type TEXT NOT NULL,
+                    entityId TEXT NOT NULL,
+                    entityName TEXT,
+                    savedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (userId) REFERENCES users(userId)
+                )
+                """;
+            if(stmt.execute(createBookmarksTable))
+            {
+                System.out.println("Bookmarks table creata correttamente.");
+            }
+            else
+            {
+                System.out.println("Bookmarks table giá presente.");
+            }
+        }
+        catch (SQLException e) {
             System.err.println("Errore init DB: " + e.getMessage());
         }
     }
