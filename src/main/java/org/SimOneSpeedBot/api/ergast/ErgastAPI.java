@@ -158,12 +158,12 @@ public class ErgastAPI {
     }
 
     //Driver
-    public String fetchDriver(String driverName, String driverSurname)
+    public Driver fetchDriver(String driverName, String driverSurname)
     {
         String driverId = driverName.equals("") ? driverSurname : driverName + "_" + driverSurname; //nome_cognome per api e se non funziona solo cognome e se non funziona allora non esiste
 
         //Voglio che l'utente sia libero di inserire il pilota come vuole, quindi controllo anche per cognome_nome
-        String result = tryFetchDriver(driverId); //Primo controllo classico.
+        Driver result = tryFetchDriver(driverId); //Primo controllo classico.
         if (result != null) {
             return result;
         }
@@ -189,12 +189,11 @@ public class ErgastAPI {
             }
         }
 
-        //Se ancora non trova, ritorna messaggio di errore
-        //StringUtils.capitalize(*stringa*) rende la prima lettera maiuscola.
-        return "❌ Pilota " + (!driverName.equals("") ? StringUtils.capitalize(driverName) + " " : "") + StringUtils.capitalize(driverSurname) + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: Verstappen, Max Verstappen o Verstappen Max).";
+        //Se ancora non trova, ritorna null. Uso un return di driver per il database
+        return null;
 
     }
-    private String tryFetchDriver(String driverId) {
+    private Driver tryFetchDriver(String driverId) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "drivers/" + driverId + ".json"))
                 .GET()
@@ -219,7 +218,7 @@ public class ErgastAPI {
             }
             else {
                 Driver pilota = mrData.getDriverTable().getDrivers().getFirst(); //Prende il primo (= get(0))
-                return pilota.toString();
+                return pilota;
             }
         }
         catch (IOException | InterruptedException e) {

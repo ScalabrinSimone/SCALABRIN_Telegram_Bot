@@ -1,6 +1,8 @@
 package org.SimOneSpeedBot.commands;
 
+import org.SimOneSpeedBot.api.ergast.DriverAPI.Driver;
 import org.SimOneSpeedBot.api.ergast.ErgastAPI;
+import org.apache.commons.lang3.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -53,7 +55,8 @@ public class DriverCommand implements Command {
             //Ergast -> nome e cognome in minuscolo
             String driverName = args.length > 1 ? String.join(" ", args[0]).toLowerCase() : "";
             String driverSurname = args.length == 1 ? String.join(" ", args[0]).toLowerCase() : String.join(" ", args[args.length - 1]).toLowerCase();
-            String driverInfo = new ErgastAPI().fetchDriver(driverName, driverSurname);
+            Driver driver = new ErgastAPI().fetchDriver(driverName, driverSurname);
+            String driverInfo = (driver != null) ? driver.toString() : "❌ Pilota " + (!driverName.equals("") ? StringUtils.capitalize(driverName) + " " : "") + StringUtils.capitalize(driverSurname) + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: Verstappen, Max Verstappen o Verstappen Max).";
 
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
@@ -97,7 +100,11 @@ public class DriverCommand implements Command {
         driverName = driverName.toLowerCase();
         driverSurname = driverSurname.toLowerCase();
 
-        String driverInfo = new ErgastAPI().fetchDriver(driverName, driverSurname);
+        //Se ancora non trova, ritorna messaggio di errore
+        //StringUtils.capitalize(*stringa*) rende la prima lettera maiuscola.
+        Driver driver = new ErgastAPI().fetchDriver(driverName, driverSurname);
+
+        String driverInfo = (driver != null) ? driver.toString() : "❌ Pilota " + (!driverName.equals("") ? StringUtils.capitalize(driverName) + " " : "") + StringUtils.capitalize(driverSurname) + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: Verstappen, Max Verstappen o Verstappen Max).";
 
         if (messageId != null) {
             //Menu -> edita il messaggio con bottone back
