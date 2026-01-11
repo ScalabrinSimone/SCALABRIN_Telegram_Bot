@@ -32,7 +32,7 @@ public class BookMarkKeyboard implements MenuKeyboard {
         //Crea i bottoni
 
         //Recupera le categorie disponibili
-        List<Bookmark> categories = BookmarkManager.getBookmarksByType(user.getId());
+        List<String> categories = BookmarkManager.getAvailableCategories(user.getId());
 
         //Crea la keyboard
         InlineKeyboardMarkup keyboard = null;
@@ -66,8 +66,8 @@ public class BookMarkKeyboard implements MenuKeyboard {
         }
         else //C'é almeno 1 bookmark salvato
         {
-            for (Bookmark category : categories) {
-                String categoryName = switch (category.getType()) //Prende il tipo di ogni categoria
+            for (String category : categories) {
+                String categoryName = switch (category) //Prende il tipo di ogni categoria
                 {
                     case "driver" -> "🏎️ Piloti";
                     case "constructor" -> "🏗️ Costruttori";
@@ -81,10 +81,15 @@ public class BookMarkKeyboard implements MenuKeyboard {
                         .callbackData("bookmark:" + category + ":1") //Formato: bookmark:tipo:pagina
                         .build();
 
-                rows.add(new InlineKeyboardRow(categoryButton));
+                rows.add(new InlineKeyboardRow(categoryButton)); //Aggiunge il pulsante alla riga
             }
 
             rows.add(new InlineKeyboardRow(backButton)); //Aggiungo il bottone per tornare indietro
+
+            //Crea la tastiera
+            keyboard = InlineKeyboardMarkup.builder()
+                    .keyboard(rows)
+                    .build();
         }
 
         //Modifica il messaggio sia che abbia piú o meno bottoni

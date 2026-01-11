@@ -130,6 +130,28 @@ public class BookmarkManager {
         return bookmarks;
     }
 
+    //Ottiene le categorie che hanno bookmark salvati per l'utente
+    public static List<String> getAvailableCategories(long userId) {
+        List<String> categories = new ArrayList<>();
+        String sql = "SELECT DISTINCT type FROM bookmarks WHERE userId = ? ORDER BY type";
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                categories.add(rs.getString("type"));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Errore recupero categorie: " + e.getMessage());
+        }
+
+        return categories;
+    }
+
     //Conta bookmark per categoria
     public static Map<String, Integer> countBookmarksByType(long userId) {
         Map<String, Integer> counts = new HashMap<>();
