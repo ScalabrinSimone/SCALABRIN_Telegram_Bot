@@ -64,6 +64,12 @@ public class SeasonCallbackHandler implements CallbackHandler {
                 int year = LocalDate.now().getYear();
                 String seasonInfo = new ErgastAPI().fetchSeason(year);
 
+                //Bottone salva, c'é sempre perché input controllato
+                InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
+                        .text("💾 Salva")
+                        .callbackData("save:season:" + year + ":Stagione " + year)
+                        .build();
+
                 //Edita il messaggio con le info + bottone back
                 InlineKeyboardButton backButton = InlineKeyboardButton.builder()
                         .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
@@ -71,7 +77,7 @@ public class SeasonCallbackHandler implements CallbackHandler {
                         .build();
 
                 InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                        .keyboard(List.of(new InlineKeyboardRow(List.of(backButton))))
+                        .keyboard(List.of(new InlineKeyboardRow(List.of(saveButton)), new InlineKeyboardRow(List.of(backButton))))
                         .build();
 
                 EditMessageText edit = EditMessageText.builder()
@@ -91,6 +97,12 @@ public class SeasonCallbackHandler implements CallbackHandler {
                 int year = LocalDate.now().getYear() - 1;
                 String seasonInfo = new ErgastAPI().fetchSeason(year);
 
+                //Bottone salva, c'é sempre perché input controllato
+                InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
+                        .text("💾 Salva")
+                        .callbackData("save:season:" + year + ":Stagione " + year)
+                        .build();
+
                 //Edita il messaggio con le info + bottone back
                 InlineKeyboardButton backButton = InlineKeyboardButton.builder()
                         .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
@@ -98,7 +110,7 @@ public class SeasonCallbackHandler implements CallbackHandler {
                         .build();
 
                 InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                        .keyboard(List.of(new InlineKeyboardRow(List.of(backButton))))
+                        .keyboard(List.of(new InlineKeyboardRow(List.of(saveButton)), new InlineKeyboardRow(List.of(backButton))))
                         .build();
 
                 EditMessageText edit = EditMessageText.builder()
@@ -116,6 +128,7 @@ public class SeasonCallbackHandler implements CallbackHandler {
             }
 
             case "race:season:select" -> {
+                //QUA POSSIBILMENTE FARE UN EXECUTEEDIT COME ALTRI COMANDI
                 //Imposta lo stato per ricevere l'anno
                 userStates.put(chatId, "AWAITING_SEASON_YEAR:EDIT:" + messageId);
 

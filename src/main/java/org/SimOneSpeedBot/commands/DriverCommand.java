@@ -118,7 +118,7 @@ public class DriverCommand implements Command {
             if(!driverInfo.contains("❌ Pilota")) {
                 InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
                         .text("💾 Salva")
-                        .callbackData("save:driver:" + driverId + ":" + driverName) //Formato: save:tipo:id:nome
+                        .callbackData("save:driver:" + driverSurname) //Formato: save:tipo:cognome
                         .build();
 
                 InlineKeyboardRow saveButtonRow = new InlineKeyboardRow(saveButton);
