@@ -9,7 +9,7 @@ public class Constructor {
     @Override
     public String toString(){
         return String.format(
-                "ℹ Informazioni:\n\nNome: %s.\nNazionalitá: %s.\n\nUrl (wikipedia): %s.",
+                "ℹ Informazioni:\n\n🏠 Nome: %s.\n🌍 Nazionalitá: %s.\n\n🔗 Url (wikipedia): %s.",
                 name,
                 nationality,
                 url != null ? url : "*dato non disponibile*"

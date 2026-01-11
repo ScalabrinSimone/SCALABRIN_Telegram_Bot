@@ -11,17 +11,21 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.util.Map;
+
 public class RaceCallbackHandler implements CallbackHandler {
     private final TelegramClient client;
     private final MainMenuKeyboard mainMenuKeyboard;
     private final int messageId;
     private final CommandHub hub;
+    private final Map<Long, String> userStates;
 
-    public RaceCallbackHandler(TelegramClient client, int messageId, CommandHub hub) {
+    public RaceCallbackHandler(TelegramClient client, int messageId, CommandHub hub, Map<Long, String> userStates) {
         this.client = client;
         this.mainMenuKeyboard = new MainMenuKeyboard(client);
         this.messageId = messageId;
         this.hub = hub;
+        this.userStates = userStates;
     }
 
     @Override
@@ -50,6 +54,11 @@ public class RaceCallbackHandler implements CallbackHandler {
             }
 
             case "race:season" -> {
+                //Rimuove lo stato per continuare a scrivere la season se attivo
+                if (userStates.get(chatId) != null &&
+                        (userStates.get(chatId).startsWith("AWAITING_SEASON_YEAR"))) {
+                    userStates.remove(chatId);
+                }
                 SeasonKeyboard keyboard = new SeasonKeyboard(client, messageId);
                 keyboard.editInlineKeyboard(chatId);
             }
