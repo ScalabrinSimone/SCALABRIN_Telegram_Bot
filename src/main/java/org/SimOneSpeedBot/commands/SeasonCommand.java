@@ -158,5 +158,18 @@ public class SeasonCommand implements Command {
                 }
             }
         }
+        else {
+            //Comando -> nuovo messaggio
+            SendMessage message = SendMessage.builder()
+                    .chatId(chatId)
+                    .text(seasonInfo)
+                    .build();
+
+            try {
+                client.execute(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

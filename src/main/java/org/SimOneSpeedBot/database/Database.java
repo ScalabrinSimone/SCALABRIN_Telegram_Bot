@@ -51,6 +51,7 @@ public class Database {
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     userId INTEGER NOT NULL,
                     type TEXT NOT NULL,
+                    entityId TEXT NOT NULL,
                     entityName TEXT,
                     savedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (userId) REFERENCES users(userId)

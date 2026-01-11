@@ -147,7 +147,7 @@ public class UserStateManager {
             if (seasonCmd != null) {
                 if (currentState.contains("EDIT:")) {
                     //Dal menu -> edita il messaggio
-                    int messageId = Integer.parseInt(currentState.split(":")[2]);
+                    int messageId = Integer.parseInt(currentState.split(":")[1]);
                     seasonCmd.processSeason(chatId, yearInt, messageId, true);
                 } else {
                     //Da comando -> nuovo messaggio
@@ -161,7 +161,7 @@ public class UserStateManager {
 
             if (currentState.contains("EDIT:")) {
                 //Dal menu -> edita il messaggio
-                int messageId = Integer.parseInt(currentState.split(":")[2]);
+                int messageId = Integer.parseInt(currentState.split(":")[1]);
 
                 InlineKeyboardButton backButton = InlineKeyboardButton.builder()
                         .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")

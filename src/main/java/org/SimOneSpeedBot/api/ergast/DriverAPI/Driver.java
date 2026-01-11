@@ -15,7 +15,7 @@ public class Driver {
     @Override
     public String toString(){
         return String.format(
-                "ℹ Informazioni:\n\nNome: %s.\nCognome: %s.\nNazionalitá: %s.\nNascita: %s.\nNumero pilota: %s.\nAbbreviazione: %s.\n\nUrl (wikipedia): %s.",
+                "ℹ Informazioni:\n\n👤 Nome e Cognome: %s %s.\n🌍 Nazionalitá: %s.\n🎂 Nascita: %s.\n🔢 Numero pilota: %s.\n🏷 Abbreviazione: %s.\n\n🔗 Url (wikipedia): %s.",
                 givenName,
                 familyName,
                 nationality,
