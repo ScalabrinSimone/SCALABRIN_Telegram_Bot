@@ -137,6 +137,18 @@ public class UserStateManager {
     private void handleSeasonState(Update update, String messageText, long chatId, String currentState) {
         String year = messageText.trim();
 
+        //Elimina il messaggio dell'utente per UI/UX migliore
+        DeleteMessage delete = DeleteMessage.builder()
+                .chatId(chatId)
+                .messageId(update.getMessage().getMessageId())
+                .build();
+
+        try {
+            client.execute(delete);
+        } catch (Exception e) {
+            //Ignora se fallisce
+        }
+
         //Valida che sia un numero
         try {
             int yearInt = Integer.parseInt(year);
