@@ -4,6 +4,7 @@ import org.SimOneSpeedBot.api.ergast.ErgastAPI;
 import org.SimOneSpeedBot.commands.CommandHub;
 import org.SimOneSpeedBot.commands.ConstructorCommand;
 import org.SimOneSpeedBot.commands.DriverCommand;
+import org.SimOneSpeedBot.commands.SeasonCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -140,133 +141,26 @@ public class UserStateManager {
         try {
             int yearInt = Integer.parseInt(year);
 
-            //Valida il range
-            if (yearInt < 1950 || yearInt > LocalDate.now().getYear()) {
-                //Anno fuori range
+            SeasonCommand seasonCmd = (SeasonCommand) hub.getCommand("season");
+
+            //Deve essere compreso nel range dal 1950 ad oggi, ma lo controllo nel processSeason
+            if (seasonCmd != null) {
                 if (currentState.contains("EDIT:")) {
                     //Dal menu -> edita il messaggio
-                    DeleteMessage delete = DeleteMessage.builder()
-                            .chatId(chatId)
-                            .messageId(update.getMessage().getMessageId())
-                            .build();
-
-                    try {
-                        client.execute(delete);
-                    } catch (Exception e) {
-                        //Ignora
-                    }
-
                     int messageId = Integer.parseInt(currentState.split(":")[2]);
-
-                    InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                            .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
-                            .callbackData("race:season")
-                            .build();
-
-                    InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                            .keyboard(List.of(new InlineKeyboardRow(List.of(backButton))))
-                            .build();
-
-                    EditMessageText edit = EditMessageText.builder()
-                            .chatId(chatId)
-                            .messageId(messageId)
-                            .text("❌ Anno non valido. Inserisci un anno tra 1950 e " + LocalDate.now().getYear())
-                            .replyMarkup(keyboard)
-                            .build();
-
-                    try {
-                        client.execute(edit);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    seasonCmd.processSeason(chatId, yearInt, messageId, true);
                 } else {
-                    //Da comando -> invia nuovo messaggio
-                    SendMessage errorMsg = SendMessage.builder()
-                            .chatId(chatId)
-                            .text("❌ Anno non valido. Inserisci un anno tra 1950 e " + LocalDate.now().getYear())
-                            .build();
-
-                    try {
-                        client.execute(errorMsg);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    //Da comando -> nuovo messaggio
+                    seasonCmd.processSeason(chatId, yearInt, null, false);
                 }
-                return;
-            }
-
-            //Anno valido -> recupera info
-            if (currentState.contains("EDIT:")) {
-                //Dal menu
-                DeleteMessage delete = DeleteMessage.builder()
-                        .chatId(chatId)
-                        .messageId(update.getMessage().getMessageId())
-                        .build();
-
-                try {
-                    client.execute(delete);
-                } catch (Exception e) {
-                    //Ignora
-                }
-
-                String seasonInfo = new ErgastAPI().fetchSeason(yearInt);
-
-                int messageId = Integer.parseInt(currentState.split(":")[2]);
-
-                InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                        .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
-                        .callbackData("race:season")
-                        .build();
-
-                InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                        .keyboard(List.of(new InlineKeyboardRow(List.of(backButton))))
-                        .build();
-
-                EditMessageText edit = EditMessageText.builder()
-                        .chatId(chatId)
-                        .messageId(messageId)
-                        .text(seasonInfo)
-                        .replyMarkup(keyboard)
-                        .build();
-
-                try {
-                    client.execute(edit);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                //Da comando -> invia nuovo messaggio
-                String seasonInfo = new ErgastAPI().fetchSeason(yearInt);
-
-                SendMessage message = SendMessage.builder()
-                        .chatId(chatId)
-                        .text(seasonInfo)
-                        .build();
-
-                try {
-                    client.execute(message);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                userStates.remove(chatId); //Rimuovi lo stato dopo comando
             }
 
         } catch (NumberFormatException e) {
             //Input non è un numero
+            String errorText = "❌ Inserisci un anno valido (es: 2024, 2023)";
+
             if (currentState.contains("EDIT:")) {
                 //Dal menu -> edita il messaggio
-                DeleteMessage delete = DeleteMessage.builder()
-                        .chatId(chatId)
-                        .messageId(update.getMessage().getMessageId())
-                        .build();
-
-                try {
-                    client.execute(delete);
-                } catch (Exception ex) {
-                    //Ignora
-                }
-
                 int messageId = Integer.parseInt(currentState.split(":")[2]);
 
                 InlineKeyboardButton backButton = InlineKeyboardButton.builder()
@@ -281,7 +175,7 @@ public class UserStateManager {
                 EditMessageText edit = EditMessageText.builder()
                         .chatId(chatId)
                         .messageId(messageId)
-                        .text("❌ Inserisci un anno valido (es: 2024, 2023)")
+                        .text(errorText)
                         .replyMarkup(keyboard)
                         .build();
 
@@ -291,10 +185,10 @@ public class UserStateManager {
                     ex.printStackTrace();
                 }
             } else {
-                //Da comando -> invia nuovo messaggio
+                //Da comando -> nuovo messaggio
                 SendMessage errorMsg = SendMessage.builder()
                         .chatId(chatId)
-                        .text("❌ Inserisci un anno valido (es: 2024, 2023)")
+                        .text(errorText)
                         .build();
 
                 try {
