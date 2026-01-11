@@ -43,6 +43,7 @@ public class SeasonCommand implements Command {
         //Controlla che sia un numero
         try {
             yearInt = Integer.parseInt(yearString);
+            processSeason(chatId, yearInt, null, false);
         } catch (NumberFormatException e) {
             SendMessage errorMsg = SendMessage.builder()
                     .chatId(chatId)
@@ -54,37 +55,6 @@ public class SeasonCommand implements Command {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            return;
-        }
-
-        //Controlla il range
-        int currentYear = LocalDate.now().getYear();
-        if (yearInt < 1950 || yearInt > currentYear) {
-            SendMessage errorMsg = SendMessage.builder()
-                    .chatId(chatId)
-                    .text("❌ Anno non valido. Inserisci un anno tra 1950 e " + currentYear)
-                    .build();
-
-            try {
-                client.execute(errorMsg);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            return;
-        }
-
-        //Anno valido -> recupera info
-        String seasonInfo = new ErgastAPI().fetchSeason(yearInt);
-
-        SendMessage message = SendMessage.builder()
-                .chatId(chatId)
-                .text(seasonInfo)
-                .build();
-
-        try {
-            client.execute(message);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
