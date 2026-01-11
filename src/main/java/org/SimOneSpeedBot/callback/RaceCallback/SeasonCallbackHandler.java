@@ -62,98 +62,18 @@ public class SeasonCallbackHandler implements CallbackHandler {
 
             case "race:season:now" -> {
                 int year = LocalDate.now().getYear();
-                String seasonInfo = new ErgastAPI().fetchSeason(year);
-
-                //Bottone salva, c'é sempre perché input controllato
-                InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
-                        .text("💾 Salva")
-                        .callbackData("save:season:" + year + ":Stagione " + year)
-                        .build();
-
-                //Edita il messaggio con le info + bottone back
-                InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                        .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
-                        .callbackData("race:season")
-                        .build();
-
-                InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                        .keyboard(List.of(new InlineKeyboardRow(List.of(saveButton)), new InlineKeyboardRow(List.of(backButton))))
-                        .build();
-
-                EditMessageText edit = EditMessageText.builder()
-                        .chatId(chatId)
-                        .messageId(messageId)
-                        .text(seasonInfo)
-                        .replyMarkup(keyboard)
-                        .build();
-
-                try {
-                    client.execute(edit);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                SeasonCommand seasonCmd = (SeasonCommand) hub.getCommand("season");
+                seasonCmd.processSeason(chatId, year, messageId, true);
             }
             case "race:season:last" -> {
                 int year = LocalDate.now().getYear() - 1;
-                String seasonInfo = new ErgastAPI().fetchSeason(year);
-
-                //Bottone salva, c'é sempre perché input controllato
-                InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
-                        .text("💾 Salva")
-                        .callbackData("save:season:" + year + ":Stagione " + year)
-                        .build();
-
-                //Edita il messaggio con le info + bottone back
-                InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                        .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
-                        .callbackData("race:season")
-                        .build();
-
-                InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                        .keyboard(List.of(new InlineKeyboardRow(List.of(saveButton)), new InlineKeyboardRow(List.of(backButton))))
-                        .build();
-
-                EditMessageText edit = EditMessageText.builder()
-                        .chatId(chatId)
-                        .messageId(messageId)
-                        .text(seasonInfo)
-                        .replyMarkup(keyboard)
-                        .build();
-
-                try {
-                    client.execute(edit);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                SeasonCommand seasonCmd = (SeasonCommand) hub.getCommand("season");
+                seasonCmd.processSeason(chatId, year, messageId, true);
             }
 
             case "race:season:select" -> {
-                //QUA POSSIBILMENTE FARE UN EXECUTEEDIT COME ALTRI COMANDI
-                //Imposta lo stato per ricevere l'anno
-                userStates.put(chatId, "AWAITING_SEASON_YEAR:EDIT:" + messageId);
-
-                //Edita il messaggio con le istruzioni
-                InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                        .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
-                        .callbackData("race:season")
-                        .build();
-
-                InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                        .keyboard(List.of(new InlineKeyboardRow(List.of(backButton))))
-                        .build();
-
-                EditMessageText edit = EditMessageText.builder()
-                        .chatId(chatId)
-                        .messageId(messageId)
-                        .text("📅 Inserisci l'anno della stagione (es: 2024, 2023, 1950-" + LocalDate.now().getYear() + "):")
-                        .replyMarkup(keyboard)
-                        .build();
-
-                try {
-                    client.execute(edit);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                SeasonCommand seasonCmd = (SeasonCommand) hub.getCommand("season");
+                seasonCmd.executeEdit(chatId, messageId);
             }
 
             default -> {return false;} //Se non inizia per queste, non riesce a gestirlo e ritorna false
