@@ -100,17 +100,37 @@ public class ConstructorCommand implements Command {
 
         if (messageId != null) {
             //Menu -> edita il messaggio con bottone back
+
+            //Bottone
             InlineKeyboardButton backButton = InlineKeyboardButton.builder()
                     .text("⬅️ Back To Race Menu\n(Concludi Inserimento)")
                     .callbackData("menu:race")
                     .build();
 
-            //Bottone
+            //Riga Sempre esistente
             InlineKeyboardRow row = new InlineKeyboardRow(List.of(backButton));
 
-            InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                    .keyboard(List.of(row))
-                    .build();
+            //Keyboard sempre esistente
+            InlineKeyboardMarkup keyboard;
+
+            //Si puó salvare solo se esiste il pilota e solo se nel menu
+            if(!constructorInfo.contains("❌ Scuderia")) {
+                InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
+                        .text("💾 Salva")
+                        .callbackData("save:constructor:" + constructorId + ":" + firstName) //Formato: save:tipo:id:nome
+                        .build();
+
+                InlineKeyboardRow saveButtonRow = new InlineKeyboardRow(saveButton);
+
+                keyboard = InlineKeyboardMarkup.builder()
+                        .keyboard(List.of(saveButtonRow, row))
+                        .build();
+            }
+            else {
+                keyboard = InlineKeyboardMarkup.builder()
+                        .keyboard(List.of(row))
+                        .build();
+            }
 
             EditMessageText edit = EditMessageText.builder()
                     .chatId(chatId)
