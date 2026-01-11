@@ -1,5 +1,6 @@
 package org.SimOneSpeedBot.bot;
 
+import org.SimOneSpeedBot.callback.BookmarksCallback.SaveCallbackHandler;
 import org.SimOneSpeedBot.callback.CallbackHandler;
 import org.SimOneSpeedBot.callback.MainMenuCallbackHandler;
 import org.SimOneSpeedBot.callback.RaceCallback.RaceCallbackHandler;
@@ -73,7 +74,8 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                     new RaceCallbackHandler(telegramClient, savedMessageId != null ?
                             savedMessageId : callbackQuery.getMessage().getMessageId(), hub, userStates),
                     new SeasonCallbackHandler(telegramClient, savedMessageId != null ?
-                            savedMessageId : callbackQuery.getMessage().getMessageId(), hub, userStates)
+                            savedMessageId : callbackQuery.getMessage().getMessageId(), hub, userStates),
+                    new SaveCallbackHandler(telegramClient)
             );
 
             boolean handled = false;
@@ -85,8 +87,8 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                 }
             }
 
-            //Se nessun handler ha gestito il callback
-            if (!handled) {
+            //Se nessun handler ha gestito il callback e il callback non é saved (serve solo per UI non per fare altro e non é un errore)
+            if (!handled && !callbackQuery.getData().equals("saved")) {
                 try {
                     telegramClient.execute(
                             AnswerCallbackQuery.builder()

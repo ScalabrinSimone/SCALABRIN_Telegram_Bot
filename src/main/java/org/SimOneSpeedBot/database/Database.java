@@ -53,6 +53,7 @@ public class Database {
                     type TEXT NOT NULL, -- "driver", "constructor", "season"
                     entityId TEXT NOT NULL, -- "hamilton", "ferrari", "2024"
                     entityName TEXT, -- "Lewis Hamilton", "Ferrari", "Stagione 2024"
+                    message TEXT, -- Testo
                     savedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (userId) REFERENCES users(userId)
                 )
