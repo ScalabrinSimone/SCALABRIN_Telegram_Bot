@@ -121,7 +121,7 @@ public class ConstructorCommand implements Command {
             if(!constructorInfo.contains("❌ Scuderia")) {
                 InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
                         .text("💾 Salva")
-                        .callbackData("save:constructor:" + firstName) //Formato: save:tipo:nome
+                        .callbackData("save:constructor:" + constructor.getConstructorId() + ":" + constructor.getName()) //Formato: save:tipo:id:nome
                         .build();
 
                 InlineKeyboardRow saveButtonRow = new InlineKeyboardRow(saveButton);

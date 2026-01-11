@@ -129,7 +129,7 @@ public class SeasonCommand implements Command {
             if (!seasonInfo.contains("❌")) {
                 InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
                         .text("💾 Salva")
-                        .callbackData("save:season:" + year + ":Stagione " + year)
+                        .callbackData("save:season:" + year + ":stagione " + year) //Formato save:season:anno:stagione anno
                         .build();
 
                 InlineKeyboardRow saveButtonRow = new InlineKeyboardRow(saveButton);
