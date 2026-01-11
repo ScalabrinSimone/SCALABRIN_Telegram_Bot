@@ -29,31 +29,26 @@ public class SeasonCommand implements Command {
 
     @Override
     public void execute(long chatId, String[] args) {
-        String yearString;
-
         //Se non ci sono argomenti, usa la stagione corrente
         if (args.length == 0) {
-            yearString = String.valueOf(LocalDate.now().getYear());
+            int currentYear = LocalDate.now().getYear();
+            processSeason(chatId, currentYear, null, false);
         } else {
-            yearString = args[0].trim();
-        }
-
-        int yearInt;
-
-        //Controlla che sia un numero
-        try {
-            yearInt = Integer.parseInt(yearString);
-            processSeason(chatId, yearInt, null, false);
-        } catch (NumberFormatException e) {
-            SendMessage errorMsg = SendMessage.builder()
-                    .chatId(chatId)
-                    .text("❌ Input errato. Inserisci un anno valido (es: 2024, 2023)")
-                    .build();
-
+            //Processa l'anno fornito
             try {
-                client.execute(errorMsg);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                int year = Integer.parseInt(args[0].trim());
+                processSeason(chatId, year, null, false);
+            }catch (NumberFormatException e) {
+                SendMessage errorMsg = SendMessage.builder()
+                        .chatId(chatId)
+                        .text("❌ Input errato. Inserisci un anno valido (es: 2024, 2023)")
+                        .build();
+
+                try {
+                    client.execute(errorMsg);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }
