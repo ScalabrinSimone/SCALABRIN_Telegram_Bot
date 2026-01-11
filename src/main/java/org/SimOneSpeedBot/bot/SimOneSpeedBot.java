@@ -70,7 +70,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
 
             List<CallbackHandler> handlers = List.of(
                     new MainMenuCallbackHandler(telegramClient, savedMessageId != null ?
-                            savedMessageId : callbackQuery.getMessage().getMessageId(), userStates, user), //Passo lo userStates per permettere di scrivere piú drivers. Passo user per poterlo usare in alcuni comandi
+                            savedMessageId : callbackQuery.getMessage().getMessageId(), userStates, callbackQuery.getFrom()), //Passo lo userStates per permettere di scrivere piú drivers. Passo user per poterlo usare in alcuni comandi NON deve passare per start
                     new RaceCallbackHandler(telegramClient, savedMessageId != null ?
                             savedMessageId : callbackQuery.getMessage().getMessageId(), hub, userStates),
                     new SeasonCallbackHandler(telegramClient, savedMessageId != null ?

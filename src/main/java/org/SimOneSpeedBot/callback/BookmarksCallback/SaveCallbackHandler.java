@@ -5,6 +5,7 @@ import org.SimOneSpeedBot.database.Bookmarks.BookmarkManager;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
@@ -43,8 +44,12 @@ public class SaveCallbackHandler implements CallbackHandler {
         String entityId = parts[2]; //Da api
         String entityName = parts[3];
 
+        //Recupera il testo del messaggio (senza i bottoni)
+        Message message = (Message) callbackQuery.getMessage(); //Il callbackQuery.getMessage() ritorna un oggetto MaybeInaccessibleMessage
+        String messageText = message.getText() != null ? message.getText() : "";
+
         //Salva nel database
-        boolean saved = BookmarkManager.saveBookmark(userId, type, entityId, entityName); //Salva il bookmark
+        boolean saved = BookmarkManager.saveBookmark(userId, type, entityId, entityName, messageText); //Salva il bookmark
 
         //Risposte al callback diverse se per Season (torna al suo menu) oppure per driver e constructor (race menu)
         if (saved && type.equals("season")) {
@@ -74,7 +79,7 @@ public class SaveCallbackHandler implements CallbackHandler {
 
             try {
                 client.execute(edit);
-                answerCallback(callbackQuery, "✅ Salvato con successo!");
+                answerCallback(callbackQuery, "✅ Salvato con successo!"); //Tendina in alto per confermare il salvataggio
             } catch (Exception e) {
                 e.printStackTrace();
                 answerCallback(callbackQuery, "❌ Errore salvataggio");
@@ -115,7 +120,7 @@ public class SaveCallbackHandler implements CallbackHandler {
             }
         }
         else {
-            answerCallback(callbackQuery, "❌ Errore salvataggio");
+            answerCallback(callbackQuery, "❌ Giá salvato"); //Probabilmente giá salvato POTREI METTERE IL PULSANTE CHE LO DICE
         }
 
         return true; //Gestito

@@ -8,13 +8,13 @@ import java.util.*;
 public class BookmarkManager {
 
     //Salva un bookmark
-    public static boolean saveBookmark(long userId, String type, String entityId, String entityName) {
+    public static boolean saveBookmark(long userId, String type, String entityId, String entityName, String message) {
         //Controlla se esiste già
         if (bookmarkExists(userId, type, entityId)) {
             return false; //Già salvato
         }
 
-        String sql = "INSERT INTO bookmarks (userId, type, entityId, entityName) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO bookmarks (userId, type, entityId, entityName, message) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -23,7 +23,9 @@ public class BookmarkManager {
             pstmt.setString(2, type);
             pstmt.setString(3, entityId);
             pstmt.setString(4, entityName);
+            pstmt.setString(5, message);
             pstmt.executeUpdate();
+            //System.out.println("Bookmark salvato con succeso"); //Debug
             return true;
 
         } catch (SQLException e) {
