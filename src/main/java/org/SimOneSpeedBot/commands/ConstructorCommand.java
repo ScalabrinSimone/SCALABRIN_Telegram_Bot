@@ -1,6 +1,8 @@
 package org.SimOneSpeedBot.commands;
 
+import org.SimOneSpeedBot.api.ergast.ConstructorAPI.Constructor;
 import org.SimOneSpeedBot.api.ergast.ErgastAPI;
+import org.apache.commons.lang3.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -52,7 +54,8 @@ public class ConstructorCommand implements Command {
             //Funziona come il comando driver, solo che invece di avere nome e congome ha primo nome e secondo nome (input 1 e input 2)
             String firstName = String.join(" ", args[0]).toLowerCase(); //Ci deve essere un nome
             String secondName = args.length != 1 ? String.join(" ", args[1]).toLowerCase() : ""; //Non é detto che ci sia il secondo
-            String constructorInfo = new ErgastAPI().fetchConstructor(firstName, secondName);
+            Constructor constructor = new ErgastAPI().fetchConstructor(firstName, secondName);
+            String constructorInfo = (constructor != null) ? constructor.toString() : "❌ Scuderia " + (StringUtils.capitalize(firstName) + (!secondName.equals("") ? StringUtils.capitalize(secondName) + " " : "")) + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: ferrari, Alfa romeo o aston Martin).";;
 
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
@@ -96,7 +99,8 @@ public class ConstructorCommand implements Command {
         firstName = firstName.toLowerCase();
         secondName = secondName.toLowerCase();
 
-        String constructorInfo = new ErgastAPI().fetchConstructor(firstName, secondName);
+        Constructor constructor = new ErgastAPI().fetchConstructor(firstName, secondName);
+        String constructorInfo = constructor != null ? constructor.toString() : "❌ Scuderia " + (StringUtils.capitalize(firstName) + (!secondName.equals("") ? StringUtils.capitalize(secondName) + " " : "")) + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: ferrari, Alfa romeo o aston Martin).";
 
         if (messageId != null) {
             //Menu -> edita il messaggio con bottone back

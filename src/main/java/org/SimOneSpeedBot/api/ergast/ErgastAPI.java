@@ -76,12 +76,12 @@ public class ErgastAPI {
     }
 
     //Constructor
-    public String fetchConstructor(String firstName, String secondName)
+    public Constructor fetchConstructor(String firstName, String secondName)
     {
         String constructorId = secondName.equals("") ? firstName : firstName + "_" + secondName; //caso ferrari e aston_martin
 
         //Voglio che vengano gestiti altri inserimenti
-        String result = tryFetchConstructor(constructorId); //Primo controllo classico.
+        Constructor result = tryFetchConstructor(constructorId); //Primo controllo classico.
         if (result != null) {
             return result;
         }
@@ -119,10 +119,10 @@ public class ErgastAPI {
 
         //Se ancora non trova, ritorna messaggio di errore
         //StringUtils.capitalize(*stringa*) rende la prima lettera maiuscola.
-        return "❌ Scuderia " + (StringUtils.capitalize(firstName) + (!secondName.equals("") ? StringUtils.capitalize(secondName) + " " : "")) + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: ferrari, Alfa romeo o aston Martin).";
+        return null;
 
     }
-    private String tryFetchConstructor(String constructorId) {
+    private Constructor tryFetchConstructor(String constructorId) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "constructors/" + constructorId + ".json"))
                 .GET()
@@ -147,7 +147,7 @@ public class ErgastAPI {
             }
             else {
                 Constructor team = mrData.getConstructorTable().getConstructors().getFirst(); //Prende il primo (= get(0))
-                return team.toString();
+                return team;
             }
         }
         catch (IOException | InterruptedException e) {
