@@ -70,8 +70,8 @@ public class BookmarkManager {
         }
     }
 
-    //Ottieni tutti i bookmark di un utente per categoria
-    public static List<Bookmark> getBookmarksByType(long userId, String type) {
+    //Ottieni tutti i bookmark di un utente per una categoria MODIFICA
+    public static List<Bookmark> getBookmarkByType(long userId, String type) {
         List<Bookmark> bookmarks = new ArrayList<>();
         String sql = "SELECT * FROM bookmarks WHERE userId = ? AND type = ? ORDER BY savedAt DESC";
 
@@ -89,6 +89,36 @@ public class BookmarkManager {
                         rs.getString("type"),
                         rs.getString("entityId"),
                         rs.getString("entityName"),
+                        rs.getString("message"),
+                        rs.getString("savedAt")
+                ));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Errore recupero bookmark: " + e.getMessage());
+        }
+
+        return bookmarks;
+    }
+    //Ottieni tutti i bookmark di un utente per categoria
+    public static List<Bookmark> getBookmarksByType(long userId){
+        List<Bookmark> bookmarks = new ArrayList<>();
+        String sql = "SELECT * FROM bookmarks WHERE userId = ? ORDER BY savedAt DESC";
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                bookmarks.add(new Bookmark(
+                        rs.getInt("id"),
+                        rs.getLong("userId"),
+                        rs.getString("type"),
+                        rs.getString("entityId"),
+                        rs.getString("entityName"),
+                        rs.getString("message"),
                         rs.getString("savedAt")
                 ));
             }

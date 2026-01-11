@@ -1,5 +1,7 @@
 package org.SimOneSpeedBot.keyboard.BookMarkKeyboards;
 
+import org.SimOneSpeedBot.database.Bookmarks.Bookmark;
+import org.SimOneSpeedBot.database.Bookmarks.BookmarkManager;
 import org.SimOneSpeedBot.keyboard.MenuKeyboard;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -9,6 +11,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.awt.print.Book;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookMarkKeyboard implements MenuKeyboard {
@@ -16,7 +20,7 @@ public class BookMarkKeyboard implements MenuKeyboard {
     private final int messageId;
     private final User user;
 
-    public BookMarkKeyboard(TelegramClient client, int messageId, User user) {this.client = client; this.messageId = messageId; this.user = user;}
+    public BookMarkKeyboard(TelegramClient client, int messageId, User user) { this.client = client; this.messageId = messageId; this.user = user; }
 
     @Override
     public Message sendInlineKeyboard(long chatId) {
@@ -27,33 +31,63 @@ public class BookMarkKeyboard implements MenuKeyboard {
         //Dovrebbe crearli in base a quante info ha l'utente (gli passo il database e il suo metodo) e se ha troppe cose dentro mette frecce per navigare
         //Crea i bottoni
 
+        //Recupera le categorie disponibili
+        List<Bookmark> categories = BookmarkManager.getBookmarksByType(user.getId());
 
+        //Crea la keyboard
+        InlineKeyboardMarkup keyboard = null;
 
-        InlineKeyboardButton modificaButton = InlineKeyboardButton.builder()
-                .text("Errore")
-                .callbackData("bookMark:errore") //Modifica
-                .build();
+        //Righe
+        List<InlineKeyboardRow> rows = new ArrayList<>();
 
+        //Bottone back sempre presente
         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
                 .text("⬅️ Back To Utils Menu")
                 .callbackData("menu:utils")
                 .build();
 
-        //Crea la prima riga di bottoni
-        InlineKeyboardRow upperRow = new InlineKeyboardRow(
-                List.of(modificaButton)
-        );
-        //Crea la seconda riga di bottoni
-        InlineKeyboardRow bottomRow = new InlineKeyboardRow(
-                List.of(backButton)
-        );
+        //Se non ci sono bookmarks salvati
+        if (categories.isEmpty()) {
+            InlineKeyboardButton modificaButton = InlineKeyboardButton.builder()
+                    .text("📭 Nessun Bookmark salvato!")
+                    .callbackData("saved") //Non da errori di alcun tipo
+                    .build();
 
-        //Crea la tastiera
-        InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                .keyboard(List.of(upperRow, bottomRow))
-                .build();
+            //Crea la prima riga di bottoni
+            rows.add(new InlineKeyboardRow(modificaButton));
 
-        //Modifica il messaggio
+            //Crea la seconda riga di bottoni
+            rows.add(new InlineKeyboardRow(backButton));
+
+            //Crea la tastiera
+            keyboard = InlineKeyboardMarkup.builder()
+                    .keyboard(rows)
+                    .build();
+        }
+        else //C'é almeno 1 bookmark salvato
+        {
+            for (Bookmark category : categories) {
+                String categoryName = switch (category.getType()) //Prende il tipo di ogni categoria
+                {
+                    case "driver" -> "🏎️ Piloti";
+                    case "constructor" -> "🏗️ Costruttori";
+                    case "season" -> "📅 Stagioni";
+                    default -> ""; //Metto solo perché lo seitch deve coprire tutte le possibilitá
+                };
+
+                //Aggiunge il bottone
+                InlineKeyboardButton categoryButton = InlineKeyboardButton.builder()
+                        .text(categoryName)
+                        .callbackData("bookmark:" + category + ":1") //Formato: bookmark:tipo:pagina
+                        .build();
+
+                rows.add(new InlineKeyboardRow(categoryButton));
+            }
+
+            rows.add(new InlineKeyboardRow(backButton)); //Aggiungo il bottone per tornare indietro
+        }
+
+        //Modifica il messaggio sia che abbia piú o meno bottoni
         EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
                 .messageId(messageId)
