@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 
 public class SeasonCallbackHandler implements CallbackHandler {
@@ -17,12 +18,14 @@ public class SeasonCallbackHandler implements CallbackHandler {
     private final MainMenuKeyboard mainMenuKeyboard;
     private final int messageId;
     private final CommandHub hub;
+    private final Map<Long, String> userStates;
 
-    public SeasonCallbackHandler(TelegramClient client, int messageId, CommandHub hub) {
+    public SeasonCallbackHandler(TelegramClient client, int messageId, CommandHub hub, Map<Long, String> userStates) {
         this.client = client;
         this.mainMenuKeyboard = new MainMenuKeyboard(client);
         this.messageId = messageId;
         this.hub = hub;
+        this.userStates = userStates;
     }
 
     @Override
@@ -53,11 +56,13 @@ public class SeasonCallbackHandler implements CallbackHandler {
             case "race:season:now" -> {
                 int year = LocalDate.now().getYear();
                 SeasonCommand seasonCmd = (SeasonCommand) hub.getCommand("season");
+                userStates.put(chatId, "AWAITING_SEASON_YEAR_EDIT:" + messageId); //Imposta prima lo stato
                 seasonCmd.processSeason(chatId, year, messageId, true);
             }
             case "race:season:last" -> {
                 int year = LocalDate.now().getYear() - 1;
                 SeasonCommand seasonCmd = (SeasonCommand) hub.getCommand("season");
+                userStates.put(chatId, "AWAITING_SEASON_YEAR_EDIT:" + messageId); //Imposta prima lo stato
                 seasonCmd.processSeason(chatId, year, messageId, true);
             }
 

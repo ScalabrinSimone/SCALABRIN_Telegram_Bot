@@ -84,11 +84,21 @@ public class SeasonCommand implements Command {
             String errorText = "❌ Anno non valido. Inserisci un anno tra 1950 e " + currentYear;
 
             if (messageId != null) {
-                //Menu -> edita il messaggio
+                //Menu -> edita il messaggio con bottone back per tornare a season
+                InlineKeyboardButton backButton = InlineKeyboardButton.builder()
+                        .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
+                        .callbackData("race:season")
+                        .build();
+
+                InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
+                        .keyboard(List.of(new InlineKeyboardRow(List.of(backButton))))
+                        .build();
+
                 EditMessageText edit = EditMessageText.builder()
                         .chatId(chatId)
                         .messageId(messageId)
                         .text(errorText)
+                        .replyMarkup(keyboard) //Aggiungi la tastiera
                         .build();
 
                 try {
@@ -118,8 +128,8 @@ public class SeasonCommand implements Command {
         if (messageId != null) {
             //Menu -> edita con bottone back e salva
             InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                    .text("⬅️ Back To Race Menu\n(Concludi Inserimento)")
-                    .callbackData("menu:race")
+                    .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
+                    .callbackData("race:season")
                     .build();
 
             InlineKeyboardRow row = new InlineKeyboardRow(List.of(backButton));

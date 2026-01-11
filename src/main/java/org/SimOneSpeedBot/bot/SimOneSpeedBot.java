@@ -73,7 +73,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                     new RaceCallbackHandler(telegramClient, savedMessageId != null ?
                             savedMessageId : callbackQuery.getMessage().getMessageId(), hub, userStates),
                     new SeasonCallbackHandler(telegramClient, savedMessageId != null ?
-                            savedMessageId : callbackQuery.getMessage().getMessageId(), hub)
+                            savedMessageId : callbackQuery.getMessage().getMessageId(), hub, userStates)
             );
 
             boolean handled = false;
