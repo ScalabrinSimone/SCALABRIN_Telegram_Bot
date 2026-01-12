@@ -32,10 +32,10 @@ public class Constructor {
     @Override
     public String toString() {
         return String.format(
-                "ℹ Informazioni:\n\n🏠 Nome: %s.\n🌍 Nazionalitá: %s.\n\n🔗 Url (wikipedia): %s.",
+                "ℹ <b>Informazioni:</b>\n\n🏠 <b>Nome:</b> %s.\n🌍 <b>Nazionalitá:</b> %s.\n\n🔗 <b>Url (wikipedia)</b>: %s.",
                 name,
                 nationality,
-                url != null ? url : "*dato non disponibile*"
+                url != null ? url : "*<i>dato non disponibile</i>*"
         );
     }
 }

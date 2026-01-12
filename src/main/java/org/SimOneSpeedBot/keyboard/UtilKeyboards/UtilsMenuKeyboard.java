@@ -82,8 +82,9 @@ public class UtilsMenuKeyboard implements MenuKeyboard {
         EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
                 .messageId(messageId)
-                .text("ℹ️ Seleziona una utility:")
+                .text("<b>⚙ Utils Menu</b>\n\n<i>Gestisci i tuoi dati salvati e preferenze:</i>")
                 .replyMarkup(keyboard)
+                .parseMode("HTML")
                 .build();
 
         try {

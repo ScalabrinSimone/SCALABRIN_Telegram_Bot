@@ -17,12 +17,13 @@ public class ConstructorCommand implements Command {
     private final TelegramClient client;
     private final Map<Long, String> userStates;
     private final String textToSend = """
-            🏁 Inserisci il nome del team...
+            <b>🔍 Cerca un team</b>
             
-            ℹ️ Scrivi il nome della squadra come vuoi (solo 2 nomi accettati), se é composto da piú nomi separali con uno spazio. Se il nome della scuderia ha ino sponsor NON metterlo (es. Aston Martin Aramco Formula One Team → Aston Martin)
-            In caso di "visa cash app red bull racing team" inserisci semplicemente rb.
+            <i>Inserisci il nome (<b>obbligatorio</b>) della squadra (<i>max 2 accettati</i>) per cercare:</i>
             
-            Se vieni dal menu puoi continuare a scrivere i nomi dei piloti, per smettere l'inserimento, premere il pulsante "Back To Race Menu".
+            ⚠ <b>Se il nome della scuderia ha ino sponsor <u>NON</u> metterlo</b> e alcune squadre necessitano dell'abbreviazione (guarda esempio).
+            💡 <b>Esempio:</b> <code>Aston Msrtin</code> per <i>Aston Martin Aramco Formula One Team</i>, <code>RB</code> per <i>Visa Cash App Red Bull Racing Team</i>.
+            ℹ️ <i>Per concludere l'inserimento <b>dal menu</b>, premere il pulsante "Back to Race Menu"</i>.
             """;
 
     public ConstructorCommand(TelegramClient client, Map<Long, String> userStates) {

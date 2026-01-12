@@ -12,8 +12,8 @@ import java.util.List;
 public class PingCommand implements Command {
     private final TelegramClient client;
     private final String messageToSend = """
-            Pong 🏓!
-            Bot online con i seguenti paramentri:
+            <b>Pong 🏓!</b>
+            Bot <b>online</b> con i seguenti paramentri:
             ChatId: """;
 
     public PingCommand(TelegramClient client) {
@@ -25,6 +25,7 @@ public class PingCommand implements Command {
         SendMessage message = SendMessage.builder()
                 .chatId(chatId)
                 .text(messageToSend + " " + chatId + ".")
+                .parseMode("HTML")
                 .build();
 
         try {
@@ -50,6 +51,7 @@ public class PingCommand implements Command {
                 .chatId(chatId)
                 .messageId(messageId)
                 .text(messageToSend + " " + chatId + ".")
+                .parseMode("HTML")
                 .replyMarkup(keyboard) //Aggiungi la keyboard con il bottone indietro
                 .build();
 

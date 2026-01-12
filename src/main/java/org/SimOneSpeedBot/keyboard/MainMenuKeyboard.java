@@ -44,7 +44,7 @@ public class MainMenuKeyboard implements MenuKeyboard {
         //Crea il messaggio
         SendMessage message = SendMessage.builder()
                 .chatId(chatId)
-                .text("Seleziona una categoria per iniziare:")
+                .text("ℹ Seleziona una categoria per iniziare:")
                 .replyMarkup(keyboard)
                 .build();
 

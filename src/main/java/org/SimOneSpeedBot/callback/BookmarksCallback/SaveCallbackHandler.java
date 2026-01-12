@@ -118,7 +118,7 @@ public class SaveCallbackHandler implements CallbackHandler {
                 answerCallback(callbackQuery, "❌ Errore salvataggio");
             }
         } else {
-            answerCallback(callbackQuery, "❌ Giá salvato"); //Probabilmente giá salvato POTREI METTERE IL PULSANTE CHE LO DICE
+            answerCallback(callbackQuery, "⚠ Giá salvato"); //Probabilmente giá salvato POTREI METTERE IL PULSANTE CHE LO DICE
         }
 
         return true; //Gestito

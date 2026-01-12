@@ -16,10 +16,13 @@ public class SeasonCommand implements Command {
     private final TelegramClient client;
     private final Map<Long, String> userStates;
     private final String textToSend = """
-            🏁 Inserisci l'anno della stagione...
+            <b>🔍 Cerca una stagione</b>
             
-            ℹ️ Non scrivere anni superiori a quello attuale e ricorda che la prima stagione di formula 1 risale al 1950.
-            Scrivi solo il numero dell'anno.
+            <i>Inserisci l'anno in formato numerico per cercare:</i>
+            
+            💡 <b>Esempio:</b> <code>1950</code> per <i>Stagione F1 1950</i>.
+            ⚠ <b>Inserisci anni tra il 1950 (prima stagione ufficiale di F1) e l'anno attuale</b>.
+            ℹ <i>Per concludere l'inserimento <b>dal menu</b>, premere il pulsante "Back to Season Menu"</i>.
             """;
 
     public SeasonCommand(TelegramClient client, Map<Long, String> userStates) {
@@ -41,7 +44,8 @@ public class SeasonCommand implements Command {
             } catch (NumberFormatException e) {
                 SendMessage errorMsg = SendMessage.builder()
                         .chatId(chatId)
-                        .text("❌ Input errato. Inserisci un anno valido (es: 2024, 2023)")
+                        .text("<b>❌ Input errato.</b> <i>Inserisci un anno <u>valido</u> (es: 2024, 2023)</i>")
+                        .parseMode("HTML")
                         .build();
 
                 try {
@@ -62,6 +66,7 @@ public class SeasonCommand implements Command {
                 .chatId(chatId)
                 .messageId(messageId)
                 .text(textToSend)
+                .parseMode("HTML")
                 .build();
 
         try {
@@ -81,7 +86,7 @@ public class SeasonCommand implements Command {
         //Controlla il range
         int currentYear = LocalDate.now().getYear();
         if (year < 1950 || year > currentYear) {
-            String errorText = "❌ Anno non valido. Inserisci un anno tra 1950 e " + currentYear;
+            String errorText = "<b>❌ Anno non valido.</b> <i>Inserisci un anno <u>tra</u> 1950 e " + currentYear + "</i>";
 
             if (messageId != null) {
                 //Menu -> edita il messaggio con bottone back per tornare a season
@@ -98,6 +103,7 @@ public class SeasonCommand implements Command {
                         .chatId(chatId)
                         .messageId(messageId)
                         .text(errorText)
+                        .parseMode("HTML")
                         .replyMarkup(keyboard) //Aggiungi la tastiera
                         .build();
 
@@ -111,6 +117,7 @@ public class SeasonCommand implements Command {
                 SendMessage message = SendMessage.builder()
                         .chatId(chatId)
                         .text(errorText)
+                        .parseMode("HTML")
                         .build();
 
                 try {
@@ -157,6 +164,7 @@ public class SeasonCommand implements Command {
                     .chatId(chatId)
                     .messageId(messageId)
                     .text(seasonInfo)
+                    .parseMode("HTML")
                     .replyMarkup(keyboard)
                     .build();
 

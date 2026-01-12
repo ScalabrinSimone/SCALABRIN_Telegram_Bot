@@ -12,23 +12,60 @@ import java.util.List;
 public class InfoCommand implements Command {
     private final TelegramClient client;
     private final String messageToSend = """
-            ℹ️ Info del bot:\n\nIl bot utilizza 2 API: 
-            - Ergast (https://api.jolpi.ca/ergast/) --> Per i dati più generali, disponibili dal 1950
-            ad oggi.
-            
-            - OpenF1 (https://openf1.org/) --> Per gare dal 2023 ad oggi, con dati e telemetrie in tempo reale.
-            
-            I dati possono essere salvati in un database SQLite e si può essere guidati dalla grafica oppure inserire un 
-            comando con tutta la lista di cose da inserire (solo per alcune operazioni semplici, per tutti i comandi 
-            completi usare l'interfaccia).
-            
-            Se non si sa come funziona o cosa fa un comando, si può scrivere /comando help. Il risultato sarà una breve
-            guida a questo.
-            
-            Un esempio:
-            /driver leclerc 2023
-            
-            Divertiti ad utilizzarlo!""";
+        <b>📖 Informazioni su <a href="t.me/SimOneSpeedBot">@SimOneSpeedBot</a></b>
+        
+        ━━━━━━━━━━━━━━━━━━━━
+        
+        <b>🏎️ MENU - Race Info</b>
+        Cerca e visualizza informazioni su:
+        
+        <b>👤 Piloti</b>
+        • Ricerca per lettera iniziale del cognome
+        • Dettagli: nazionalità, data di nascita, numero
+        • Link a Wikipedia per approfondimenti
+        
+        <b>🏗️ Costruttori</b>
+        • Lista completa team F1 (attuali e storici)
+        • Nazionalità e link ufficiali
+        • Dati dal 1950 ad oggi
+        
+        <b>📅 Stagioni</b>
+        • Consulta dati di stagioni specifiche
+        • Circuiti, gare e risultati
+        • Statistiche complete
+        
+        ━━━━━━━━━━━━━━━━━━━━
+        <b>⚙️ MENU - Utils</b>
+        Trova queste pagine e impostazioni (tra cui anche test di popup di errore) del bot non collegate con la formula 1, come:
+        
+        <b>💾 BOOKMARKS</b>
+        Salva i tuoi elementi preferiti <u>(solo con menu!)</u>:
+        • Organizzazione automatica per categoria
+        • Massimo 10 elementi per pagina
+        • Eliminazione rapida
+        
+        <b>Come salvare:</b>
+        1. Cerca un pilota/costruttore/stagione
+        2. Premi il pulsante <b>💾 Salva</b>
+        3. Accedi ai salvati da <b>⚙️ Utils → 🔖 Bookmarks</b>
+        
+        ━━━━━━━━━━━━━━━━━━━━
+        
+        <b>👩‍💻 COMANDI</b>
+        Tutti i comandi sono disponibili nella <b>tendina in basso a sinistra</b>, ma te li ho riportati anche qui, copiabili con un click 😲:
+        <code>/start</code> - Mostra messaggio di benvenuto
+        <code>/info</code> - Mostra questa guida
+        <code>/showmenu</code> - Riporta il menu a bottoni in basso
+        <code>/driver</code> *args/vuoto* - Ricerca info per un pilota, puoi cercarlo subito mettendo argomenti
+        <code>/constructor</code> *args* - Ricerca info per una scuderia, puoi cercarla subito mettendo argomenti
+        <code>/season</code> *args* - Ricerca info per una scuderia, puoi cercarla subito mettendo argomenti oppure lasciare vuoto e restituirá la stagione corrente
+        <code>/ping</code> - Controlla se il bot é online
+        <code>/project</code> - Ottieni le informazioni del progetto online
+        
+        ━━━━━━━━━━━━━━━━━━━━
+        
+        <i>💡 Suggerimento: Tutti i dati provengono dall'API <a href="https://api.jolpi.ca/ergast/">Ergast</a>, il reupload del database più completo per la Formula 1!</i>
+        """;;
 
     public InfoCommand(TelegramClient client) {
         this.client = client;
@@ -39,6 +76,7 @@ public class InfoCommand implements Command {
         SendMessage message = SendMessage.builder()
                 .chatId(chatId)
                 .text(messageToSend)
+                .parseMode("HTML")
                 .build();
 
         try {
@@ -64,6 +102,7 @@ public class InfoCommand implements Command {
                 .chatId(chatId)
                 .messageId(messageId)
                 .text(messageToSend)
+                .parseMode("HTML")
                 .replyMarkup(keyboard) //Aggiungi la keyboard con il bottone indietro
                 .build();
 

@@ -51,7 +51,7 @@ public class BookMarkKeyboard implements MenuKeyboard {
         //Se non ci sono bookmarks salvati
         if (categories.isEmpty()) {
             InlineKeyboardButton modificaButton = InlineKeyboardButton.builder()
-                    .text("📭 Nessun Bookmark salvato!")
+                    .text("<i><b>📭 Nessun</b> Bookmark salvato<i>")
                     .callbackData("saved") //Non da errori di alcun tipo
                     .build();
 
@@ -97,8 +97,9 @@ public class BookMarkKeyboard implements MenuKeyboard {
         EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
                 .messageId(messageId)
-                .text("🏡 Benvenuto " + (user.getUserName() != null ? "@" + user.getUserName() : user.getFirstName()) +
-                        "\n\nℹ️ Seleziona un elemento salvato:") //Controlla se ci sono elementi salvati. Se non c'é il nome utente dell'utente, usa il nome.
+                .text("<b>🏡 Benvenuto nei tuoi Bookmarks " + (user.getUserName() != null ? "@" + user.getUserName() : user.getFirstName()) +
+                        "!</b>\n\nℹ️ Seleziona un elemento salvato:") //Controlla se ci sono elementi salvati. Se non c'é il nome utente dell'utente, usa il nome.
+                .parseMode("HTML")
                 .replyMarkup(keyboard)
                 .build();
 

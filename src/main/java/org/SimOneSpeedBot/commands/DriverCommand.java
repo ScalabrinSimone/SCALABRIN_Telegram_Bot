@@ -18,12 +18,14 @@ public class DriverCommand implements Command {
     private final Map<Long, String> userStates; //chatId -> stato attuale. Serve per aspettare un
     //input dall'utente.
     private final String textToSend = """
-            🏁 Inserisci il nome del pilota...
-            
-            ℹ️ Puoi scrivere nome e cognome, cognome nome oppure cognome, sconsigliato se esistono piú piloti con lo stesso cognome (es: Verstappen ritorna il padre; max verstappen, Verstappen Max ritorna il figlio).
-            
-            Se vieni dal menu puoi continuare a scrivere i nomi dei piloti, per smettere l'inserimento, premere il pulsante "Back To Race Menu".
-            """;
+                <b>🔍 Cerca un pilota</b>
+                
+                <i>Inserisci il cognome (<b>obbligatorio</b>), nome cognome o cognome nome per cercare:</i>
+                
+                💡 <b>Esempio:</b> <code>Lewis Hamilton</code> per <i>Lewis Hamilton</i>, <code>Max Verstappen</code> per <i>Max Verstappen</i>.
+                ⚠ <b>Per piloti che hanno un cognome comune (come verstappen con quello del padre), é <u>obbligatorio</u> inserire anche il nome</b>.
+                ℹ <i>Per concludere l'inserimento <b>dal menu</b>, premere il pulsante "Back to Race Menu"</i>.
+                """;
 
     public DriverCommand(TelegramClient client, Map<Long, String> userStates) {
         this.client = client;
@@ -53,11 +55,12 @@ public class DriverCommand implements Command {
             String driverName = args.length > 1 ? String.join(" ", args[0]).toLowerCase() : "";
             String driverSurname = args.length == 1 ? String.join(" ", args[0]).toLowerCase() : String.join(" ", args[args.length - 1]).toLowerCase();
             Driver driver = new ErgastAPI().fetchDriver(driverName, driverSurname);
-            String driverInfo = (driver != null) ? driver.toString() : "❌ Pilota " + (!driverName.equals("") ? StringUtils.capitalize(driverName) + " " : "") + StringUtils.capitalize(driverSurname) + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: Verstappen, Max Verstappen o Verstappen Max).";
+            String driverInfo = (driver != null) ? driver.toString() : "❌ <b>Pilota " + (!driverName.equals("") ? StringUtils.capitalize(driverName) + " " : "") + StringUtils.capitalize(driverSurname) + " non trovato</b>\n\nℹ️ <i>Controlla di aver scritto <u>correttamente</u> il nome e cognome</i>.";
 
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
                     .text(driverInfo)
+                    .parseMode("HTML")
                     .build();
 
             try {
@@ -101,7 +104,7 @@ public class DriverCommand implements Command {
         //StringUtils.capitalize(*stringa*) rende la prima lettera maiuscola.
         Driver driver = new ErgastAPI().fetchDriver(driverName, driverSurname);
 
-        String driverInfo = (driver != null) ? driver.toString() : "❌ Pilota " + (!driverName.equals("") ? StringUtils.capitalize(driverName) + " " : "") + StringUtils.capitalize(driverSurname) + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: Verstappen, Max Verstappen o Verstappen Max).";
+        String driverInfo = (driver != null) ? driver.toString() : "❌ <b>Pilota " + (!driverName.equals("") ? StringUtils.capitalize(driverName) + " " : "") + StringUtils.capitalize(driverSurname) + " non trovato</b>\n\nℹ️ <i>Controlla di aver scritto <u>correttamente</u> il nome e cognome</i>.";
 
         if (messageId != null) {
             //Menu -> edita il messaggio con bottone back
@@ -140,6 +143,7 @@ public class DriverCommand implements Command {
                     .chatId(chatId)
                     .messageId(messageId)
                     .text(driverInfo)
+                    .parseMode("HTML")
                     .replyMarkup(keyboard)
                     .build();
 

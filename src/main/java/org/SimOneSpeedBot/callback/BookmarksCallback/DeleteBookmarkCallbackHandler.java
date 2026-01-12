@@ -62,7 +62,14 @@ public class DeleteBookmarkCallbackHandler implements CallbackHandler {
                 EditMessageText edit = EditMessageText.builder()
                         .chatId(chatId)
                         .messageId(messageId)
-                        .text("✅ Bookmark eliminato con successo!\n\nℹ️ Non ci sono più elementi in questa categoria.")
+                        .text("""
+                                <b>✅ Bookmark eliminato!</b>
+                                
+                                <i>ℹ️ Non ci sono più elementi in questa categoria.</i>
+                                
+                                💡 Torna al menu Bookmarks per esplorare altre categorie o salvare nuovi elementi.
+                                """)
+                        .parseMode("HTML")
                         .replyMarkup(keyboard)
                         .build();
 
@@ -86,7 +93,8 @@ public class DeleteBookmarkCallbackHandler implements CallbackHandler {
                 EditMessageText edit = EditMessageText.builder()
                         .chatId(chatId)
                         .messageId(messageId)
-                        .text("✅ Bookmark eliminato con successo!")
+                        .text("<b>✅ Bookmark eliminato con successo!</b>")
+                        .parseMode("HTML")
                         .replyMarkup(keyboard)
                         .build();
 

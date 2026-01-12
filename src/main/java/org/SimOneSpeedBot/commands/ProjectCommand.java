@@ -12,8 +12,10 @@ import java.util.List;
 public class ProjectCommand implements Command {
     private final TelegramClient client;
     private final String messageToSend = """
-            ℹ️ Scopri il progetto su GitHub al seguente link:\n
-            https://github.com/ScalabrinSimone/SCALABRIN_Telegram_Bot/blob/master/README.md""";
+            ℹ️ <b>Scopri il progetto su GitHub al seguente al link!</b>
+            
+            🔗 Link a <a href="https://github.com/ScalabrinSimone/SCALABRIN_Telegram_Bot/blob/master/README.md">GitHub pubblico</a>.
+            """;
 
     public ProjectCommand(TelegramClient client) {
         this.client = client;
@@ -24,6 +26,7 @@ public class ProjectCommand implements Command {
         SendMessage message = SendMessage.builder()
                 .chatId(chatId)
                 .text(messageToSend)
+                .parseMode("HTML")
                 .build();
 
         try {
@@ -49,6 +52,7 @@ public class ProjectCommand implements Command {
                 .chatId(chatId)
                 .messageId(messageId)
                 .text(messageToSend)
+                .parseMode("HTML")
                 .replyMarkup(keyboard) //Aggiungi la keyboard con il bottone indietro
                 .build();
 

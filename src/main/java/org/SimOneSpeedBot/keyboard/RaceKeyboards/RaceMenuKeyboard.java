@@ -68,7 +68,8 @@ public class RaceMenuKeyboard implements MenuKeyboard {
         EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
                 .messageId(messageId)
-                .text("ℹ️ Seleziona la categoria di informazioni da ottenere:")
+                .text("<b>🏎️ Race Menu</b>\n\n<i>Seleziona la categoria di informazioni:</i>")
+                .parseMode("HTML")
                 .replyMarkup(keyboard)
                 .build();
 

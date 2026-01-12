@@ -37,14 +37,14 @@ public class Driver {
     @Override
     public String toString() {
         return String.format(
-                "ℹ Informazioni:\n\n👤 Nome e Cognome: %s %s.\n🌍 Nazionalitá: %s.\n🎂 Nascita: %s.\n🔢 Numero pilota: %s.\n🏷 Abbreviazione: %s.\n\n🔗 Url (wikipedia): %s.",
+                "ℹ <b>Informazioni:</b>\n\n👤 <b>Nome e Cognome:</b> %s %s.\n🌍 <b>Nazionalitá:</b> %s.\n🎂 <b>Nascita:</b> %s.\n🔢 <b>Numero pilota:</b> %s.\n🏷 <b>Abbreviazione:</b> %s.\n\n🔗 <b>Url (wikipedia):</b> %s.",
                 givenName,
                 familyName,
                 nationality,
                 dateOfBirth,
-                permanentNumber != null ? permanentNumber : "*dato non disponibile*", //Gestisco caso di dati non disbonibili
-                code != null ? code : "*dato non disponibile*", //es. Verstappen -> Jos Verstappen (no dati).
-                url != null ? url : "*dato non disponibile*"
+                permanentNumber != null ? permanentNumber : "*<i>dato non disponibile</i>*", //Gestisco caso di dati non disbonibili
+                code != null ? code : "*<i>dato non disponibile</i>*", //es. Verstappen -> Jos Verstappen (no dati).
+                url != null ? url : "*<i>dato non disponibile</i>*"
         );
     }
 }

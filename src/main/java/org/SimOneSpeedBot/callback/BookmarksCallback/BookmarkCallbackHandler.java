@@ -71,8 +71,14 @@ public class BookmarkCallbackHandler implements CallbackHandler {
             default -> type;
         };
 
-        StringBuilder text = new StringBuilder(categoryName + " salvati (Pagina " + page + "/" + totalPages + " - 10 x pagina):\n\n");
-        text.append("Totale: ").append(allBookmarks.size()).append(" elementi (slvati in ordine cronologico discendente)\n\n");
+        String text = String.format("""
+        <b>%s Salvati</b>
+        
+        📄 Pagina <b>%d/%d</b> (10 per pagina)
+        📊 Totale: <b>%d</b> elementi <i>(slvati in ordine cronologico discendente)</i>
+        
+        <i>Clicca su un elemento per visualizzarlo:</i>
+        """, categoryName, page, totalPages, allBookmarks.size());
 
         List<InlineKeyboardRow> rows = new ArrayList<>();
 
@@ -122,7 +128,8 @@ public class BookmarkCallbackHandler implements CallbackHandler {
         EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
                 .messageId(messageId)
-                .text(text.toString())
+                .text(text)
+                .parseMode("HTML")
                 .replyMarkup(keyboard)
                 .build();
 

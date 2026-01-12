@@ -83,6 +83,7 @@ public class ViewBookmarkCallbackHandler implements CallbackHandler {
                 .chatId(chatId)
                 .messageId(messageId)
                 .text(messageText)
+                .parseMode("HTML")
                 .replyMarkup(keyboard)
                 .build();
 

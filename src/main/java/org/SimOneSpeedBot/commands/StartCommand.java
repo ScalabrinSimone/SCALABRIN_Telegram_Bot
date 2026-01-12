@@ -11,18 +11,23 @@ public class StartCommand implements Command {
     private final TelegramClient client;
     private final Map<Long, Integer> menuMessageIds; //Mappa per memorizzare il primo comando mandato
     private final String messageToSend = """
-            Bevenuto nel bot di Telegram della formula 1 creato da Scalabrin Simone!
+                                 <b>🏁 Benvenuto in <a href="t.me/SimOneSpeedBot">@SimOneSpeedBot</a>!</b>
             
-            Cosa può fare questo bot?
-            Scopri subito tutti i comandi dal menu a tendina in basso a sinistra della chat!
+                                 <i>Il tuo assistente personale per le statistiche della Formula 1</i>
             
-            Cosa utilizza e come funziona il seguente bot?
-            Scopri la documentazione e il progetto sul github ufficiale:
-            https://github.com/ScalabrinSimone/SCALABRIN_Telegram_Bot/tree/master
+                                 ━━━━━━━━━━━━━━━━━━━━
+                                 
+                                 📊 <b>Cosa puoi fare:</b>
+                                 • <i>Cerca informazioni</i> su piloti, costruttori e stagioni
+                                 • <i>Salva i tuoi preferiti</i> con i Bookmarks
+                                 • <i>Esplora statistiche</i> dettagliate
             
-            Divertiti!
-            Questo bot è gratis da utilizzare e non servono permessi di alcun tipo. Importalo nelle tue chat e chiunque
-            potrà usarlo!""";
+                                 ⚙️ <b>Comandi disponibili:</b>
+                                 <code>/start</code> - Mostra questo messaggio
+                                 <code>/info</code> - Guida completa
+            
+                                 👇 Usa il menu qui sotto per iniziare (ha piú funzionalitá, come bookmarks e inserimento continuo 😉)!
+                                 """;
 
     public StartCommand(TelegramClient client, Map<Long, Integer> menuMessageIds) {
         this.menuMessageIds = menuMessageIds;
@@ -34,6 +39,7 @@ public class StartCommand implements Command {
         SendMessage message = SendMessage.builder()
                 .chatId(chatId)
                 .text(messageToSend)
+                .parseMode("HTML") //Per formattare in html
                 .build();
 
         try {
