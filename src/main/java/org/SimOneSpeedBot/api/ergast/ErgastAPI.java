@@ -219,4 +219,19 @@ public class ErgastAPI {
             return null;
         }
     }
+
+    //Griglia di partenza
+    public List<GridPosition> fetchStartingGrid(int year, int round){
+
+    }
+
+    //Risultati finali
+    public List<Result> fetchRaceResults(int year, int round){
+
+    }
+
+    //Qualifiche (opzionale)
+    public List<QualifyingResult> fetchQualifying(int year, int round){
+
+    }
 }
