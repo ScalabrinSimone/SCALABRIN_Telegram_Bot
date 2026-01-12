@@ -75,7 +75,6 @@ public class MainMenuCallbackHandler implements CallbackHandler {
                 BookMarkKeyboard keyboard = new BookMarkKeyboard(client, messageId, user);
                 keyboard.editInlineKeyboard(chatId);
             }
-
             case "menu:race" -> {
                 //Rimuove lo stato per continuare a scrivere il driver o il team se attivo
                 if (userStates.get(chatId) != null &&
