@@ -1,4 +1,4 @@
-package org.SimOneSpeedBot.api.ergast.GridAPI;
+package org.SimOneSpeedBot.api.ergast.QualifyingAPI;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class RaceTable {
         return Races;
     }
 
-    public void setRaces(java.util.List<Race> races) {
-        this.Races = races;
+    public void setRaces(List<Race> races) {
+        Races = races;
     }
 }

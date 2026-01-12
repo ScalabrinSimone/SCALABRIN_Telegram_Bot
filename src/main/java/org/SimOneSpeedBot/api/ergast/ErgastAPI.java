@@ -12,6 +12,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ErgastAPI {
@@ -221,17 +222,101 @@ public class ErgastAPI {
     }
 
     //Griglia di partenza
-    public List<GridPosition> fetchStartingGrid(int year, int round){
+    public List<org.SimOneSpeedBot.api.ergast.GridAPI.GridPosition> fetchStartingGrid(int year, int round) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + year + "/" + round + "/grid.json"))
+                .GET()
+                .build();
 
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Gson deserializzatore = new Gson();
+
+            org.SimOneSpeedBot.api.ergast.GridAPI.RootResponse root =
+                    deserializzatore.fromJson(response.body(), org.SimOneSpeedBot.api.ergast.GridAPI.RootResponse.class);
+
+            org.SimOneSpeedBot.api.ergast.GridAPI.MRData mrData = root.getMRData();
+            if (mrData == null || mrData.getRaceTable() == null) {
+                return new ArrayList<>();
+            }
+
+            List<org.SimOneSpeedBot.api.ergast.GridAPI.Race> races = mrData.getRaceTable().getRaces();
+            if (races == null || races.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+            org.SimOneSpeedBot.api.ergast.GridAPI.Race race = races.get(0);
+            return race.getQualifyingResults() != null ? race.getQualifyingResults() : new ArrayList<>();
+
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Errore in richiesta API per la griglia di partenza: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
-    //Risultati finali
-    public List<Result> fetchRaceResults(int year, int round){
+    //Risultati finali della gara
+    public List<org.SimOneSpeedBot.api.ergast.RaceResultAPI.Result> fetchRaceResults(int year, int round) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + year + "/" + round + "/results.json"))
+                .GET()
+                .build();
 
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Gson deserializzatore = new Gson();
+
+            org.SimOneSpeedBot.api.ergast.RaceResultAPI.RootResponse root =
+                    deserializzatore.fromJson(response.body(), org.SimOneSpeedBot.api.ergast.RaceResultAPI.RootResponse.class);
+
+            org.SimOneSpeedBot.api.ergast.RaceResultAPI.MRData mrData = root.getMRData();
+            if (mrData == null || mrData.getRaceTable() == null) {
+                return new ArrayList<>();
+            }
+
+            List<org.SimOneSpeedBot.api.ergast.RaceResultAPI.Race> races = mrData.getRaceTable().getRaces();
+            if (races == null || races.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+            org.SimOneSpeedBot.api.ergast.RaceResultAPI.Race race = races.get(0);
+            return race.getResults() != null ? race.getResults() : new ArrayList<>();
+
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Errore in richiesta API per i risultati della gara: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
-    //Qualifiche (opzionale)
-    public List<QualifyingResult> fetchQualifying(int year, int round){
+    //Risultati qualifiche
+    public List<org.SimOneSpeedBot.api.ergast.QualifyingAPI.QualifyingResult> fetchQualifying(int year, int round) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + year + "/" + round + "/qualifying.json"))
+                .GET()
+                .build();
 
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Gson deserializzatore = new Gson();
+
+            org.SimOneSpeedBot.api.ergast.QualifyingAPI.RootResponse root =
+                    deserializzatore.fromJson(response.body(), org.SimOneSpeedBot.api.ergast.QualifyingAPI.RootResponse.class);
+
+            org.SimOneSpeedBot.api.ergast.QualifyingAPI.MRData mrData = root.getMRData();
+            if (mrData == null || mrData.getRaceTable() == null) {
+                return new ArrayList<>();
+            }
+
+            List<org.SimOneSpeedBot.api.ergast.QualifyingAPI.Race> races = mrData.getRaceTable().getRaces();
+            if (races == null || races.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+            org.SimOneSpeedBot.api.ergast.QualifyingAPI.Race race = races.get(0);
+            return race.getQualifyingResults() != null ? race.getQualifyingResults() : new ArrayList<>();
+
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Errore in richiesta API per le qualifiche: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 }

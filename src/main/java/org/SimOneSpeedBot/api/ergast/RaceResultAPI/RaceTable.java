@@ -1,5 +1,7 @@
 package org.SimOneSpeedBot.api.ergast.RaceResultAPI;
 
+import java.util.List;
+
 public class RaceTable {
     private String season;
     private String round;
