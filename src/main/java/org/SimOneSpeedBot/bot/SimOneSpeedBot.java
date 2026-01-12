@@ -1,6 +1,8 @@
 package org.SimOneSpeedBot.bot;
 
+import org.SimOneSpeedBot.callback.BookmarksCallback.DeleteBookmarkCallbackHandler;
 import org.SimOneSpeedBot.callback.BookmarksCallback.SaveCallbackHandler;
+import org.SimOneSpeedBot.callback.BookmarksCallback.ViewBookmarkCallbackHandler;
 import org.SimOneSpeedBot.callback.CallbackHandler;
 import org.SimOneSpeedBot.callback.MainMenuCallbackHandler;
 import org.SimOneSpeedBot.callback.RaceCallback.RaceCallbackHandler;
@@ -75,7 +77,11 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                             savedMessageId : callbackQuery.getMessage().getMessageId(), hub, userStates),
                     new SeasonCallbackHandler(telegramClient, savedMessageId != null ?
                             savedMessageId : callbackQuery.getMessage().getMessageId(), hub, userStates),
-                    new SaveCallbackHandler(telegramClient)
+                    new SaveCallbackHandler(telegramClient),
+                    new ViewBookmarkCallbackHandler(telegramClient, savedMessageId != null ?
+                            savedMessageId : callbackQuery.getMessage().getMessageId()),
+                    new DeleteBookmarkCallbackHandler(telegramClient, savedMessageId != null ?
+                            savedMessageId : callbackQuery.getMessage().getMessageId())
             );
 
             boolean handled = false;
