@@ -55,7 +55,7 @@ public class SaveCallbackHandler implements CallbackHandler {
         if (saved && type.equals("season")) {
             //Disattiva il pulsante salva
             InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                    .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
+                    .text("⬅️ Back To Season Menu\n (Concludi Inserimento)")
                     .callbackData("race:season")
                     .build();
 
@@ -88,7 +88,7 @@ public class SaveCallbackHandler implements CallbackHandler {
         {
             //Disattiva il pulsante salva
             InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                    .text("⬅️ Back To Race Menu\n(Concludi Inserimento)")
+                    .text("⬅️ Back To Race Menu\n (Concludi Inserimento)")
                     .callbackData("menu:race")
                     .build();
 

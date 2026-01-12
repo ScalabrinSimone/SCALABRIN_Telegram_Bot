@@ -41,6 +41,7 @@ public class DriverCommand implements Command {
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
                     .text(textToSend)
+                    .parseMode("HTML")
                     .build();
 
             try {
@@ -80,6 +81,7 @@ public class DriverCommand implements Command {
                 .chatId(chatId)
                 .messageId(messageId)
                 .text(textToSend)
+                .parseMode("HTML")
                 .build();
 
         try {
@@ -111,7 +113,7 @@ public class DriverCommand implements Command {
 
             //Bottone
             InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                    .text("⬅️ Back To Race Menu\n(Concludi Inserimento)")
+                    .text("⬅️ Back To Race Menu\n (Concludi Inserimento)")
                     .callbackData("menu:race")
                     .build();
 
@@ -159,6 +161,7 @@ public class DriverCommand implements Command {
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
                     .text(driverInfo)
+                    .parseMode("HTML")
                     .build();
 
             try {

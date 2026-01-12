@@ -44,7 +44,8 @@ public class MainMenuCallbackHandler implements CallbackHandler {
                 EditMessageText edit = EditMessageText.builder()
                         .chatId(chatId)
                         .messageId(messageId)
-                        .text("Seleziona una categoria per iniziare:")
+                        .text("<b>🏁 Menu Principale</b>\n\n<i>Seleziona una categoria per iniziare:</i>")
+                        .parseMode("HTML")
                         .replyMarkup(mainMenuKeyboard.getKeyboard())
                         .build();
                 try {

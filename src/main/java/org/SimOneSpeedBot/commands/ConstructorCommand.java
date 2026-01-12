@@ -22,7 +22,7 @@ public class ConstructorCommand implements Command {
             <i>Inserisci il nome (<b>obbligatorio</b>) della squadra (<i>max 2 accettati</i>) per cercare:</i>
             
             ⚠ <b>Se il nome della scuderia ha ino sponsor <u>NON</u> metterlo</b> e alcune squadre necessitano dell'abbreviazione (guarda esempio).
-            💡 <b>Esempio:</b> <code>Aston Msrtin</code> per <i>Aston Martin Aramco Formula One Team</i>, <code>RB</code> per <i>Visa Cash App Red Bull Racing Team</i>.
+            💡 <b>Esempio:</b> <code>Aston Martin</code> per <i>Aston Martin Aramco Formula One Team</i>, <code>RB</code> per <i>Visa Cash App Red Bull Racing Team</i>.
             ℹ️ <i>Per concludere l'inserimento <b>dal menu</b>, premere il pulsante "Back to Race Menu"</i>.
             """;
 
@@ -40,6 +40,7 @@ public class ConstructorCommand implements Command {
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
                     .text(textToSend)
+                    .parseMode("HTML")
                     .build();
 
             try {
@@ -61,6 +62,7 @@ public class ConstructorCommand implements Command {
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
                     .text(constructorInfo)
+                    .parseMode("HTML")
                     .build();
 
             try {
@@ -80,6 +82,7 @@ public class ConstructorCommand implements Command {
                 .chatId(chatId)
                 .messageId(messageId)
                 .text(textToSend)
+                .parseMode("HTML")
                 .build();
 
         try {
@@ -108,7 +111,7 @@ public class ConstructorCommand implements Command {
 
             //Bottone
             InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                    .text("⬅️ Back To Race Menu\n(Concludi Inserimento)")
+                    .text("⬅️ Back To Race Menu\n (Concludi Inserimento)")
                     .callbackData("menu:race")
                     .build();
 
@@ -140,6 +143,7 @@ public class ConstructorCommand implements Command {
                     .chatId(chatId)
                     .messageId(messageId)
                     .text(constructorInfo)
+                    .parseMode("HTML")
                     .replyMarkup(keyboard)
                     .build();
 
@@ -155,6 +159,7 @@ public class ConstructorCommand implements Command {
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
                     .text(constructorInfo)
+                    .parseMode("HTML")
                     .build();
 
             try {

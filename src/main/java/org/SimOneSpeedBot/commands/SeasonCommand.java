@@ -91,7 +91,7 @@ public class SeasonCommand implements Command {
             if (messageId != null) {
                 //Menu -> edita il messaggio con bottone back per tornare a season
                 InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                        .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
+                        .text("⬅️ Back To Season Menu\n (Concludi Inserimento)")
                         .callbackData("race:season")
                         .build();
 
@@ -135,7 +135,7 @@ public class SeasonCommand implements Command {
         if (messageId != null) {
             //Menu -> edita con bottone back e salva
             InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                    .text("⬅️ Back To Season Menu\n(Concludi Inserimento)")
+                    .text("⬅️ Back To Season Menu\n (Concludi Inserimento)")
                     .callbackData("race:season")
                     .build();
 
@@ -180,6 +180,7 @@ public class SeasonCommand implements Command {
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
                     .text(seasonInfo)
+                    .parseMode("HTML")
                     .build();
 
             try {

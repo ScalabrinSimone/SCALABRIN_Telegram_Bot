@@ -51,7 +51,7 @@ public class BookMarkKeyboard implements MenuKeyboard {
         //Se non ci sono bookmarks salvati
         if (categories.isEmpty()) {
             InlineKeyboardButton modificaButton = InlineKeyboardButton.builder()
-                    .text("<i><b>📭 Nessun</b> Bookmark salvato<i>")
+                    .text("📭 Nessun Bookmark salvato")
                     .callbackData("saved") //Non da errori di alcun tipo
                     .build();
 

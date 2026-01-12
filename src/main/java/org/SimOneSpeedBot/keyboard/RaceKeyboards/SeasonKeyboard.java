@@ -74,7 +74,8 @@ public class SeasonKeyboard implements MenuKeyboard {
         EditMessageText edit = EditMessageText.builder()
                 .chatId(chatId)
                 .messageId(messageId)
-                .text("ℹ️ Seleziona la stagione desiderata (sono giá presenti alcuni shortcut):")
+                .text("ℹ️ <b>Seleziona la stagione desiderata<b>\n<i>Sono giá presenti alcuni shortcut</i>:")
+                .parseMode("HTML")
                 .replyMarkup(keyboard)
                 .build();
 
