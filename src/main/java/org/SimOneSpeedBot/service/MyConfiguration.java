@@ -10,9 +10,9 @@ public class MyConfiguration {
     private Configuration config;
 
     private MyConfiguration() {
-        try{
+        try {
             config = configs.properties("config.properties");
-        }catch(ConfigurationException e){
+        } catch (ConfigurationException e) {
             System.err.println("File non disponibile.");
             System.exit(-1);
         }

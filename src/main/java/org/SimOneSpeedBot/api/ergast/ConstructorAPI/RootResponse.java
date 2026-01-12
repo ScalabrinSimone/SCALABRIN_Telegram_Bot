@@ -1,6 +1,6 @@
 package org.SimOneSpeedBot.api.ergast.ConstructorAPI;
 
-public class RootResponse{
+public class RootResponse {
     private MRData MRData;
 
     public MRData getMRData() {

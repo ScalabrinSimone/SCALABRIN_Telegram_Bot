@@ -13,13 +13,24 @@ public class Constructor {
         this.nationality = nationality;
     }
 
-    public String getConstructorId() { return constructorId; }
-    public String getUrl() { return url; }
-    public String getName() { return name; }
-    public String getNationality() { return nationality; }
+    public String getConstructorId() {
+        return constructorId;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format(
                 "ℹ Informazioni:\n\n🏠 Nome: %s.\n🌍 Nazionalitá: %s.\n\n🔗 Url (wikipedia): %s.",
                 name,

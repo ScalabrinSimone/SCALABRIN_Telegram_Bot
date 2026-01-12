@@ -1,11 +1,8 @@
 package org.SimOneSpeedBot.callback.BookmarksCallback;
 
-import org.SimOneSpeedBot.api.ergast.ErgastAPI;
 import org.SimOneSpeedBot.callback.CallbackHandler;
-import org.SimOneSpeedBot.commands.CommandHub;
 import org.SimOneSpeedBot.database.Bookmarks.Bookmark;
 import org.SimOneSpeedBot.database.Bookmarks.BookmarkManager;
-import org.SimOneSpeedBot.keyboard.MainMenuKeyboard;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -14,10 +11,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class BookmarkCallbackHandler implements CallbackHandler {
     private final TelegramClient client;
@@ -35,7 +30,7 @@ public class BookmarkCallbackHandler implements CallbackHandler {
         long chatId = callbackQuery.getMessage().getChatId();
         long userId = callbackQuery.getFrom().getId();
 
-        if (!data.startsWith("bookmark:")){
+        if (!data.startsWith("bookmark:")) {
             return false;
         }
 

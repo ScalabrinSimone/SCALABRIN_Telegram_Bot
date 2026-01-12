@@ -84,8 +84,7 @@ public class SaveCallbackHandler implements CallbackHandler {
                 e.printStackTrace();
                 answerCallback(callbackQuery, "❌ Errore salvataggio");
             }
-        }
-        else if(saved) //Altri casi dove non ci sono comunque problemi di salvataggio
+        } else if (saved) //Altri casi dove non ci sono comunque problemi di salvataggio
         {
             //Disattiva il pulsante salva
             InlineKeyboardButton backButton = InlineKeyboardButton.builder()
@@ -118,8 +117,7 @@ public class SaveCallbackHandler implements CallbackHandler {
                 e.printStackTrace();
                 answerCallback(callbackQuery, "❌ Errore salvataggio");
             }
-        }
-        else {
+        } else {
             answerCallback(callbackQuery, "❌ Giá salvato"); //Probabilmente giá salvato POTREI METTERE IL PULSANTE CHE LO DICE
         }
 

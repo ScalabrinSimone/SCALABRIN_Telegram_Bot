@@ -7,8 +7,19 @@ public class Location {
     private String country;
 
     //Getter
-    public String getLat() { return lat; }
-    public String getLng() { return lng; }
-    public String getLocality() { return locality; }
-    public String getCountry() { return country; }
+    public String getLat() {
+        return lat;
+    }
+
+    public String getLng() {
+        return lng;
+    }
+
+    public String getLocality() {
+        return locality;
+    }
+
+    public String getCountry() {
+        return country;
+    }
 }

@@ -22,52 +22,46 @@ public class Database {
 
         initializeDatabase(); //Viene eseguito una volta sola per pattern singleton
     }
+
     //Metodo per creare il database per la prima volta
     private static void initializeDatabase() {
         try (Statement stmt = getConnection().createStatement()) {
 
             String createUsersTable = """
-                CREATE TABLE IF NOT EXISTS users (
-                    userId INTEGER NOT NULL PRIMARY KEY,
-                    username TEXT,
-                    firstName TEXT NOT NULL,
-                    lastName TEXT,
-                    languageCode TEXT,
-                    isBot INTEGER DEFAULT 0,
-                    isPremium INTEGER DEFAULT 0
-                )
-                """;
-            if(stmt.execute(createUsersTable))
-            {
+                    CREATE TABLE IF NOT EXISTS users (
+                        userId INTEGER NOT NULL PRIMARY KEY,
+                        username TEXT,
+                        firstName TEXT NOT NULL,
+                        lastName TEXT,
+                        languageCode TEXT,
+                        isBot INTEGER DEFAULT 0,
+                        isPremium INTEGER DEFAULT 0
+                    )
+                    """;
+            if (stmt.execute(createUsersTable)) {
                 System.out.println("Users table creata correttamente.");
-            }
-            else
-            {
+            } else {
                 System.out.println("Users table giá presente.");
             }
 
             String createBookmarksTable = """
-                CREATE TABLE IF NOT EXISTS bookmarks (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    userId INTEGER NOT NULL,
-                    type TEXT NOT NULL, -- "driver", "constructor", "season"
-                    entityId TEXT NOT NULL, -- "hamilton", "ferrari", "2024"
-                    entityName TEXT, -- "Lewis Hamilton", "Ferrari", "Stagione 2024"
-                    message TEXT, -- Testo
-                    savedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (userId) REFERENCES users(userId)
-                )
-                """;
-            if(stmt.execute(createBookmarksTable))
-            {
+                    CREATE TABLE IF NOT EXISTS bookmarks (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        userId INTEGER NOT NULL,
+                        type TEXT NOT NULL, -- "driver", "constructor", "season"
+                        entityId TEXT NOT NULL, -- "hamilton", "ferrari", "2024"
+                        entityName TEXT, -- "Lewis Hamilton", "Ferrari", "Stagione 2024"
+                        message TEXT, -- Testo
+                        savedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY (userId) REFERENCES users(userId)
+                    )
+                    """;
+            if (stmt.execute(createBookmarksTable)) {
                 System.out.println("Bookmarks table creata correttamente.");
-            }
-            else
-            {
+            } else {
                 System.out.println("Bookmarks table giá presente.");
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             System.err.println("Errore init DB: " + e.getMessage());
         }
     }
@@ -88,12 +82,11 @@ public class Database {
     //Metodi di inserimento...
     //User
     public boolean isUserPresent(long userId) throws SQLException {
-        try{
-            if(!connection.isValid(5)){ //Controlla la connesione con timeout 5
+        try {
+            if (!connection.isValid(5)) { //Controlla la connesione con timeout 5
                 throw new SQLException();
             }
-        }
-        catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Errore di timeout del database: " + e.getMessage());
             throw new SQLException();
         }
@@ -108,6 +101,7 @@ public class Database {
             }
         }
     }
+
     public void insertUser(User utente) throws SQLException {
         try {
             if (!connection.isValid(5))
@@ -132,12 +126,12 @@ public class Database {
             System.out.println("User inserito"); //Debug
         }
     }
+
     public User getUser(long userId) throws SQLException {
         try {
             if (!connection.isValid(5))
                 throw new SQLException();
-        }
-        catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Errore di timeout del database: " + e.getMessage());
             throw new SQLException();
         }
@@ -151,7 +145,7 @@ public class Database {
                     return rs.getObject(1, User.class); //Se esiste prende l'user
                 }
 
-                return  null;
+                return null;
             }
         }
     }

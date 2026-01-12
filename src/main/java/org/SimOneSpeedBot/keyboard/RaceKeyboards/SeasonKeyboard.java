@@ -9,14 +9,16 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 public class SeasonKeyboard implements MenuKeyboard {
     private final TelegramClient client;
     private final int messageId;
 
-    public SeasonKeyboard(TelegramClient client, int messageId) {this.client = client; this.messageId = messageId;}
+    public SeasonKeyboard(TelegramClient client, int messageId) {
+        this.client = client;
+        this.messageId = messageId;
+    }
 
     @Override
     public Message sendInlineKeyboard(long chatId) {

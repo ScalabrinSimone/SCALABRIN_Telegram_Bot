@@ -27,9 +27,9 @@ public class ShowMenuCommand implements Command {
                     .messageId(oldMenuId)
                     .build();
 
-            try{
+            try {
                 client.execute(delete);
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

@@ -1,6 +1,5 @@
 package org.SimOneSpeedBot.service;
 
-import org.SimOneSpeedBot.api.ergast.ErgastAPI;
 import org.SimOneSpeedBot.commands.CommandHub;
 import org.SimOneSpeedBot.commands.ConstructorCommand;
 import org.SimOneSpeedBot.commands.DriverCommand;
@@ -14,7 +13,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +91,6 @@ public class UserStateManager {
                 driverCmd.processDriver(chatId, givenName, familyName, null, false); //Non ".
             }
         }
-        return;
     }
 
     //Stato attesa constructor
@@ -128,8 +125,6 @@ public class UserStateManager {
             } else { //Nuovo messaggio
                 constructorCmd.processConstructor(chatId, firstName, secondName, null, false); //Non ".
             }
-
-            return;
         }
     }
 
@@ -210,6 +205,5 @@ public class UserStateManager {
                 }
             }
         }
-        return;
     }
 }

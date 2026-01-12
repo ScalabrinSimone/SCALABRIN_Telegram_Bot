@@ -1,6 +1,5 @@
 package org.SimOneSpeedBot.keyboard.BookMarkKeyboards;
 
-import org.SimOneSpeedBot.database.Bookmarks.Bookmark;
 import org.SimOneSpeedBot.database.Bookmarks.BookmarkManager;
 import org.SimOneSpeedBot.keyboard.MenuKeyboard;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -11,7 +10,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +18,11 @@ public class BookMarkKeyboard implements MenuKeyboard {
     private final int messageId;
     private final User user;
 
-    public BookMarkKeyboard(TelegramClient client, int messageId, User user) { this.client = client; this.messageId = messageId; this.user = user; }
+    public BookMarkKeyboard(TelegramClient client, int messageId, User user) {
+        this.client = client;
+        this.messageId = messageId;
+        this.user = user;
+    }
 
     @Override
     public Message sendInlineKeyboard(long chatId) {
@@ -63,8 +65,7 @@ public class BookMarkKeyboard implements MenuKeyboard {
             keyboard = InlineKeyboardMarkup.builder()
                     .keyboard(rows)
                     .build();
-        }
-        else //C'é almeno 1 bookmark salvato
+        } else //C'é almeno 1 bookmark salvato
         {
             for (String category : categories) {
                 String categoryName = switch (category) //Prende il tipo di ogni categoria

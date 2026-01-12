@@ -14,7 +14,10 @@ public class RaceMenuKeyboard implements MenuKeyboard {
     private final TelegramClient client;
     private final int messageId;
 
-    public RaceMenuKeyboard(TelegramClient client, int messageId) {this.client = client; this.messageId = messageId;}
+    public RaceMenuKeyboard(TelegramClient client, int messageId) {
+        this.client = client;
+        this.messageId = messageId;
+    }
 
     @Override
     public Message sendInlineKeyboard(long chatId) {

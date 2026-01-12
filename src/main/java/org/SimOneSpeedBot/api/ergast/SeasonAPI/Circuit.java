@@ -7,8 +7,19 @@ public class Circuit {
     private Location Location;
 
     //Getter
-    public String getCircuitId() { return circuitId; }
-    public String getUrl() { return url; }
-    public String getCircuitName() { return circuitName; }
-    public Location getLocation() { return Location; }
+    public String getCircuitId() {
+        return circuitId;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getCircuitName() {
+        return circuitName;
+    }
+
+    public Location getLocation() {
+        return Location;
+    }
 }

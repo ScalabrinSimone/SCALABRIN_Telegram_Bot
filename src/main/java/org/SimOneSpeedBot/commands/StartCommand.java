@@ -24,7 +24,7 @@ public class StartCommand implements Command {
             Questo bot è gratis da utilizzare e non servono permessi di alcun tipo. Importalo nelle tue chat e chiunque
             potrà usarlo!""";
 
-    public StartCommand(TelegramClient client,  Map<Long, Integer> menuMessageIds) {
+    public StartCommand(TelegramClient client, Map<Long, Integer> menuMessageIds) {
         this.menuMessageIds = menuMessageIds;
         this.client = client;
     }

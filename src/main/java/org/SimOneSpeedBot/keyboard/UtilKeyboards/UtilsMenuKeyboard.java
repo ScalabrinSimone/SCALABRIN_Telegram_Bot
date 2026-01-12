@@ -14,7 +14,10 @@ public class UtilsMenuKeyboard implements MenuKeyboard {
     private final TelegramClient client;
     private final int messageId;
 
-    public UtilsMenuKeyboard(TelegramClient client, int messageId) {this.client = client; this.messageId = messageId;}
+    public UtilsMenuKeyboard(TelegramClient client, int messageId) {
+        this.client = client;
+        this.messageId = messageId;
+    }
 
     @Override
     public Message sendInlineKeyboard(long chatId) {
@@ -55,7 +58,7 @@ public class UtilsMenuKeyboard implements MenuKeyboard {
 
         //Crea la prima riga di bottoni
         InlineKeyboardRow upperRow = new InlineKeyboardRow(
-                List.of(utilsButton, raceButton,  testErrorPopupButton)
+                List.of(utilsButton, raceButton, testErrorPopupButton)
         );
         //Crea la seconda riga di bottoni
         InlineKeyboardRow middleUpRow = new InlineKeyboardRow(

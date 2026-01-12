@@ -20,11 +20,31 @@ public class Bookmark {
     }
 
     //Getters
-    public int getId() { return id; }
-    public long getUserId() { return userId; }
-    public String getType() { return type; }
-    public String getEntityId() { return entityId; }
-    public String getEntityName() { return entityName; }
-    public String getMessage() { return message; }
-    public String getSavedAt() { return savedAt; }
+    public int getId() {
+        return id;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getEntityId() {
+        return entityId;
+    }
+
+    public String getEntityName() {
+        return entityName;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getSavedAt() {
+        return savedAt;
+    }
 }

@@ -9,5 +9,8 @@ public class ConstructorTable {
     public List<Constructor> getConstructors() {
         return Constructors;
     }
-    public String getConstructorId() { return constructorId; }
+
+    public String getConstructorId() {
+        return constructorId;
+    }
 }

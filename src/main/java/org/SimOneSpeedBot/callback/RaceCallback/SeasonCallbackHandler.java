@@ -71,7 +71,9 @@ public class SeasonCallbackHandler implements CallbackHandler {
                 seasonCmd.executeEdit(chatId, messageId);
             }
 
-            default -> {return false;} //Se non inizia per queste, non riesce a gestirlo e ritorna false
+            default -> {
+                return false;
+            } //Se non inizia per queste, non riesce a gestirlo e ritorna false
         }
 
         answerCallback(callbackQuery);

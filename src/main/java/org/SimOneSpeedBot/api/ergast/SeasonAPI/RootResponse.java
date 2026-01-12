@@ -4,5 +4,7 @@ public class RootResponse {
     private MRData MRData;
 
     //Getter
-    public MRData getMRData() { return MRData; }
+    public MRData getMRData() {
+        return MRData;
+    }
 }

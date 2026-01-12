@@ -1,7 +1,5 @@
 package org.SimOneSpeedBot.api.ergast.DriverAPI;
 
-import java.util.List;
-
 public class Driver {
     private String driverId;
     private String permanentNumber;
@@ -24,14 +22,20 @@ public class Driver {
         this.url = url;
     }
 
-    public String getDriverId() { return driverId; }
+    public String getDriverId() {
+        return driverId;
+    }
 
-    public String getGivenName() { return givenName; }
+    public String getGivenName() {
+        return givenName;
+    }
 
-    public String getFamilyName() { return familyName; }
+    public String getFamilyName() {
+        return familyName;
+    }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format(
                 "ℹ Informazioni:\n\n👤 Nome e Cognome: %s %s.\n🌍 Nazionalitá: %s.\n🎂 Nascita: %s.\n🔢 Numero pilota: %s.\n🏷 Abbreviazione: %s.\n\n🔗 Url (wikipedia): %s.",
                 givenName,

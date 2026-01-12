@@ -10,13 +10,33 @@ public class Race {
     private Circuit Circuit;
 
     //Getter
-    public String getSeason() { return season; }
-    public String getRound() { return round; }
-    public String getUrl() { return url; }
-    public String getRaceName() { return raceName; }
-    public String getDate() { return date; }
-    public String getTime() { return time; }
-    public Circuit getCircuit() { return Circuit; }
+    public String getSeason() {
+        return season;
+    }
+
+    public String getRound() {
+        return round;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getRaceName() {
+        return raceName;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public Circuit getCircuit() {
+        return Circuit;
+    }
 
     @Override
     public String toString() {

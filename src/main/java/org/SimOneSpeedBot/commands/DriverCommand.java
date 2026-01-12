@@ -10,22 +10,20 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class DriverCommand implements Command {
     private final TelegramClient client;
     private final Map<Long, String> userStates; //chatId -> stato attuale. Serve per aspettare un
-                                               //input dall'utente.
+    //input dall'utente.
     private final String textToSend = """
-                                🏁 Inserisci il nome del pilota...
-                                
-                                ℹ️ Puoi scrivere nome e cognome, cognome nome oppure cognome, sconsigliato se esistono piú piloti con lo stesso cognome (es: Verstappen ritorna il padre; max verstappen, Verstappen Max ritorna il figlio).
-                                
-                                Se vieni dal menu puoi continuare a scrivere i nomi dei piloti, per smettere l'inserimento, premere il pulsante "Back To Race Menu".
-                                """;
+            🏁 Inserisci il nome del pilota...
+            
+            ℹ️ Puoi scrivere nome e cognome, cognome nome oppure cognome, sconsigliato se esistono piú piloti con lo stesso cognome (es: Verstappen ritorna il padre; max verstappen, Verstappen Max ritorna il figlio).
+            
+            Se vieni dal menu puoi continuare a scrivere i nomi dei piloti, per smettere l'inserimento, premere il pulsante "Back To Race Menu".
+            """;
 
     public DriverCommand(TelegramClient client, Map<Long, String> userStates) {
         this.client = client;
@@ -34,7 +32,7 @@ public class DriverCommand implements Command {
 
     @Override
     public void execute(long chatId, String[] args) {
-        if(args.length == 0) {
+        if (args.length == 0) {
             //Imposta stato e chiede il nome
             userStates.put(chatId, "AWAITING_DRIVER_NAME");
 
@@ -48,8 +46,7 @@ public class DriverCommand implements Command {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else { //Processa il nome del pilota se ci sono args
+        } else { //Processa il nome del pilota se ci sono args
             //Controlla quanti args ha lo string[]
 
             //Ergast -> nome e cognome in minuscolo
@@ -122,7 +119,7 @@ public class DriverCommand implements Command {
             InlineKeyboardMarkup keyboard;
 
             //Si puó salvare solo se esiste il pilota e solo se nel menu
-            if(!driverInfo.contains("❌ Pilota")) {
+            if (!driverInfo.contains("❌ Pilota")) {
                 InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
                         .text("💾 Salva")
                         .callbackData("save:driver:" + driver.getDriverId() + ":" + driver.getGivenName() + " " + driver.getFamilyName()) //Formato: save:tipo:if:nome cognome
@@ -133,8 +130,7 @@ public class DriverCommand implements Command {
                 keyboard = InlineKeyboardMarkup.builder()
                         .keyboard(List.of(saveButtonRow, row))
                         .build();
-            }
-            else {
+            } else {
                 keyboard = InlineKeyboardMarkup.builder()
                         .keyboard(List.of(row))
                         .build();
@@ -154,8 +150,7 @@ public class DriverCommand implements Command {
                     e.printStackTrace();
                 }
             }
-        }
-        else {
+        } else {
             //Comando -> manda nuovo messaggio senza bottoni
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)

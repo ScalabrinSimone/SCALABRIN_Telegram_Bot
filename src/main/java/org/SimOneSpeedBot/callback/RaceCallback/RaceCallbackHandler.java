@@ -5,7 +5,7 @@ import org.SimOneSpeedBot.commands.CommandHub;
 import org.SimOneSpeedBot.commands.ConstructorCommand;
 import org.SimOneSpeedBot.commands.DriverCommand;
 import org.SimOneSpeedBot.keyboard.MainMenuKeyboard;
-import org.SimOneSpeedBot.keyboard.RaceKeyboards.*;
+import org.SimOneSpeedBot.keyboard.RaceKeyboards.SeasonKeyboard;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -64,19 +64,21 @@ public class RaceCallbackHandler implements CallbackHandler {
             }
             case "race:driver" -> {
                 DriverCommand driverCommand = (DriverCommand) hub.getCommand("driver");
-                if(driverCommand != null) {
+                if (driverCommand != null) {
                     driverCommand.executeEdit(chatId, messageId);
                 }
             }
 
             case "race:team" -> {
                 ConstructorCommand constructorCommand = (ConstructorCommand) hub.getCommand("constructor");
-                if(constructorCommand != null) {
+                if (constructorCommand != null) {
                     constructorCommand.executeEdit(chatId, messageId);
                 }
             }
 
-            default -> {return false;} //Se non inizia per queste, non riesce a gestirlo e ritorna false
+            default -> {
+                return false;
+            } //Se non inizia per queste, non riesce a gestirlo e ritorna false
         }
 
         answerCallback(callbackQuery);

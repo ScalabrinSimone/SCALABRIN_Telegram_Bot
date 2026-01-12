@@ -17,13 +17,13 @@ public class ConstructorCommand implements Command {
     private final TelegramClient client;
     private final Map<Long, String> userStates;
     private final String textToSend = """
-                                🏁 Inserisci il nome del team...
-                                
-                                ℹ️ Scrivi il nome della squadra come vuoi (solo 2 nomi accettati), se é composto da piú nomi separali con uno spazio. Se il nome della scuderia ha ino sponsor NON metterlo (es. Aston Martin Aramco Formula One Team → Aston Martin)
-                                In caso di "visa cash app red bull racing team" inserisci semplicemente rb.
-                                
-                                Se vieni dal menu puoi continuare a scrivere i nomi dei piloti, per smettere l'inserimento, premere il pulsante "Back To Race Menu".
-                                """;
+            🏁 Inserisci il nome del team...
+            
+            ℹ️ Scrivi il nome della squadra come vuoi (solo 2 nomi accettati), se é composto da piú nomi separali con uno spazio. Se il nome della scuderia ha ino sponsor NON metterlo (es. Aston Martin Aramco Formula One Team → Aston Martin)
+            In caso di "visa cash app red bull racing team" inserisci semplicemente rb.
+            
+            Se vieni dal menu puoi continuare a scrivere i nomi dei piloti, per smettere l'inserimento, premere il pulsante "Back To Race Menu".
+            """;
 
     public ConstructorCommand(TelegramClient client, Map<Long, String> userStates) {
         this.client = client;
@@ -32,7 +32,7 @@ public class ConstructorCommand implements Command {
 
     @Override
     public void execute(long chatId, String[] args) {
-        if(args.length == 0) {
+        if (args.length == 0) {
             //Imposta stato e chiede il nome
             userStates.put(chatId, "AWAITING_CONSTRUCTOR_NAME");
 
@@ -46,8 +46,7 @@ public class ConstructorCommand implements Command {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else { //Processa il nome della scuderia se ci sono args (ne gestisce solo 2!!!)
+        } else { //Processa il nome della scuderia se ci sono args (ne gestisce solo 2!!!)
             //Controlla quanti args ha lo string[]
 
             //Ergast -> in minuscolo
@@ -55,7 +54,8 @@ public class ConstructorCommand implements Command {
             String firstName = String.join(" ", args[0]).toLowerCase(); //Ci deve essere un nome
             String secondName = args.length != 1 ? String.join(" ", args[1]).toLowerCase() : ""; //Non é detto che ci sia il secondo
             Constructor constructor = new ErgastAPI().fetchConstructor(firstName, secondName);
-            String constructorInfo = (constructor != null) ? constructor.toString() : "❌ Scuderia " + (StringUtils.capitalize(firstName) + (!secondName.equals("") ? StringUtils.capitalize(secondName) + " " : "")) + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: ferrari, Alfa romeo o aston Martin).";;
+            String constructorInfo = (constructor != null) ? constructor.toString() : "❌ Scuderia " + (StringUtils.capitalize(firstName) + (!secondName.equals("") ? StringUtils.capitalize(secondName) + " " : "")) + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: ferrari, Alfa romeo o aston Martin).";
+            ;
 
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)
@@ -118,7 +118,7 @@ public class ConstructorCommand implements Command {
             InlineKeyboardMarkup keyboard;
 
             //Si puó salvare solo se esiste il pilota e solo se nel menu
-            if(!constructorInfo.contains("❌ Scuderia")) {
+            if (!constructorInfo.contains("❌ Scuderia")) {
                 InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
                         .text("💾 Salva")
                         .callbackData("save:constructor:" + constructor.getConstructorId() + ":" + constructor.getName()) //Formato: save:tipo:id:nome
@@ -129,8 +129,7 @@ public class ConstructorCommand implements Command {
                 keyboard = InlineKeyboardMarkup.builder()
                         .keyboard(List.of(saveButtonRow, row))
                         .build();
-            }
-            else {
+            } else {
                 keyboard = InlineKeyboardMarkup.builder()
                         .keyboard(List.of(row))
                         .build();
@@ -150,8 +149,7 @@ public class ConstructorCommand implements Command {
                     e.printStackTrace();
                 }
             }
-        }
-        else {
+        } else {
             //Comando -> manda nuovo messaggio senza bottoni
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)

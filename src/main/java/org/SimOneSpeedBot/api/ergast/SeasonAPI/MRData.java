@@ -10,6 +10,11 @@ public class MRData {
     private RaceTable RaceTable;
 
     //Getter
-    public String getTotal() { return total; }
-    public RaceTable getRaceTable() { return RaceTable; }
+    public String getTotal() {
+        return total;
+    }
+
+    public RaceTable getRaceTable() {
+        return RaceTable;
+    }
 }

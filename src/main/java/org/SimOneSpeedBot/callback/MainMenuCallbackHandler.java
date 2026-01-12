@@ -78,9 +78,9 @@ public class MainMenuCallbackHandler implements CallbackHandler {
             case "menu:race" -> {
                 //Rimuove lo stato per continuare a scrivere il driver o il team se attivo
                 if (userStates.get(chatId) != null &&
-                   (userStates.get(chatId).startsWith("AWAITING_DRIVER_NAME") ||
-                    userStates.get(chatId).startsWith("AWAITING_CONSTRUCTOR_NAME")  ||
-                    userStates.get(chatId).startsWith("AWAITING_SEASON_YEAR"))) {
+                        (userStates.get(chatId).startsWith("AWAITING_DRIVER_NAME") ||
+                                userStates.get(chatId).startsWith("AWAITING_CONSTRUCTOR_NAME") ||
+                                userStates.get(chatId).startsWith("AWAITING_SEASON_YEAR"))) {
                     userStates.remove(chatId);
                 }
 
@@ -88,7 +88,9 @@ public class MainMenuCallbackHandler implements CallbackHandler {
                 keyboard.editInlineKeyboard(chatId);
             }
 
-            default -> {return false;} //Se non inizia per queste, non riesce a gestirlo e ritorna false
+            default -> {
+                return false;
+            } //Se non inizia per queste, non riesce a gestirlo e ritorna false
         }
 
         answerCallback(callbackQuery);

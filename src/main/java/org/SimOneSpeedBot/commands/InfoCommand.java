@@ -27,7 +27,7 @@ public class InfoCommand implements Command {
             
             Un esempio:
             /driver leclerc 2023
-             
+            
             Divertiti ad utilizzarlo!""";
 
     public InfoCommand(TelegramClient client) {

@@ -24,7 +24,7 @@ public class ViewBookmarkCallbackHandler implements CallbackHandler {
 
     @Override
     public boolean handle(CallbackQuery callbackQuery) {
-        String data =  callbackQuery.getData();
+        String data = callbackQuery.getData();
 
         if (!data.startsWith("view:")) {
             return false; //Deve iniziare per view il callback.

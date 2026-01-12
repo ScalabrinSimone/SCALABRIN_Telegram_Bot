@@ -32,11 +32,11 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
     private final CommandHub hub = new CommandHub();
     private final UserStateManager stateManager;
     private final Map<Long, Integer> menuMessageIds = new HashMap<>(); //chatId -> messageId. Serve per modificare
-                                                                      //il messaggio invece che inviarne di nuovi.
-                                                                     //Usato per la prima volta in classe StartCommand.
+    //il messaggio invece che inviarne di nuovi.
+    //Usato per la prima volta in classe StartCommand.
 
     private final Map<Long, String> userStates = new HashMap<>(); //chatId -> stato attuale. Serve per aspettare un
-                                                                 //input dall'utente.
+    //input dall'utente.
 
     private final Database usersDatabase; //Database
     private User user; //User della chat
@@ -57,8 +57,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
 
         try {
             this.usersDatabase = Database.getInstance(); //Inizializza/Recupera istanza Database all'avvio del bot
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e); //Va in errore se non riesce a connettersi
         }
     }
@@ -123,7 +122,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
             long chatId = update.getMessage().getChatId();
 
             //Controlla se é all'inizio della chat per registrare l'user (/start). Sarebbe meglio usare una cache per controllare gli utenti giá registrati durante la sessione
-            if (messageText.startsWith("/start")){
+            if (messageText.startsWith("/start")) {
                 //Inizio chat, registro l'utente se non esiste giá
                 user = update.getMessage().getFrom();
                 try {
@@ -131,12 +130,10 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
                     if (!usersDatabase.isUserPresent(user.getId())) { //Controllo se esiste l'utente nel database
                         System.out.println("Utente controllato e nuovo... procedo ad inserirlo nel database"); //Debug
                         usersDatabase.insertUser(user); //Inserisco l'utente se non é giá presente.
-                    }
-                    else {
+                    } else {
                         System.out.println("Utennte controllato e giá esistente"); //Debug
                     }
-                }
-                catch (SQLException e) {
+                } catch (SQLException e) {
                     throw new RuntimeException(e); //Errore di sql
                 }
             }

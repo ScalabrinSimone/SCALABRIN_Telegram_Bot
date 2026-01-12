@@ -1,6 +1,6 @@
 package org.SimOneSpeedBot.api.ergast.ConstructorAPI;
 
-public class MRData{
+public class MRData {
     private String series;
     private String url;
     private String limit;
@@ -12,5 +12,7 @@ public class MRData{
         return total;
     }
 
-    public ConstructorTable getConstructorTable() { return ConstructorTable; }
+    public ConstructorTable getConstructorTable() {
+        return ConstructorTable;
+    }
 }

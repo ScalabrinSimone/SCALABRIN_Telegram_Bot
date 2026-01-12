@@ -2,13 +2,10 @@ package org.SimOneSpeedBot.api.ergast;
 
 
 import com.google.gson.Gson;
-//Import non con * perché specificati nei metodi per aiuitare gson a capire quale package prendere. Questi due import NON danno conflitto
-import org.SimOneSpeedBot.api.ergast.DriverAPI.Driver;
 import org.SimOneSpeedBot.api.ergast.ConstructorAPI.Constructor;
-//
+import org.SimOneSpeedBot.api.ergast.DriverAPI.Driver;
 import org.SimOneSpeedBot.api.ergast.SeasonAPI.Race;
 import org.SimOneSpeedBot.service.MyConfiguration;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -68,16 +65,14 @@ public class ErgastAPI {
             }
 
             return info.toString();
-        }
-        catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             System.err.println("Errore in richiesta API per la stagione " + year + ": " + e.getMessage());
             return "❌ Errore nel recupero della stagione " + year;
         }
     }
 
     //Constructor
-    public Constructor fetchConstructor(String firstName, String secondName)
-    {
+    public Constructor fetchConstructor(String firstName, String secondName) {
         String constructorId = secondName.equals("") ? firstName : firstName + "_" + secondName; //caso ferrari e aston_martin
 
         //Voglio che vengano gestiti altri inserimenti
@@ -122,6 +117,7 @@ public class ErgastAPI {
         return null;
 
     }
+
     private Constructor tryFetchConstructor(String constructorId) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "constructors/" + constructorId + ".json"))
@@ -144,13 +140,11 @@ public class ErgastAPI {
                     mrData.getConstructorTable().getConstructors() == null ||
                     mrData.getConstructorTable().getConstructors().isEmpty()) {
                 return null; //Team non trovato. L'API risponde SEMPRE con 200 anche se la scuderia non esiste.
-            }
-            else {
+            } else {
                 Constructor team = mrData.getConstructorTable().getConstructors().getFirst(); //Prende il primo (= get(0))
                 return team;
             }
-        }
-        catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             System.err.println("Errore in richiesta API per il team: " + e.getMessage());
 
             return null;
@@ -158,8 +152,7 @@ public class ErgastAPI {
     }
 
     //Driver
-    public Driver fetchDriver(String driverName, String driverSurname)
-    {
+    public Driver fetchDriver(String driverName, String driverSurname) {
         String driverId = driverName.equals("") ? driverSurname : driverName + "_" + driverSurname; //nome_cognome per api e se non funziona solo cognome e se non funziona allora non esiste
 
         //Voglio che l'utente sia libero di inserire il pilota come vuole, quindi controllo anche per cognome_nome
@@ -193,6 +186,7 @@ public class ErgastAPI {
         return null;
 
     }
+
     private Driver tryFetchDriver(String driverId) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "drivers/" + driverId + ".json"))
@@ -215,13 +209,11 @@ public class ErgastAPI {
                     mrData.getDriverTable().getDrivers() == null ||
                     mrData.getDriverTable().getDrivers().isEmpty()) {
                 return null; //Pilota non trovato. L'API risponde SEMPRE con 200 anche se il pilota non esiste.
-            }
-            else {
+            } else {
                 Driver pilota = mrData.getDriverTable().getDrivers().getFirst(); //Prende il primo (= get(0))
                 return pilota;
             }
-        }
-        catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             System.err.println("Errore in richiesta API per il pilota: " + e.getMessage());
 
             return null;

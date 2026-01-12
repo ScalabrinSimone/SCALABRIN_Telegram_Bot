@@ -7,6 +7,11 @@ public class RaceTable {
     private List<Race> Races;
 
     //Getter
-    public String getSeason() { return season; }
-    public List<Race> getRaces() { return Races; }
+    public String getSeason() {
+        return season;
+    }
+
+    public List<Race> getRaces() {
+        return Races;
+    }
 }

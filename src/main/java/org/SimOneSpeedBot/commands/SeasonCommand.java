@@ -38,7 +38,7 @@ public class SeasonCommand implements Command {
             try {
                 int year = Integer.parseInt(args[0].trim());
                 processSeason(chatId, year, null, false);
-            }catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 SendMessage errorMsg = SendMessage.builder()
                         .chatId(chatId)
                         .text("❌ Input errato. Inserisci un anno valido (es: 2024, 2023)")
@@ -167,8 +167,7 @@ public class SeasonCommand implements Command {
                     e.printStackTrace();
                 }
             }
-        }
-        else {
+        } else {
             //Comando -> nuovo messaggio
             SendMessage message = SendMessage.builder()
                     .chatId(chatId)

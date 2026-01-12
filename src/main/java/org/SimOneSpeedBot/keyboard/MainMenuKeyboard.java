@@ -9,11 +9,13 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.List;
 
-public class MainMenuKeyboard implements  MenuKeyboard {
+public class MainMenuKeyboard implements MenuKeyboard {
 
     private final TelegramClient client;
 
-    public MainMenuKeyboard(TelegramClient client) {this.client = client;}
+    public MainMenuKeyboard(TelegramClient client) {
+        this.client = client;
+    }
 
     @Override
     public Message sendInlineKeyboard(long chatId) {
@@ -54,6 +56,7 @@ public class MainMenuKeyboard implements  MenuKeyboard {
         }
 
     }
+
     public InlineKeyboardMarkup getKeyboard() {
         //Crea i bottoni
         InlineKeyboardButton utilsButton = InlineKeyboardButton.builder()
