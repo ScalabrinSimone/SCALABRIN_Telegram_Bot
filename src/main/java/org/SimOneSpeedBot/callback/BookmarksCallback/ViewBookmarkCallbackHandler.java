@@ -28,6 +28,37 @@ public class ViewBookmarkCallbackHandler implements CallbackHandler {
     public boolean handle(CallbackQuery callbackQuery) {
         String data = callbackQuery.getData();
 
+        //Gestisce la paginazione dei bookmarks season
+        if (data.startsWith("bookmark:season:page:")) {
+            //Formato: bookmark:season:page:year:pageNumber
+            String[] parts = data.split(":");
+            if (parts.length == 5) {
+                long chatId = callbackQuery.getMessage().getChatId();
+                long userId = callbackQuery.getFrom().getId();
+
+                String year = parts[3];
+                int page = Integer.parseInt(parts[4]);
+
+                //Recupera il bookmark per quella stagione
+                List<Bookmark> bookmarks = BookmarkManager.getBookmarkByType(userId, "season");
+                Bookmark selectedBookmark = null;
+
+                for (Bookmark bookmark : bookmarks) {
+                    if (bookmark.getEntityId().equals(year)) {
+                        selectedBookmark = bookmark;
+                        break;
+                    }
+                }
+
+                if (selectedBookmark != null) {
+                    handleSeasonBookmark(callbackQuery, selectedBookmark, page);
+                }
+
+                answerCallback(callbackQuery);
+                return true;
+            }
+        }
+
         if (!data.startsWith("view:")) {
             return false; //Deve iniziare per view il callback.
         }
@@ -62,7 +93,7 @@ public class ViewBookmarkCallbackHandler implements CallbackHandler {
 
         //Se é una stagione, gestisci diversamente
         if (type.equals("season")) {
-            handleSeasonBookmark(callbackQuery, selectedBookmark);
+            handleSeasonBookmark(callbackQuery, selectedBookmark, 1); //Pagina 1 di default
             return true;
         }
 
@@ -117,7 +148,7 @@ public class ViewBookmarkCallbackHandler implements CallbackHandler {
         };
     }
 
-    private void handleSeasonBookmark(CallbackQuery callbackQuery, Bookmark selectedBookmark) {
+    private void handleSeasonBookmark(CallbackQuery callbackQuery, Bookmark selectedBookmark, int page) {
         long chatId = callbackQuery.getMessage().getChatId();
         String entityId = selectedBookmark.getEntityId();
         int year = Integer.parseInt(entityId);
@@ -127,6 +158,57 @@ public class ViewBookmarkCallbackHandler implements CallbackHandler {
 
         List<InlineKeyboardRow> rows = new ArrayList<>();
 
+        int racesPerPage = 10;
+        int totalPages = (int) Math.ceil((double) races.size() / racesPerPage);
+
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+
+        int startIndex = (page - 1) * racesPerPage;
+        int endIndex = Math.min(startIndex + racesPerPage, races.size());
+
+        for (int i = startIndex; i < endIndex; i++) {
+            org.SimOneSpeedBot.api.ergast.SeasonAPI.Race race = races.get(i);
+
+            String buttonText = "🏁 " + race.getRound() + " - " + race.getRaceName();
+            InlineKeyboardButton raceButton = InlineKeyboardButton.builder()
+                    .text(buttonText)
+                    .callbackData("race:details:" + year + ":" + race.getRound() + ":bookmark")
+                    .build();
+
+            rows.add(new InlineKeyboardRow(raceButton));
+        }
+
+        //Navigazione pagine
+        if (totalPages > 1) {
+            List<InlineKeyboardButton> navButtons = new ArrayList<>();
+
+            if (page > 1) {
+                InlineKeyboardButton prevButton = InlineKeyboardButton.builder()
+                        .text("⬅️ Pagina " + (page - 1))
+                        .callbackData("bookmark:season:page:" + year + ":" + (page - 1))
+                        .build();
+                navButtons.add(prevButton);
+            }
+
+            InlineKeyboardButton pageIndicator = InlineKeyboardButton.builder()
+                    .text("📄 " + page + "/" + totalPages)
+                    .callbackData("page:indicator")
+                    .build();
+            navButtons.add(pageIndicator);
+
+            if (page < totalPages) {
+                InlineKeyboardButton nextButton = InlineKeyboardButton.builder()
+                        .text("Pagina " + (page + 1) + " ➡️")
+                        .callbackData("bookmark:season:page:" + year + ":" + (page + 1))
+                        .build();
+                navButtons.add(nextButton);
+            }
+
+            rows.add(new InlineKeyboardRow(navButtons));
+        }
+
+        /*
         int maxRacesToShow = Math.min(10, races.size());
         for (int i = 0; i < maxRacesToShow; i++) {
             org.SimOneSpeedBot.api.ergast.SeasonAPI.Race race = races.get(i);
@@ -138,7 +220,7 @@ public class ViewBookmarkCallbackHandler implements CallbackHandler {
                     .build();
 
             rows.add(new InlineKeyboardRow(raceButton));
-        }
+        }*/
 
         //Bottone elimina
         InlineKeyboardButton deleteButton = InlineKeyboardButton.builder()

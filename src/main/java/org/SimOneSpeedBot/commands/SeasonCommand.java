@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -199,65 +200,8 @@ public class SeasonCommand implements Command {
         String seasonInfo = seasonInfoBuilder.toString();
 
         if (messageId != null) {
-            //Costruisco tastiera con gare + salva + back
-            java.util.List<InlineKeyboardRow> rows = new java.util.ArrayList<>();
-
-            int maxRacesToShow = Math.min(10, races.size());
-            for (int i = 0; i < maxRacesToShow; i++) {
-                org.SimOneSpeedBot.api.ergast.SeasonAPI.Race race = races.get(i);
-
-                String buttonText = "🏁 " + race.getRound() + " - " + race.getRaceName();
-                InlineKeyboardButton raceButton = InlineKeyboardButton.builder()
-                        .text(buttonText)
-                        .callbackData("race:details:" + year + ":" + race.getRound())
-                        .build();
-
-                rows.add(new InlineKeyboardRow(raceButton));
-            }
-
-            //Controllo se é giá salvato e crea un pulsante di conseguenza
-            boolean alreadySaved = BookmarkManager.bookmarkExists(chatId, "season", String.valueOf(year));
-            InlineKeyboardButton saveButton;
-            if (alreadySaved) {
-                saveButton = InlineKeyboardButton.builder()
-                        .text("⚠ Stagione " + year+ " giá salvata")
-                        .callbackData("saved") //Non da errori
-                        .build();
-            }
-            else {
-                saveButton = InlineKeyboardButton.builder()
-                        .text("💾 Salva Stagione")
-                        .callbackData("save:season:" + year + ":stagione " + year)
-                        .build();
-            }
-            rows.add(0, new InlineKeyboardRow(saveButton));
-
-            InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                    .text("⬅️ Back To Season Menu")
-                    .callbackData("race:season")
-                    .build();
-            rows.add(new InlineKeyboardRow(backButton));
-
-            InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                    .keyboard(rows)
-                    .build();
-
-            EditMessageText edit = EditMessageText.builder()
-                    .chatId(chatId)
-                    .messageId(messageId)
-                    .text(seasonInfo)
-                    .parseMode("HTML")
-                    .replyMarkup(keyboard)
-                    .build();
-
-            try {
-                client.execute(edit);
-                userStates.remove(chatId); //Rimuove lo stato (era presente un bug che contuinuava ad aspettarlo)
-            } catch (Exception e) {
-                if (!e.getMessage().contains("message is not modified")) {
-                    e.printStackTrace();
-                }
-            }
+            //Costruisco tastiera con paginazione
+            int currentPage = 1; //Prima pagina di default
         } else {
             //Comando /season -> solo testo
             SendMessage message = SendMessage.builder()
@@ -272,5 +216,144 @@ public class SeasonCommand implements Command {
                 e.printStackTrace();
             }
         }
+    }
+
+    //Metodo per costruire la tastiera con paginazione
+    private void buildSeasonKeyboard(long chatId, int messageId, int year, List<org.SimOneSpeedBot.api.ergast.SeasonAPI.Race> races, String seasonInfo, int page) {
+        List<InlineKeyboardRow> rows = new ArrayList<>();
+
+        int racesPerPage = 10;
+        int totalPages = (int) Math.ceil((double) races.size() / racesPerPage);
+
+        //Limita la pagina al range valido
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+
+        //Calcola indici per la pagina corrente
+        int startIndex = (page - 1) * racesPerPage;
+        int endIndex = Math.min(startIndex + racesPerPage, races.size());
+
+        //Aggiungi gare della pagina corrente
+        for (int i = startIndex; i < endIndex; i++) {
+            org.SimOneSpeedBot.api.ergast.SeasonAPI.Race race = races.get(i);
+
+            String buttonText = "🏁 " + race.getRound() + " - " + race.getRaceName();
+            InlineKeyboardButton raceButton = InlineKeyboardButton.builder()
+                    .text(buttonText)
+                    .callbackData("race:details:" + year + ":" + race.getRound())
+                    .build();
+
+            rows.add(new InlineKeyboardRow(raceButton));
+        }
+
+        //Bottoni di navigazione se ci sono più pagine
+        if (totalPages > 1) {
+            List<InlineKeyboardButton> navButtons = new ArrayList<>();
+
+            //Bottone pagina precedente
+            if (page > 1) {
+                InlineKeyboardButton prevButton = InlineKeyboardButton.builder()
+                        .text("⬅️ Pagina " + (page - 1))
+                        .callbackData("season:page:" + year + ":" + (page - 1))
+                        .build();
+                navButtons.add(prevButton);
+            }
+
+            //Indicatore pagina corrente
+            InlineKeyboardButton pageIndicator = InlineKeyboardButton.builder()
+                    .text("📄 " + page + "/" + totalPages)
+                    .callbackData("page:indicator") //Non fa nulla
+                    .build();
+            navButtons.add(pageIndicator);
+
+            //Bottone pagina successiva
+            if (page < totalPages) {
+                InlineKeyboardButton nextButton = InlineKeyboardButton.builder()
+                        .text("Pagina " + (page + 1) + " ➡️")
+                        .callbackData("season:page:" + year + ":" + (page + 1))
+                        .build();
+                navButtons.add(nextButton);
+            }
+
+            rows.add(new InlineKeyboardRow(navButtons));
+        }
+
+        //Pulsante salva
+        boolean alreadySaved = BookmarkManager.bookmarkExists(chatId, "season", String.valueOf(year));
+        InlineKeyboardButton saveButton;
+        if (alreadySaved) {
+            saveButton = InlineKeyboardButton.builder()
+                    .text("⚠ Stagione " + year+ " giá salvata")
+                    .callbackData("saved") //Non da errori
+                    .build();
+        } else {
+            saveButton = InlineKeyboardButton.builder()
+                    .text("💾 Salva Stagione")
+                    .callbackData("save:season:" + year + ":stagione " + year)
+                    .build();
+        }
+        rows.add(0, new InlineKeyboardRow(saveButton));
+
+        //Back
+        InlineKeyboardButton backButton = InlineKeyboardButton.builder()
+                .text("⬅️ Back To Season Menu")
+                .callbackData("race:season")
+                .build();
+        rows.add(new InlineKeyboardRow(backButton));
+
+        InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
+                .keyboard(rows)
+                .build();
+
+        EditMessageText edit = EditMessageText.builder()
+                .chatId(chatId)
+                .messageId(messageId)
+                .text(seasonInfo)
+                .parseMode("HTML")
+                .replyMarkup(keyboard)
+                .build();
+
+        try {
+            client.execute(edit);
+        } catch (Exception e) {
+            if (!e.getMessage().contains("message is not modified")) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //Metodo per permettere di avere un callback con pagina
+    public void processSeasonWithPage(long chatId, int year, Integer messageId, int page) {
+        //Recupera le gare
+        ErgastAPI api = new ErgastAPI();
+        List<org.SimOneSpeedBot.api.ergast.SeasonAPI.Race> races = api.fetchSeasonRaces(year);
+
+        if (races.isEmpty()) {
+            return; //Gestisci errore se necessario
+        }
+
+        //Costruisci il testo (uguale a processSeason)
+        StringBuilder seasonInfoBuilder = new StringBuilder();
+        seasonInfoBuilder.append("<b>🏎️ Stagione Formula 1 ").append(year).append("</b>\n\n");
+        seasonInfoBuilder.append("📊 <b>Totale gare:</b> ").append(races.size()).append("\n\n");
+        seasonInfoBuilder.append("<b>📅 Calendario gare:</b>\n\n");
+
+        for (org.SimOneSpeedBot.api.ergast.SeasonAPI.Race race : races) {
+            seasonInfoBuilder.append("• Round ")
+                    .append(race.getRound())
+                    .append(" - ")
+                    .append(race.getRaceName())
+                    .append(" (")
+                    .append(race.getCircuit().getCircuitName())
+                    .append(" - ")
+                    .append(race.getDate())
+                    .append(")\n");
+        }
+
+        seasonInfoBuilder.append("\n<i>Usa i bottoni qui sotto per vedere i dettagli di una singola gara.</i>");
+        String seasonInfo = seasonInfoBuilder.toString();
+
+        //Costruisci la tastiera con la pagina specifica
+        buildSeasonKeyboard(chatId, messageId, year, races, seasonInfo, page);
     }
 }
