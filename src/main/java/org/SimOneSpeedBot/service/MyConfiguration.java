@@ -6,23 +6,22 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 
 public class MyConfiguration {
     private static MyConfiguration instance;
-    private Configurations configs = new Configurations();
-    private Configuration config;
+    private Configuration config; //Può essere null se il file non esiste
 
     private MyConfiguration() {
         try {
+            Configurations configs = new Configurations();
+            //Nome file: mettilo in src/main/resources/config.properties SOLO in locale
             config = configs.properties("config.properties");
-        } catch (ConfigurationException e) {
-            System.err.println("File non disponibile.");
-            System.exit(-1);
+        } catch (Exception e) {
+            //Su Render il file non esiste: va bene così, useremo solo le variabili d'ambiente
+            config = null;
         }
     }
-
-    public static MyConfiguration getInstance() {
+    public static synchronized MyConfiguration getInstance() {
         if (instance == null) {
             instance = new MyConfiguration();
         }
-
         return instance;
     }
 
@@ -33,7 +32,12 @@ public class MyConfiguration {
             return envValue;
         }
 
-        //2. Se non c'è, usa il file di config (per uso locale)
-        return config.getString(key);
+        //2. Se non c'è, prova dal file di config (solo locale)
+        if (config != null && config.containsKey(key)) {
+            return config.getString(key);
+        }
+
+        //3. Se non trovato da nessuna parte -> errore chiaro
+        throw new RuntimeException("Configurazione mancante per chiave: " + key);
     }
 }
