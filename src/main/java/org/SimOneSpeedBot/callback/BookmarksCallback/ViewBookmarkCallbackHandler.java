@@ -193,7 +193,7 @@ public class ViewBookmarkCallbackHandler implements CallbackHandler {
 
             InlineKeyboardButton pageIndicator = InlineKeyboardButton.builder()
                     .text("📄 " + page + "/" + totalPages)
-                    .callbackData("page:indicator")
+                    .callbackData("saved") //Non fa nulla (neanche errori)
                     .build();
             navButtons.add(pageIndicator);
 

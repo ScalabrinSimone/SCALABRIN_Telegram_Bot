@@ -270,7 +270,7 @@ public class SeasonCommand implements Command {
             //Indicatore pagina corrente
             InlineKeyboardButton pageIndicator = InlineKeyboardButton.builder()
                     .text("📄 " + page + "/" + totalPages)
-                    .callbackData("page:indicator") //Non fa nulla
+                    .callbackData("saved") //Non fa nulla
                     .build();
             navButtons.add(pageIndicator);
 
