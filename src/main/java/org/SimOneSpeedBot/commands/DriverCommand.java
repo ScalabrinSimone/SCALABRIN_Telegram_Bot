@@ -2,6 +2,7 @@ package org.SimOneSpeedBot.commands;
 
 import org.SimOneSpeedBot.api.ergast.DriverAPI.Driver;
 import org.SimOneSpeedBot.api.ergast.ErgastAPI;
+import org.SimOneSpeedBot.database.Bookmarks.BookmarkManager;
 import org.apache.commons.lang3.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -125,10 +126,22 @@ public class DriverCommand implements Command {
 
             //Si puó salvare solo se esiste il pilota e solo se nel menu
             if (!driverInfo.contains("❌ Pilota")) {
-                InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
-                        .text("💾 Salva")
-                        .callbackData("save:driver:" + driver.getDriverId() + ":" + driver.getGivenName() + " " + driver.getFamilyName()) //Formato: save:tipo:if:nome cognome
-                        .build();
+
+                //Controllo se é giá salvato e crea un pulsante di conseguenza
+                boolean alreadySaved = BookmarkManager.bookmarkExists(chatId, "driver", driver.getDriverId());
+                InlineKeyboardButton saveButton;
+                if (alreadySaved) {
+                    saveButton = InlineKeyboardButton.builder()
+                            .text("⚠ Driver " + driver.getFamilyName() + " " + driver.getGivenName() + " giá salvato")
+                            .callbackData("saved") //Non da errori
+                            .build();
+                }
+                else {
+                    saveButton = InlineKeyboardButton.builder()
+                            .text("💾 Salva Driver")
+                            .callbackData("save:driver:" + driver.getDriverId() + ":" + driver.getGivenName() + " " + driver.getFamilyName()) //Formato: save:tipo:if:nome cognome
+                            .build();
+                }
 
                 InlineKeyboardRow saveButtonRow = new InlineKeyboardRow(saveButton);
 

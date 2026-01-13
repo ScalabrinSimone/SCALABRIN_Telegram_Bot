@@ -1,6 +1,7 @@
 package org.SimOneSpeedBot.commands;
 
 import org.SimOneSpeedBot.api.ergast.ErgastAPI;
+import org.SimOneSpeedBot.database.Bookmarks.BookmarkManager;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -214,10 +215,21 @@ public class SeasonCommand implements Command {
                 rows.add(new InlineKeyboardRow(raceButton));
             }
 
-            InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
-                    .text("💾 Salva Stagione")
-                    .callbackData("save:season:" + year + ":stagione " + year)
-                    .build();
+            //Controllo se é giá salvato e crea un pulsante di conseguenza
+            boolean alreadySaved = BookmarkManager.bookmarkExists(chatId, "season", String.valueOf(year));
+            InlineKeyboardButton saveButton;
+            if (alreadySaved) {
+                saveButton = InlineKeyboardButton.builder()
+                        .text("⚠ Stagione " + year+ " giá salvata")
+                        .callbackData("saved") //Non da errori
+                        .build();
+            }
+            else {
+                saveButton = InlineKeyboardButton.builder()
+                        .text("💾 Salva Stagione")
+                        .callbackData("save:season:" + year + ":stagione " + year)
+                        .build();
+            }
             rows.add(0, new InlineKeyboardRow(saveButton));
 
             InlineKeyboardButton backButton = InlineKeyboardButton.builder()

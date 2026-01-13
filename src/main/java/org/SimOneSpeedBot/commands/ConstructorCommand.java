@@ -2,6 +2,7 @@ package org.SimOneSpeedBot.commands;
 
 import org.SimOneSpeedBot.api.ergast.ConstructorAPI.Constructor;
 import org.SimOneSpeedBot.api.ergast.ErgastAPI;
+import org.SimOneSpeedBot.database.Bookmarks.BookmarkManager;
 import org.apache.commons.lang3.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -123,10 +124,21 @@ public class ConstructorCommand implements Command {
 
             //Si puó salvare solo se esiste il pilota e solo se nel menu
             if (!constructorInfo.contains("❌ Scuderia")) {
-                InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
-                        .text("💾 Salva")
-                        .callbackData("save:constructor:" + constructor.getConstructorId() + ":" + constructor.getName()) //Formato: save:tipo:id:nome
-                        .build();
+                //Controllo se é giá salvato e crea un pulsante di conseguenza
+                boolean alreadySaved = BookmarkManager.bookmarkExists(chatId, "constructor", constructor.getConstructorId());
+                InlineKeyboardButton saveButton;
+                if (alreadySaved) {
+                    saveButton = InlineKeyboardButton.builder()
+                            .text("⚠ Costruttore " + constructor.getName() + " giá salvato")
+                            .callbackData("saved") //Non da errori
+                            .build();
+                }
+                else {
+                    saveButton = InlineKeyboardButton.builder()
+                            .text("💾 Salva Constructor")
+                            .callbackData("save:constructor:" + constructor.getConstructorId() + ":" + constructor.getName()) //Formato: save:tipo:id:nome
+                            .build();
+                }
 
                 InlineKeyboardRow saveButtonRow = new InlineKeyboardRow(saveButton);
 
