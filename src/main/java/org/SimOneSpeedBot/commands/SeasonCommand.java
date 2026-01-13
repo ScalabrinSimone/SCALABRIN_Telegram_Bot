@@ -92,7 +92,7 @@ public class SeasonCommand implements Command {
             if (messageId != null) {
                 //Menu -> edita il messaggio con bottone back per tornare a season
                 InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                        .text("⬅️ Back To Season Menu\n (Concludi Inserimento)")
+                        .text("⬅️ Back To Season Menu")
                         .callbackData("race:season")
                         .build();
 
@@ -252,6 +252,7 @@ public class SeasonCommand implements Command {
 
             try {
                 client.execute(edit);
+                userStates.remove(chatId); //Rimuove lo stato (era presente un bug che contuinuava ad aspettarlo)
             } catch (Exception e) {
                 if (!e.getMessage().contains("message is not modified")) {
                     e.printStackTrace();

@@ -40,6 +40,12 @@ public class RaceDetailsCallbackHandler implements CallbackHandler {
             return false;
         }
 
+        //Controlla se viene da bookmark
+        boolean fromBookmark = data.endsWith(":bookmark");
+        if (fromBookmark) {
+            data = data.replace(":bookmark", ""); //Rimuove il flag per processare normalmente
+        }
+
         //Per tornare subito alla season selezionata
         if (data.startsWith("race:season:year:")) {
             //Formato: race:season:year:2024
@@ -64,10 +70,10 @@ public class RaceDetailsCallbackHandler implements CallbackHandler {
         int round = Integer.parseInt(parts[3]);
 
         switch (action) {
-            case "details" -> showRaceDetails(chatId, year, round);
-            case "grid" -> showStartingGrid(chatId, year, round);
-            case "results" -> showRaceResults(chatId, year, round);
-            case "qualy" -> showQualifying(chatId, year, round);
+            case "details" -> showRaceDetails(chatId, year, round, fromBookmark);
+            case "grid" -> showStartingGrid(chatId, year, round, fromBookmark);
+            case "results" -> showRaceResults(chatId, year, round, fromBookmark);
+            case "qualy" -> showQualifying(chatId, year, round, fromBookmark);
             default -> { return false; }
         }
 
@@ -76,7 +82,7 @@ public class RaceDetailsCallbackHandler implements CallbackHandler {
     }
 
     //Mostra dettagli gara con bottoni per griglia/risultati
-    private void showRaceDetails(long chatId, int year, int round) {
+    private void showRaceDetails(long chatId, int year, int round, boolean fromBookmark) {
         ErgastAPI api = new ErgastAPI();
         List<Race> races = api.fetchSeasonRaces(year);
 
@@ -92,25 +98,36 @@ public class RaceDetailsCallbackHandler implements CallbackHandler {
             message = RaceService.formatRaceInfo(target);
         }
 
+        String bookmarkSuffix = fromBookmark ? ":bookmark" : "";
+
         InlineKeyboardButton gridButton = InlineKeyboardButton.builder()
                 .text("🏁 Griglia di Partenza")
-                .callbackData("race:grid:" + year + ":" + round)
+                .callbackData("race:grid:" + year + ":" + round + bookmarkSuffix)
                 .build();
 
         InlineKeyboardButton qualyButton = InlineKeyboardButton.builder()
                 .text("⏱️ Qualifiche")
-                .callbackData("race:qualy:" + year + ":" + round)
+                .callbackData("race:qualy:" + year + ":" + round + bookmarkSuffix)
                 .build();
 
         InlineKeyboardButton resultsButton = InlineKeyboardButton.builder()
                 .text("🏆 Risultati Gara")
-                .callbackData("race:results:" + year + ":" + round)
+                .callbackData("race:results:" + year + ":" + round + bookmarkSuffix)
                 .build();
 
-        InlineKeyboardButton backButton = InlineKeyboardButton.builder()
-                .text("⬅️ Torna alla Stagione")
-                .callbackData("race:season:year:" + year) //Torna alla stagione selezionata
-                .build();
+        //Cambia il back in base alla provenienza
+        InlineKeyboardButton backButton;
+        if (fromBookmark) {
+            backButton = InlineKeyboardButton.builder()
+                    .text("⬅️ Torna alla Stagione Salvata")
+                    .callbackData("view:season:" + year)
+                    .build();
+        } else {
+            backButton = InlineKeyboardButton.builder()
+                    .text("⬅️ Torna alla Stagione")
+                    .callbackData("race:season:year:" + year)
+                    .build();
+        }
 
         List<InlineKeyboardRow> rows = new ArrayList<>();
         rows.add(new InlineKeyboardRow(gridButton));
@@ -140,25 +157,27 @@ public class RaceDetailsCallbackHandler implements CallbackHandler {
     }
 
     //Mostra griglia di partenza
-    private void showStartingGrid(long chatId, int year, int round) {
+    private void showStartingGrid(long chatId, int year, int round, boolean fromBookmark) {
         ErgastAPI api = new ErgastAPI();
         List<GridPosition> grid = api.fetchStartingGrid(year, round);
 
         String message = RaceService.formatStartingGrid(grid, "GP Round " + round, year, round);
 
+        String bookmarkSuffix = fromBookmark ? ":bookmark" : "";
+
         InlineKeyboardButton resultsButton = InlineKeyboardButton.builder()
                 .text("🏆 Vai ai Risultati")
-                .callbackData("race:results:" + year + ":" + round)
+                .callbackData("race:results:" + year + ":" + round + bookmarkSuffix)
                 .build();
 
         InlineKeyboardButton qualyButton = InlineKeyboardButton.builder()
                 .text("⏱️ Vai alle Qualifiche")
-                .callbackData("race:qualy:" + year + ":" + round)
+                .callbackData("race:qualy:" + year + ":" + round + bookmarkSuffix)
                 .build();
 
         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
                 .text("⬅️ Torna ai Dettagli")
-                .callbackData("race:details:" + year + ":" + round)
+                .callbackData("race:details:" + year + ":" + round + bookmarkSuffix)
                 .build();
 
         List<InlineKeyboardRow> rows = new ArrayList<>();
@@ -188,25 +207,27 @@ public class RaceDetailsCallbackHandler implements CallbackHandler {
     }
 
     //Mostra risultati finali
-    private void showRaceResults(long chatId, int year, int round) {
+    private void showRaceResults(long chatId, int year, int round, boolean fromBookmark) {
         ErgastAPI api = new ErgastAPI();
         List<Result> results = api.fetchRaceResults(year, round);
 
         String message = RaceService.formatRaceResults(results, "GP Round " + round, year, round);
 
+        String bookmarkSuffix = fromBookmark ? ":bookmark" : "";
+
         InlineKeyboardButton gridButton = InlineKeyboardButton.builder()
                 .text("🏁 Vai alla Griglia")
-                .callbackData("race:grid:" + year + ":" + round)
+                .callbackData("race:grid:" + year + ":" + round + bookmarkSuffix)
                 .build();
 
         InlineKeyboardButton qualyButton = InlineKeyboardButton.builder()
                 .text("⏱️ Vai alle Qualifiche")
-                .callbackData("race:qualy:" + year + ":" + round)
+                .callbackData("race:qualy:" + year + ":" + round + bookmarkSuffix)
                 .build();
 
         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
                 .text("⬅️ Torna ai Dettagli")
-                .callbackData("race:details:" + year + ":" + round)
+                .callbackData("race:details:" + year + ":" + round + bookmarkSuffix)
                 .build();
 
         List<InlineKeyboardRow> rows = new ArrayList<>();
@@ -236,25 +257,27 @@ public class RaceDetailsCallbackHandler implements CallbackHandler {
     }
 
     //Mostra le qualifiche
-    private void showQualifying(long chatId, int year, int round) {
+    private void showQualifying(long chatId, int year, int round, boolean fromBookmark) {
         ErgastAPI api = new ErgastAPI();
         List<QualifyingResult> qualy = api.fetchQualifying(year, round);
 
         String message = RaceService.formatQualifying(qualy, "GP Round " + round, year, round);
 
+        String bookmarkSuffix = fromBookmark ? ":bookmark" : "";
+
         InlineKeyboardButton gridButton = InlineKeyboardButton.builder()
                 .text("🏁 Vai alla Griglia")
-                .callbackData("race:grid:" + year + ":" + round)
+                .callbackData("race:grid:" + year + ":" + round + bookmarkSuffix)
                 .build();
 
         InlineKeyboardButton resultsButton = InlineKeyboardButton.builder()
                 .text("🏆 Vai ai Risultati")
-                .callbackData("race:results:" + year + ":" + round)
+                .callbackData("race:results:" + year + ":" + round + bookmarkSuffix)
                 .build();
 
         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
                 .text("⬅️ Torna ai Dettagli")
-                .callbackData("race:details:" + year + ":" + round)
+                .callbackData("race:details:" + year + ":" + round + bookmarkSuffix)
                 .build();
 
         List<InlineKeyboardRow> rows = new ArrayList<>();

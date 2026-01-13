@@ -1,9 +1,11 @@
 package org.SimOneSpeedBot.callback.BookmarksCallback;
 
+import org.SimOneSpeedBot.api.ergast.ErgastAPI;
 import org.SimOneSpeedBot.callback.CallbackHandler;
 import org.SimOneSpeedBot.database.Bookmarks.BookmarkManager;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -11,6 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SaveCallbackHandler implements CallbackHandler {
@@ -53,6 +56,26 @@ public class SaveCallbackHandler implements CallbackHandler {
 
         //Risposte al callback diverse se per Season (torna al suo menu) oppure per driver e constructor (race menu)
         if (saved && type.equals("season")) {
+            //Rigenera la tastiera completa con le gare + pulsante salvato
+            ErgastAPI api = new ErgastAPI();
+            int year = Integer.parseInt(entityId);
+            List<org.SimOneSpeedBot.api.ergast.SeasonAPI.Race> races = api.fetchSeasonRaces(year);
+
+            List<InlineKeyboardRow> rows = new ArrayList<>();
+
+            int maxRacesToShow = Math.min(10, races.size());
+            for (int i = 0; i < maxRacesToShow; i++) {
+                org.SimOneSpeedBot.api.ergast.SeasonAPI.Race race = races.get(i);
+
+                String buttonText = "🏁 " + race.getRound() + " - " + race.getRaceName();
+                InlineKeyboardButton raceButton = InlineKeyboardButton.builder()
+                        .text(buttonText)
+                        .callbackData("race:details:" + year + ":" + race.getRound())
+                        .build();
+
+                rows.add(new InlineKeyboardRow(raceButton));
+            }
+
             //Disattiva il pulsante salva
             InlineKeyboardButton backButton = InlineKeyboardButton.builder()
                     .text("⬅️ Back To Season Menu\n (Concludi Inserimento)")
@@ -60,7 +83,7 @@ public class SaveCallbackHandler implements CallbackHandler {
                     .build();
 
             InlineKeyboardButton savedButton = InlineKeyboardButton.builder()
-                    .text("✅ Salvato")
+                    .text("✅ Salvata")
                     .callbackData("saved") //Callback vuoto, non fa nulla, e non deve generare il popup di errore.
                     .build();
 
@@ -71,9 +94,11 @@ public class SaveCallbackHandler implements CallbackHandler {
                     ))
                     .build();
 
-            EditMessageReplyMarkup edit = EditMessageReplyMarkup.builder()
+            EditMessageText edit = EditMessageText .builder()
                     .chatId(chatId)
                     .messageId(messageId)
+                    .text(messageText)
+                    .parseMode("HTML")
                     .replyMarkup(keyboard)
                     .build();
 

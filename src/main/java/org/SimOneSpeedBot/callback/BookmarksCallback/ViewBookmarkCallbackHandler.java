@@ -1,5 +1,6 @@
 package org.SimOneSpeedBot.callback.BookmarksCallback;
 
+import org.SimOneSpeedBot.api.ergast.ErgastAPI;
 import org.SimOneSpeedBot.callback.CallbackHandler;
 import org.SimOneSpeedBot.database.Bookmarks.Bookmark;
 import org.SimOneSpeedBot.database.Bookmarks.BookmarkManager;
@@ -11,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ViewBookmarkCallbackHandler implements CallbackHandler {
@@ -55,6 +57,12 @@ public class ViewBookmarkCallbackHandler implements CallbackHandler {
 
         if (selectedBookmark == null) {
             answerCallback(callbackQuery);
+            return true;
+        }
+
+        //Se é una stagione, gestisci diversamente
+        if (type.equals("season")) {
+            handleSeasonBookmark(callbackQuery, selectedBookmark);
             return true;
         }
 
@@ -107,6 +115,65 @@ public class ViewBookmarkCallbackHandler implements CallbackHandler {
             case "season" -> "📅 Stagioni";
             default -> "";
         };
+    }
+
+    private void handleSeasonBookmark(CallbackQuery callbackQuery, Bookmark selectedBookmark) {
+        long chatId = callbackQuery.getMessage().getChatId();
+        String entityId = selectedBookmark.getEntityId();
+        int year = Integer.parseInt(entityId);
+
+        ErgastAPI api = new ErgastAPI();
+        List<org.SimOneSpeedBot.api.ergast.SeasonAPI.Race> races = api.fetchSeasonRaces(year);
+
+        List<InlineKeyboardRow> rows = new ArrayList<>();
+
+        int maxRacesToShow = Math.min(10, races.size());
+        for (int i = 0; i < maxRacesToShow; i++) {
+            org.SimOneSpeedBot.api.ergast.SeasonAPI.Race race = races.get(i);
+
+            String buttonText = "🏁 " + race.getRound() + " - " + race.getRaceName();
+            InlineKeyboardButton raceButton = InlineKeyboardButton.builder()
+                    .text(buttonText)
+                    .callbackData("race:details:" + year + ":" + race.getRound() + ":bookmark") //Aggiunge :bookmark alla fine per tracciare che viene da bookmark
+                    .build();
+
+            rows.add(new InlineKeyboardRow(raceButton));
+        }
+
+        //Bottone elimina
+        InlineKeyboardButton deleteButton = InlineKeyboardButton.builder()
+                .text("🗑️ Elimina")
+                .callbackData("delete:season:" + entityId)
+                .build();
+        rows.add(0, new InlineKeyboardRow(deleteButton));
+
+        //Bottone back che torna ai bookmarks
+        InlineKeyboardButton backButton = InlineKeyboardButton.builder()
+                .text("⬅️ Back To 📅 Stagioni")
+                .callbackData("bookmark:season:1")
+                .build();
+        rows.add(new InlineKeyboardRow(backButton));
+
+        InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
+                .keyboard(rows)
+                .build();
+
+        EditMessageText edit = EditMessageText.builder()
+                .chatId(chatId)
+                .messageId(messageId)
+                .text(selectedBookmark.getMessage())
+                .parseMode("HTML")
+                .replyMarkup(keyboard)
+                .build();
+
+        try {
+            telegramClient.execute(edit);
+            answerCallback(callbackQuery);
+        } catch (Exception e) {
+            if (!e.getMessage().contains("message is not modified")) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void answerCallback(CallbackQuery callbackQuery) {
