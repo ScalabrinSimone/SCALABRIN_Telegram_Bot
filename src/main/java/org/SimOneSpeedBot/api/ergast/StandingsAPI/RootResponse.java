@@ -1,13 +1,13 @@
 package org.SimOneSpeedBot.api.ergast.StandingsAPI;
 
 public class RootResponse {
-    private MRData mrData;
+    private MRData MRData;
 
     public MRData getMRData() {
-        return mrData;
+        return MRData;
     }
 
-    public void setMRData(MRData mrData) {
-        this.mrData = mrData;
+    public void setMRData(MRData MRData) {
+        this.MRData = MRData;
     }
 }

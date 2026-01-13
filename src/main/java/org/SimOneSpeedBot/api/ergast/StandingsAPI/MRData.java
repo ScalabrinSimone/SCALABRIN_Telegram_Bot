@@ -1,13 +1,13 @@
 package org.SimOneSpeedBot.api.ergast.StandingsAPI;
 
 public class MRData {
-    private StandingsTable standingsTable;
+    private StandingsTable StandingsTable;
 
     public StandingsTable getStandingsTable() {
-        return standingsTable;
+        return StandingsTable;
     }
 
-    public void setStandingsTable(StandingsTable standingsTable) {
-        this.standingsTable = standingsTable;
+    public void setStandingsTable(StandingsTable StandingsTable) {
+        this.StandingsTable = StandingsTable;
     }
 }

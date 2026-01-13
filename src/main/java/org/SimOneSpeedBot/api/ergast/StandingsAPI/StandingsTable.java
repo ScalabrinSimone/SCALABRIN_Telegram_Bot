@@ -3,13 +3,13 @@ package org.SimOneSpeedBot.api.ergast.StandingsAPI;
 import java.util.List;
 
 public class StandingsTable {
-    private List<StandingsList> standingsLists;
+    private List<StandingsList> StandingsLists;
 
     public List<StandingsList> getStandingsLists() {
-        return standingsLists;
+        return StandingsLists;
     }
 
-    public void setStandingsLists(List<StandingsList> standingsLists) {
-        this.standingsLists = standingsLists;
+    public void setStandingsLists(List<StandingsList> StandingsLists) {
+        this.StandingsLists = StandingsLists;
     }
 }
