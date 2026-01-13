@@ -1,5 +1,7 @@
 package org.SimOneSpeedBot.api.ergast.RaceResultAPI;
 
+import org.SimOneSpeedBot.api.ergast.SeasonAPI.Circuit;
+
 import java.util.List;
 
 public class Race {

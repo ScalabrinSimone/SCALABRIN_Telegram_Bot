@@ -6,6 +6,8 @@ import org.SimOneSpeedBot.api.ergast.QualifyingAPI.QualifyingResult;
 import org.SimOneSpeedBot.api.ergast.RaceResultAPI.Result;
 import org.SimOneSpeedBot.api.ergast.SeasonAPI.Race;
 import org.SimOneSpeedBot.callback.CallbackHandler;
+import org.SimOneSpeedBot.commands.CommandHub;
+import org.SimOneSpeedBot.commands.SeasonCommand;
 import org.SimOneSpeedBot.service.RaceService;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -21,10 +23,12 @@ import java.util.List;
 public class RaceDetailsCallbackHandler implements CallbackHandler {
     private final TelegramClient client;
     private final int messageId;
+    private final CommandHub hub;
 
-    public RaceDetailsCallbackHandler(TelegramClient client, int messageId) {
+    public RaceDetailsCallbackHandler(TelegramClient client, int messageId, CommandHub hub) {
         this.client = client;
         this.messageId = messageId;
+        this.hub = hub;
     }
 
     @Override
@@ -34,6 +38,20 @@ public class RaceDetailsCallbackHandler implements CallbackHandler {
 
         if (!data.startsWith("race:")) {
             return false;
+        }
+
+        //Per tornare subito alla season selezionata
+        if (data.startsWith("race:season:year:")) {
+            //Formato: race:season:year:2024
+            String[] parts = data.split(":");
+            int year = Integer.parseInt(parts[3]);
+
+            //Richiama direttamente SeasonCommand, come quando l'utente ha inserito l'anno
+            SeasonCommand seasonCmd = (SeasonCommand) hub.getCommand("season");
+            seasonCmd.processSeason(chatId, year, messageId, false);
+
+            answerCallback(callbackQuery);
+            return true;
         }
 
         String[] parts = data.split(":");
@@ -91,7 +109,7 @@ public class RaceDetailsCallbackHandler implements CallbackHandler {
 
         InlineKeyboardButton backButton = InlineKeyboardButton.builder()
                 .text("⬅️ Torna alla Stagione")
-                .callbackData("race:season:view:" + year) //da gestire se vuoi
+                .callbackData("race:season:year:" + year) //Torna alla stagione selezionata
                 .build();
 
         List<InlineKeyboardRow> rows = new ArrayList<>();
