@@ -6,6 +6,7 @@ import org.SimOneSpeedBot.api.ergast.ConstructorAPI.Constructor;
 import org.SimOneSpeedBot.api.ergast.DriverAPI.Driver;
 import org.SimOneSpeedBot.api.ergast.SeasonAPI.Race;
 import org.SimOneSpeedBot.service.MyConfiguration;
+import org.SimOneSpeedBot.api.ergast.StandingsAPI.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -343,6 +344,60 @@ public class ErgastAPI {
 
         } catch (IOException | InterruptedException e) {
             System.err.println("Errore in richiesta API per le qualifiche: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    //Standings
+
+    //Recupera classifica piloti per una stagione
+    public List<DriverStanding> fetchDriverStandings(int year) {
+        String url = baseUrl + year + "/driverStandings.json";
+
+        try {
+            String jsonResponse = getRequest(url);
+            Gson gson = new Gson();
+            RootResponse response = gson.fromJson(jsonResponse, RootResponse.class);
+
+            if (response != null &&
+                    response.getMrData() != null &&
+                    response.getMrData().getStandingsTable() != null &&
+                    response.getMrData().getStandingsTable().getStandingsLists() != null &&
+                    !response.getMrData().getStandingsTable().getStandingsLists().isEmpty()) {
+
+                return response.getMrData().getStandingsTable().getStandingsLists().get(0).getDriverStandings();
+            }
+
+            return new ArrayList<>();
+
+        } catch (Exception e) {
+            System.err.println("Errore recupero classifica piloti: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    //Recupera classifica costruttori per una stagione
+    public List<ConstructorStanding> fetchConstructorStandings(int year) {
+        String url = baseUrl + year + "/constructorStandings.json";
+
+        try {
+            String jsonResponse = getRequest(url);
+            Gson gson = new Gson();
+            RootResponse response = gson.fromJson(jsonResponse, RootResponse.class);
+
+            if (response != null &&
+                    response.getMrData() != null &&
+                    response.getMrData().getStandingsTable() != null &&
+                    response.getMrData().getStandingsTable().getStandingsLists() != null &&
+                    !response.getMrData().getStandingsTable().getStandingsLists().isEmpty()) {
+
+                return response.getMrData().getStandingsTable().getStandingsLists().get(0).getConstructorStandings();
+            }
+
+            return new ArrayList<>();
+
+        } catch (Exception e) {
+            System.err.println("Errore recupero classifica costruttori: " + e.getMessage());
             return new ArrayList<>();
         }
     }

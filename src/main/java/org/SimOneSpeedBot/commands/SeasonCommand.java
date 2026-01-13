@@ -181,6 +181,13 @@ public class SeasonCommand implements Command {
         //Stagione trovata → costruisco il testo completo (quello salvato nel database)
         StringBuilder seasonInfoBuilder = new StringBuilder();
         seasonInfoBuilder.append("<b>🏎️ Stagione Formula 1 ").append(year).append("</b>\n\n");
+
+        //Aggiunge info campioni
+        String championInfo = getChampionInfo(api, year);
+        if (!championInfo.isEmpty()) {
+            seasonInfoBuilder.append(championInfo).append("\n");
+        }
+
         seasonInfoBuilder.append("📊 <b>Totale gare:</b> ").append(races.size()).append("\n\n");
         seasonInfoBuilder.append("<b>📅 Calendario gare:</b>\n\n");
 
@@ -333,9 +340,18 @@ public class SeasonCommand implements Command {
             return; //Gestisci errore se necessario
         }
 
+        //Recupera la classifica piloti e costruttori
+        String championInfo = getChampionInfo(api, year);
+
         //Costruisci il testo (uguale a processSeason)
         StringBuilder seasonInfoBuilder = new StringBuilder();
         seasonInfoBuilder.append("<b>🏎️ Stagione Formula 1 ").append(year).append("</b>\n\n");
+
+        //NUOVO: Aggiungi info campioni
+        if (!championInfo.isEmpty()) {
+            seasonInfoBuilder.append(championInfo).append("\n");
+        }
+
         seasonInfoBuilder.append("📊 <b>Totale gare:</b> ").append(races.size()).append("\n\n");
         seasonInfoBuilder.append("<b>📅 Calendario gare:</b>\n\n");
 
@@ -356,5 +372,66 @@ public class SeasonCommand implements Command {
 
         //Costruisci la tastiera con la pagina specifica
         buildSeasonKeyboard(chatId, messageId, year, races, seasonInfo, page);
+    }
+
+    //Recupera info sui campioni della stagione
+    private String getChampionInfo(ErgastAPI api, int year) {
+        try {
+            //Recupera classifica piloti (top 3)
+            List<org.SimOneSpeedBot.api.ergast.StandingsAPI.DriverStanding> driverStandings = api.fetchDriverStandings(year);
+
+            //Recupera campione costruttori
+            List<org.SimOneSpeedBot.api.ergast.StandingsAPI.ConstructorStanding> constructorStandings = api.fetchConstructorStandings(year);
+
+            StringBuilder info = new StringBuilder();
+
+            //Top 3 piloti (o solo campione se preferisci)
+            if (!driverStandings.isEmpty()) {
+                info.append("🏆 <b>Campione:</b> ")
+                        .append(driverStandings.get(0).getDriver().getGivenName())
+                        .append(" ")
+                        .append(driverStandings.get(0).getDriver().getFamilyName())
+                        .append(" (")
+                        .append(driverStandings.get(0).getPoints())
+                        .append(" pt)\n");
+
+                //Top 3 completo (commentalo se vuoi solo il campione)
+                if (driverStandings.size() > 1) {
+                    info.append("🥈 ")
+                            .append(driverStandings.get(1).getDriver().getGivenName())
+                            .append(" ")
+                            .append(driverStandings.get(1).getDriver().getFamilyName())
+                            .append(" (")
+                            .append(driverStandings.get(1).getPoints())
+                            .append(" pt)");
+                }
+
+                if (driverStandings.size() > 2) {
+                    info.append(" • 🥉 ")
+                            .append(driverStandings.get(2).getDriver().getGivenName())
+                            .append(" ")
+                            .append(driverStandings.get(2).getDriver().getFamilyName())
+                            .append(" (")
+                            .append(driverStandings.get(2).getPoints())
+                            .append(" pt)");
+                }
+                info.append("\n");
+            }
+
+            //Costruttore vincente
+            if (!constructorStandings.isEmpty()) {
+                info.append("🏁 <b>Costruttore:</b> ")
+                        .append(constructorStandings.get(0).getConstructor().getName())
+                        .append(" (")
+                        .append(constructorStandings.get(0).getPoints())
+                        .append(" pt)");
+            }
+
+            return info.toString();
+
+        } catch (Exception e) {
+            //Se API fallisce, ritorna stringa vuota
+            return "";
+        }
     }
 }
