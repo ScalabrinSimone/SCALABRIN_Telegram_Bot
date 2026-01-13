@@ -2,6 +2,7 @@ package org.SimOneSpeedBot.database;
 
 import org.telegram.telegrambots.meta.api.objects.User;
 
+import java.io.File;
 import java.sql.*;
 
 public class Database {
@@ -16,9 +17,25 @@ public class Database {
     }*/
 
     private Database() throws SQLException {
-        DbUrl = "jdbc:sqlite:src/main/java/org/SimOneSpeedBot/database/usersDatabase.db"; //Inserisce il database nella cartella database.
-        connection = DriverManager.getConnection(DbUrl); //Tabelle create da IntelliJ ultimate
-        System.out.println("Connessione di Database"); //Debug
+        //Directory di lavoro (locale: root progetto, server: /app). Prima era assoluta ma non c'èra nel server
+        String workingDir = System.getProperty("user.dir");
+        System.out.println("Working dir: " + workingDir); //Debug
+
+        //Cartella e nome file DB RELATIVI alla working dir
+        String dbFolder = "database";
+        String dbFileName = "usersDatabase.db";
+
+        //Costruisco il path completo del file (solo per creare la cartella in modo sicuro)
+        File dir = new File(workingDir, dbFolder);
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new RuntimeException("Impossibile creare la cartella database: " + dir.getAbsolutePath());
+        }
+
+        //URL JDBC relativo alla working dir (funziona sia locale che server)
+        DbUrl = "jdbc:sqlite:" + dbFolder + "/" + dbFileName;
+
+        connection = DriverManager.getConnection(DbUrl);
+        System.out.println("Connessione di Database a: " + DbUrl);
 
         initializeDatabase(); //Viene eseguito una volta sola per pattern singleton
     }
@@ -61,6 +78,7 @@ public class Database {
             } else {
                 System.out.println("Bookmarks table giá presente.");
             }
+            System.out.println("Tabelle DB inizializzate correttamente."); //Debug server https
         } catch (SQLException e) {
             System.err.println("Errore init DB: " + e.getMessage());
         }

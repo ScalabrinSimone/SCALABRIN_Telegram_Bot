@@ -41,3 +41,5 @@ build/
 ### Mac OS ###
 .DS_Store
 /src/main/resources/config.properties
+/database/usersDatabase.db
+/database/
