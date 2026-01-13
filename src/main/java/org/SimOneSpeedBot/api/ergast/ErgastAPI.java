@@ -71,6 +71,33 @@ public class ErgastAPI {
             return "❌ Errore nel recupero della stagione " + year;
         }
     }
+    //Ritorna la lista di gare della stagione come oggetti Race
+    public List<org.SimOneSpeedBot.api.ergast.SeasonAPI.Race> fetchSeasonRaces(int year) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + year + ".json"))
+                .GET()
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Gson deserializzatore = new Gson();
+
+            org.SimOneSpeedBot.api.ergast.SeasonAPI.RootResponse root =
+                    deserializzatore.fromJson(response.body(), org.SimOneSpeedBot.api.ergast.SeasonAPI.RootResponse.class);
+
+            org.SimOneSpeedBot.api.ergast.SeasonAPI.MRData mrData = root.getMRData();
+            if (mrData == null || mrData.getRaceTable() == null ||
+                    mrData.getRaceTable().getRaces() == null ||
+                    mrData.getRaceTable().getRaces().isEmpty()) {
+                return List.of();
+            }
+
+            return mrData.getRaceTable().getRaces();
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Errore in richiesta API per la stagione " + year + ": " + e.getMessage());
+            return List.of();
+        }
+    }
 
     //Constructor
     public Constructor fetchConstructor(String firstName, String secondName) {

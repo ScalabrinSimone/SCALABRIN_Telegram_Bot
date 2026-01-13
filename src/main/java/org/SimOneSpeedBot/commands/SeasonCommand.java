@@ -130,7 +130,18 @@ public class SeasonCommand implements Command {
         }
 
         //Anno valido -> recupera info
-        String seasonInfo = new ErgastAPI().fetchSeason(year);
+        //String seasonInfo = new ErgastAPI().fetchSeason(year);
+        ErgastAPI api = new ErgastAPI();
+        List<org.SimOneSpeedBot.api.ergast.SeasonAPI.Race> races = api.fetchSeasonRaces(year);
+
+        //Non ho capito qui
+
+        //Costruisco il testo principale
+        StringBuilder seasonInfoBuilder = new StringBuilder();
+        seasonInfoBuilder.append("<b>🏎️ Stagione Formula 1 ").append(year).append("</b>\n\n");
+        seasonInfoBuilder.append("📊 <b>Totale gare:</b> ").append(races.size()).append("\n\n");
+        seasonInfoBuilder.append("<i>Seleziona una gara dalla tastiera qui sotto per vedere i dettagli.</i>\n");
+        String seasonInfo = seasonInfoBuilder.toString();
 
         if (messageId != null) {
             //Menu -> edita con bottone back e salva
@@ -139,26 +150,38 @@ public class SeasonCommand implements Command {
                     .callbackData("race:season")
                     .build();
 
-            InlineKeyboardRow row = new InlineKeyboardRow(List.of(backButton));
-            InlineKeyboardMarkup keyboard;
+            //Righe con le gare (max es. 8 per evitare tastiera enorme)
+            List<InlineKeyboardRow> rows = new java.util.ArrayList<>();
 
-            //Aggiungi pulsante salva solo se dal menu
-            if (!seasonInfo.contains("❌")) {
-                InlineKeyboardButton saveButton = InlineKeyboardButton.builder()
-                        .text("💾 Salva")
-                        .callbackData("save:season:" + year + ":stagione " + year) //Formato save:season:anno:stagione anno
+            int maxRacesToShow = Math.min(8, races.size());
+            for (int i = 0; i < maxRacesToShow; i++) {
+                org.SimOneSpeedBot.api.ergast.SeasonAPI.Race race = races.get(i);
+
+                String buttonText = "🏁 " + race.getRound() + " - " + race.getRaceName();
+                InlineKeyboardButton raceButton = InlineKeyboardButton.builder()
+                        .text(buttonText)
+                        .callbackData("race:details:" + year + ":" + race.getRound())
                         .build();
 
-                InlineKeyboardRow saveButtonRow = new InlineKeyboardRow(saveButton);
-
-                keyboard = InlineKeyboardMarkup.builder()
-                        .keyboard(List.of(saveButtonRow, row))
-                        .build();
-            } else {
-                keyboard = InlineKeyboardMarkup.builder()
-                        .keyboard(List.of(row))
-                        .build();
+                rows.add(new InlineKeyboardRow(raceButton));
             }
+
+            //Riga back
+            rows.add(new InlineKeyboardRow(backButton));
+
+            //Save button
+            InlineKeyboardButton saveButton = null;
+            if (!seasonInfo.contains("❌")) {
+                saveButton = InlineKeyboardButton.builder()
+                        .text("💾 Salva Stagione")
+                        .callbackData("save:season:" + year + ":stagione " + year)
+                        .build();
+                rows.add(0, new InlineKeyboardRow(saveButton)); //Prima riga
+            }
+
+            InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
+                    .keyboard(rows)
+                    .build();
 
             EditMessageText edit = EditMessageText.builder()
                     .chatId(chatId)
