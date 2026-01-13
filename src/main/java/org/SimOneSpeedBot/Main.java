@@ -4,7 +4,6 @@ import com.sun.net.httpserver.HttpServer; //Fa parte di Java SE (JDK standard), 
 import org.SimOneSpeedBot.bot.SimOneSpeedBot;
 import org.SimOneSpeedBot.service.MyConfiguration;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.IOException;
 import java.io.OutputStream;
