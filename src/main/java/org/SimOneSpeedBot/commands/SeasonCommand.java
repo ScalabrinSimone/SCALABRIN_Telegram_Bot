@@ -202,6 +202,7 @@ public class SeasonCommand implements Command {
         if (messageId != null) {
             //Costruisco tastiera con paginazione
             int currentPage = 1; //Prima pagina di default
+            buildSeasonKeyboard(chatId, messageId, year, races, seasonInfo, currentPage);
         } else {
             //Comando /season -> solo testo
             SendMessage message = SendMessage.builder()
