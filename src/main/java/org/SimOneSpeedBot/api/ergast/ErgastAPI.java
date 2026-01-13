@@ -4,7 +4,6 @@ package org.SimOneSpeedBot.api.ergast;
 import com.google.gson.Gson;
 import org.SimOneSpeedBot.api.ergast.ConstructorAPI.Constructor;
 import org.SimOneSpeedBot.api.ergast.DriverAPI.Driver;
-import org.SimOneSpeedBot.api.ergast.SeasonAPI.Race;
 import org.SimOneSpeedBot.service.MyConfiguration;
 import org.SimOneSpeedBot.api.ergast.StandingsAPI.*;
 
@@ -29,49 +28,6 @@ public class ErgastAPI {
     //Metodi
 
     //Season
-    public String fetchSeason(int year) {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + year + ".json"))
-                .GET()
-                .build();
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            Gson deserializzatore = new Gson();
-
-            org.SimOneSpeedBot.api.ergast.SeasonAPI.RootResponse root =
-                    deserializzatore.fromJson(response.body(), org.SimOneSpeedBot.api.ergast.SeasonAPI.RootResponse.class);
-
-            org.SimOneSpeedBot.api.ergast.SeasonAPI.MRData mrData = root.getMRData();
-            if (mrData == null || mrData.getRaceTable() == null ||
-                    mrData.getRaceTable().getRaces() == null ||
-                    mrData.getRaceTable().getRaces().isEmpty()) {
-                return "❌ Stagione " + year + " non trovata\n\nℹ️ Controlla di aver scritto correttamente l'anno (es: 2024, 2023).";
-            }
-
-            //Formatta le informazioni della stagione
-            List<Race> races = mrData.getRaceTable().getRaces();
-            StringBuilder info = new StringBuilder();
-            info.append("🏎️ Stagione Formula 1 ").append(year).append("\n\n");
-            info.append("📊 Totale gare: ").append(races.size()).append("\n\n");
-
-            //Mostra solo le prime 3 gare come anteprima
-            info.append("🥇 Prime gare:\n\n");
-            for (int i = 0; i < Math.min(3, races.size()); i++) {
-                info.append(races.get(i).toString()).append("\n\n");
-            }
-
-            if (races.size() > 3) {
-                info.append("... e altre ").append(races.size() - 3).append(" gare");
-            }
-
-            return info.toString();
-        } catch (IOException | InterruptedException e) {
-            System.err.println("Errore in richiesta API per la stagione " + year + ": " + e.getMessage());
-            return "❌ Errore nel recupero della stagione " + year;
-        }
-    }
     //Ritorna la lista di gare della stagione come oggetti Race
     public List<org.SimOneSpeedBot.api.ergast.SeasonAPI.Race> fetchSeasonRaces(int year) {
         HttpRequest request = HttpRequest.newBuilder()
@@ -155,24 +111,28 @@ public class ErgastAPI {
 
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                Gson deserializzatore = new Gson();
 
-            Gson deserializzatore = new Gson();
+                //System.out.println("JSON ricevuto: " + response.body()); //Debug
 
-            //System.out.println("JSON ricevuto: " + response.body()); //Debug
+                //Import specificato qui per non avere probelmi nella compilazione
+                org.SimOneSpeedBot.api.ergast.ConstructorAPI.RootResponse root = deserializzatore.fromJson(response.body(),
+                        org.SimOneSpeedBot.api.ergast.ConstructorAPI.RootResponse.class);
 
-            //Import specificato qui per non avere probelmi nella compilazione
-            org.SimOneSpeedBot.api.ergast.ConstructorAPI.RootResponse root = deserializzatore.fromJson(response.body(),
-                    org.SimOneSpeedBot.api.ergast.ConstructorAPI.RootResponse.class);
-
-            org.SimOneSpeedBot.api.ergast.ConstructorAPI.MRData mrData = root.getMRData();
-            if (mrData == null || mrData.getConstructorTable() == null ||
-                    mrData.getConstructorTable().getConstructors() == null ||
-                    mrData.getConstructorTable().getConstructors().isEmpty()) {
-                return null; //Team non trovato. L'API risponde SEMPRE con 200 anche se la scuderia non esiste.
-            } else {
-                Constructor team = mrData.getConstructorTable().getConstructors().getFirst(); //Prende il primo (= get(0))
-                return team;
+                org.SimOneSpeedBot.api.ergast.ConstructorAPI.MRData mrData = root.getMRData();
+                if (mrData == null || mrData.getConstructorTable() == null ||
+                        mrData.getConstructorTable().getConstructors() == null ||
+                        mrData.getConstructorTable().getConstructors().isEmpty()) {
+                    return null; //Team non trovato. L'API risponde SEMPRE con 200 anche se la scuderia non esiste.
+                } else {
+                    Constructor team = mrData.getConstructorTable().getConstructors().getFirst(); //Prende il primo (= get(0))
+                    return team;
+                }
             }
+
+            return null;
+
         } catch (IOException | InterruptedException e) {
             System.err.println("Errore in richiesta API per il team: " + e.getMessage());
 
@@ -225,23 +185,28 @@ public class ErgastAPI {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            Gson deserializzatore = new Gson();
+            if (response.statusCode() == 200) {
+                Gson deserializzatore = new Gson();
 
-            //System.out.println("JSON ricevuto: " + response.body()); //Debug
+                //System.out.println("JSON ricevuto: " + response.body()); //Debug
 
-            //Import specificato qui per non avere probelmi nella compilazione
-            org.SimOneSpeedBot.api.ergast.DriverAPI.RootResponse root = deserializzatore.fromJson(response.body(),
-                    org.SimOneSpeedBot.api.ergast.DriverAPI.RootResponse.class);
+                //Import specificato qui per non avere probelmi nella compilazione
+                org.SimOneSpeedBot.api.ergast.DriverAPI.RootResponse root = deserializzatore.fromJson(response.body(),
+                        org.SimOneSpeedBot.api.ergast.DriverAPI.RootResponse.class);
 
-            org.SimOneSpeedBot.api.ergast.DriverAPI.MRData mrData = root.getMRData();
-            if (mrData == null || mrData.getDriverTable() == null ||
-                    mrData.getDriverTable().getDrivers() == null ||
-                    mrData.getDriverTable().getDrivers().isEmpty()) {
-                return null; //Pilota non trovato. L'API risponde SEMPRE con 200 anche se il pilota non esiste.
-            } else {
-                Driver pilota = mrData.getDriverTable().getDrivers().getFirst(); //Prende il primo (= get(0))
-                return pilota;
+                org.SimOneSpeedBot.api.ergast.DriverAPI.MRData mrData = root.getMRData();
+                if (mrData == null || mrData.getDriverTable() == null ||
+                        mrData.getDriverTable().getDrivers() == null ||
+                        mrData.getDriverTable().getDrivers().isEmpty()) {
+                    return null; //Pilota non trovato. L'API risponde SEMPRE con 200 anche se il pilota non esiste.
+                } else {
+                    Driver pilota = mrData.getDriverTable().getDrivers().getFirst(); //Prende il primo (= get(0))
+                    return pilota;
+                }
             }
+
+            return null;
+
         } catch (IOException | InterruptedException e) {
             System.err.println("Errore in richiesta API per il pilota: " + e.getMessage());
 
@@ -258,23 +223,27 @@ public class ErgastAPI {
 
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            Gson deserializzatore = new Gson();
+            if (response.statusCode() == 200) {
+                Gson deserializzatore = new Gson();
 
-            org.SimOneSpeedBot.api.ergast.GridAPI.RootResponse root =
-                    deserializzatore.fromJson(response.body(), org.SimOneSpeedBot.api.ergast.GridAPI.RootResponse.class);
+                org.SimOneSpeedBot.api.ergast.GridAPI.RootResponse root =
+                        deserializzatore.fromJson(response.body(), org.SimOneSpeedBot.api.ergast.GridAPI.RootResponse.class);
 
-            org.SimOneSpeedBot.api.ergast.GridAPI.MRData mrData = root.getMRData();
-            if (mrData == null || mrData.getRaceTable() == null) {
-                return new ArrayList<>();
+                org.SimOneSpeedBot.api.ergast.GridAPI.MRData mrData = root.getMRData();
+                if (mrData == null || mrData.getRaceTable() == null) {
+                    return new ArrayList<>();
+                }
+
+                List<org.SimOneSpeedBot.api.ergast.GridAPI.Race> races = mrData.getRaceTable().getRaces();
+                if (races == null || races.isEmpty()) {
+                    return new ArrayList<>();
+                }
+
+                org.SimOneSpeedBot.api.ergast.GridAPI.Race race = races.get(0);
+                return race.getQualifyingResults() != null ? race.getQualifyingResults() : new ArrayList<>();
             }
 
-            List<org.SimOneSpeedBot.api.ergast.GridAPI.Race> races = mrData.getRaceTable().getRaces();
-            if (races == null || races.isEmpty()) {
-                return new ArrayList<>();
-            }
-
-            org.SimOneSpeedBot.api.ergast.GridAPI.Race race = races.get(0);
-            return race.getQualifyingResults() != null ? race.getQualifyingResults() : new ArrayList<>();
+            return new ArrayList<>();
 
         } catch (IOException | InterruptedException e) {
             System.err.println("Errore in richiesta API per la griglia di partenza: " + e.getMessage());
@@ -291,23 +260,27 @@ public class ErgastAPI {
 
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            Gson deserializzatore = new Gson();
+            if (response.statusCode() == 200) {
+                Gson deserializzatore = new Gson();
 
-            org.SimOneSpeedBot.api.ergast.RaceResultAPI.RootResponse root =
-                    deserializzatore.fromJson(response.body(), org.SimOneSpeedBot.api.ergast.RaceResultAPI.RootResponse.class);
+                org.SimOneSpeedBot.api.ergast.RaceResultAPI.RootResponse root =
+                        deserializzatore.fromJson(response.body(), org.SimOneSpeedBot.api.ergast.RaceResultAPI.RootResponse.class);
 
-            org.SimOneSpeedBot.api.ergast.RaceResultAPI.MRData mrData = root.getMRData();
-            if (mrData == null || mrData.getRaceTable() == null) {
-                return new ArrayList<>();
+                org.SimOneSpeedBot.api.ergast.RaceResultAPI.MRData mrData = root.getMRData();
+                if (mrData == null || mrData.getRaceTable() == null) {
+                    return new ArrayList<>();
+                }
+
+                List<org.SimOneSpeedBot.api.ergast.RaceResultAPI.Race> races = mrData.getRaceTable().getRaces();
+                if (races == null || races.isEmpty()) {
+                    return new ArrayList<>();
+                }
+
+                org.SimOneSpeedBot.api.ergast.RaceResultAPI.Race race = races.get(0);
+                return race.getResults() != null ? race.getResults() : new ArrayList<>();
             }
 
-            List<org.SimOneSpeedBot.api.ergast.RaceResultAPI.Race> races = mrData.getRaceTable().getRaces();
-            if (races == null || races.isEmpty()) {
-                return new ArrayList<>();
-            }
-
-            org.SimOneSpeedBot.api.ergast.RaceResultAPI.Race race = races.get(0);
-            return race.getResults() != null ? race.getResults() : new ArrayList<>();
+            return new ArrayList<>();
 
         } catch (IOException | InterruptedException e) {
             System.err.println("Errore in richiesta API per i risultati della gara: " + e.getMessage());
@@ -324,23 +297,27 @@ public class ErgastAPI {
 
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            Gson deserializzatore = new Gson();
+            if (response.statusCode() == 200) {
+                Gson deserializzatore = new Gson();
 
-            org.SimOneSpeedBot.api.ergast.QualifyingAPI.RootResponse root =
-                    deserializzatore.fromJson(response.body(), org.SimOneSpeedBot.api.ergast.QualifyingAPI.RootResponse.class);
+                org.SimOneSpeedBot.api.ergast.QualifyingAPI.RootResponse root =
+                        deserializzatore.fromJson(response.body(), org.SimOneSpeedBot.api.ergast.QualifyingAPI.RootResponse.class);
 
-            org.SimOneSpeedBot.api.ergast.QualifyingAPI.MRData mrData = root.getMRData();
-            if (mrData == null || mrData.getRaceTable() == null) {
-                return new ArrayList<>();
+                org.SimOneSpeedBot.api.ergast.QualifyingAPI.MRData mrData = root.getMRData();
+                if (mrData == null || mrData.getRaceTable() == null) {
+                    return new ArrayList<>();
+                }
+
+                List<org.SimOneSpeedBot.api.ergast.QualifyingAPI.Race> races = mrData.getRaceTable().getRaces();
+                if (races == null || races.isEmpty()) {
+                    return new ArrayList<>();
+                }
+
+                org.SimOneSpeedBot.api.ergast.QualifyingAPI.Race race = races.get(0);
+                return race.getQualifyingResults() != null ? race.getQualifyingResults() : new ArrayList<>();
             }
 
-            List<org.SimOneSpeedBot.api.ergast.QualifyingAPI.Race> races = mrData.getRaceTable().getRaces();
-            if (races == null || races.isEmpty()) {
-                return new ArrayList<>();
-            }
-
-            org.SimOneSpeedBot.api.ergast.QualifyingAPI.Race race = races.get(0);
-            return race.getQualifyingResults() != null ? race.getQualifyingResults() : new ArrayList<>();
+            return new ArrayList<>();
 
         } catch (IOException | InterruptedException e) {
             System.err.println("Errore in richiesta API per le qualifiche: " + e.getMessage());
@@ -355,17 +332,25 @@ public class ErgastAPI {
         String url = baseUrl + year + "/driverStandings.json";
 
         try {
-            String jsonResponse = getRequest(url);
-            Gson gson = new Gson();
-            RootResponse response = gson.fromJson(jsonResponse, RootResponse.class);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .build();
 
-            if (response != null &&
-                    response.getMrData() != null &&
-                    response.getMrData().getStandingsTable() != null &&
-                    response.getMrData().getStandingsTable().getStandingsLists() != null &&
-                    !response.getMrData().getStandingsTable().getStandingsLists().isEmpty()) {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-                return response.getMrData().getStandingsTable().getStandingsLists().get(0).getDriverStandings();
+            if (response.statusCode() == 200) {
+                Gson gson = new Gson();
+                RootResponse rootResponse = gson.fromJson(response.body(), RootResponse.class);
+
+                if (rootResponse != null &&
+                        rootResponse.getMRData() != null &&
+                        rootResponse.getMRData().getStandingsTable() != null &&
+                        rootResponse.getMRData().getStandingsTable().getStandingsLists() != null &&
+                        !rootResponse.getMRData().getStandingsTable().getStandingsLists().isEmpty()) {
+
+                    return rootResponse.getMRData().getStandingsTable().getStandingsLists().get(0).getDriverStandings();
+                }
             }
 
             return new ArrayList<>();
@@ -381,17 +366,25 @@ public class ErgastAPI {
         String url = baseUrl + year + "/constructorStandings.json";
 
         try {
-            String jsonResponse = getRequest(url);
-            Gson gson = new Gson();
-            RootResponse response = gson.fromJson(jsonResponse, RootResponse.class);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .build();
 
-            if (response != null &&
-                    response.getMrData() != null &&
-                    response.getMrData().getStandingsTable() != null &&
-                    response.getMrData().getStandingsTable().getStandingsLists() != null &&
-                    !response.getMrData().getStandingsTable().getStandingsLists().isEmpty()) {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-                return response.getMrData().getStandingsTable().getStandingsLists().get(0).getConstructorStandings();
+            if (response.statusCode() == 200) {
+                Gson gson = new Gson();
+                RootResponse rootResponse = gson.fromJson(response.body(), RootResponse.class);
+
+                if (rootResponse != null &&
+                        rootResponse.getMRData() != null &&
+                        rootResponse.getMRData().getStandingsTable() != null &&
+                        rootResponse.getMRData().getStandingsTable().getStandingsLists() != null &&
+                        !rootResponse.getMRData().getStandingsTable().getStandingsLists().isEmpty()) {
+
+                    return rootResponse.getMRData().getStandingsTable().getStandingsLists().get(0).getConstructorStandings();
+                }
             }
 
             return new ArrayList<>();
