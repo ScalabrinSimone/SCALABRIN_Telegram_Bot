@@ -134,7 +134,10 @@ public class SeasonCommand implements Command {
         ErgastAPI api = new ErgastAPI();
         List<org.SimOneSpeedBot.api.ergast.SeasonAPI.Race> races = api.fetchSeasonRaces(year);
 
-        //Non ho capito qui
+        if (races.isEmpty()) {
+            String errorText = "❌ <b>Stagione " + year + " non trovata</b>\n\nℹ️ <i>Controlla di aver scritto correttamente l'anno (es: 2024, 2023)</i>.";
+            return;
+        }
 
         //Costruisco il testo principale
         StringBuilder seasonInfoBuilder = new StringBuilder();
