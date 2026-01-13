@@ -333,7 +333,6 @@ public class ErgastAPI {
     public List<DriverStanding> fetchDriverStandings(int year) {
         String url = baseUrl + year + "/driverStandings/";
 
-        System.out.println("URL Driver Standings: " + url); //DEBUG
 
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -342,8 +341,6 @@ public class ErgastAPI {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("Status code driver: " + response.statusCode()); //DEBUG
-            System.out.println("Response body driver (primi 500 char): " + response.body().substring(0, Math.min(500, response.body().length()))); //DEBUG
 
             if (response.statusCode() == 200) {
                 Gson gson = new Gson();
@@ -375,7 +372,6 @@ public class ErgastAPI {
     public List<ConstructorStanding> fetchConstructorStandings(int year) {
         String url = baseUrl + year + "/constructorStandings/";
 
-        System.out.println("URL Constructor Standings: " + url); //DEBUG
 
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -385,16 +381,9 @@ public class ErgastAPI {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            System.out.println("Status code constructor: " + response.statusCode()); //DEBUG
-            System.out.println("Response body constructor (primi 500 char): " + response.body().substring(0, Math.min(500, response.body().length()))); //DEBUG
             if (response.statusCode() == 200) {
                 Gson gson = new Gson();
                 RootResponse rootResponse = gson.fromJson(response.body(), RootResponse.class);
-                System.out.println("rootResponse null? " + (rootResponse == null)); //DEBUG
-                System.out.println("1. rootResponse null? " + (rootResponse == null));
-                System.out.println("2. MRData null? " + (rootResponse.getMRData() == null));
-                System.out.println("3. StandingsTable null? " + (rootResponse.getMRData() == null ? "skip" : rootResponse.getMRData().getStandingsTable() == null));
-                System.out.println("4. StandingsLists null? " + (rootResponse.getMRData() == null || rootResponse.getMRData().getStandingsTable() == null ? "skip" : rootResponse.getMRData().getStandingsTable().getStandingsLists() == null));
 
                 if (rootResponse != null &&
                         rootResponse.getMRData() != null &&

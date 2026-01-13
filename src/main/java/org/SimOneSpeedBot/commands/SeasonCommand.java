@@ -188,22 +188,31 @@ public class SeasonCommand implements Command {
             seasonInfoBuilder.append(championInfo).append("\n");
         }
 
-        seasonInfoBuilder.append("📊 <b>Totale gare:</b> ").append(races.size()).append("\n\n");
-        seasonInfoBuilder.append("<b>📅 Calendario gare:</b>\n\n");
+        //Totale gare con box
+        seasonInfoBuilder.append("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+        seasonInfoBuilder.append("┃  <b>📊 STATISTICHE STAGIONE</b>  ┃\n");
+        seasonInfoBuilder.append("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+        seasonInfoBuilder.append("📍 Totale gare: <b>").append(races.size()).append("</b>\n\n");
+
+//Calendario
+        seasonInfoBuilder.append("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+        seasonInfoBuilder.append("┃  <b>📅 CALENDARIO GARE</b>       ┃\n");
+        seasonInfoBuilder.append("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n");
 
         for (org.SimOneSpeedBot.api.ergast.SeasonAPI.Race race : races) {
-            seasonInfoBuilder.append("• Round ")
+            seasonInfoBuilder.append("🏁 <b>R")
                     .append(race.getRound())
-                    .append(" - ")
+                    .append("</b> │ ")
                     .append(race.getRaceName())
-                    .append(" (")
+                    .append("\n   └ 📍 ")
                     .append(race.getCircuit().getCircuitName())
-                    .append(" - ")
+                    .append("\n   └ 📅 ")
                     .append(race.getDate())
-                    .append(")\n");
+                    .append("\n\n");
         }
 
-        seasonInfoBuilder.append("\n<i>Usa i bottoni qui sotto per vedere i dettagli di una singola gara.</i>");
+        seasonInfoBuilder.append("━━━━━━━━━━━━━━━━━━━━━\n");
+        seasonInfoBuilder.append("<i>💡 Usa i bottoni per vedere i dettagli delle gare</i>");
         String seasonInfo = seasonInfoBuilder.toString();
 
         if (messageId != null) {
@@ -385,46 +394,61 @@ public class SeasonCommand implements Command {
 
             StringBuilder info = new StringBuilder();
 
-            //Top 3 piloti (o solo campione se preferisci)
+            //Sezione campioni con separatore visivo
+            info.append("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+            info.append("┃  <b>🏆 CAMPIONI </b>").append(year).append("        ┃\n");
+            info.append("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n\n");
+
+            //Podio piloti
             if (!driverStandings.isEmpty()) {
-                info.append("🏆 <b>Campione:</b> ")
+                info.append("<b>👤 CLASSIFICA PILOTI</b>\n");
+                info.append("━━━━━━━━━━━━━━━━━━━━\n");
+
+                //1° posto
+                info.append("🥇 <b>")
                         .append(driverStandings.get(0).getDriver().getGivenName())
                         .append(" ")
                         .append(driverStandings.get(0).getDriver().getFamilyName())
-                        .append(" (")
+                        .append("</b>\n")
+                        .append("   └ ")
                         .append(driverStandings.get(0).getPoints())
-                        .append(" pt)\n");
+                        .append(" pt \n");
 
-                //Top 3 completo (commentalo se vuoi solo il campione)
+                //2° posto
                 if (driverStandings.size() > 1) {
                     info.append("🥈 ")
                             .append(driverStandings.get(1).getDriver().getGivenName())
                             .append(" ")
                             .append(driverStandings.get(1).getDriver().getFamilyName())
-                            .append(" (")
+                            .append("\n")
+                            .append("   └ ")
                             .append(driverStandings.get(1).getPoints())
-                            .append(" pt)");
+                            .append(" pt \n");
                 }
 
+                //3° posto
                 if (driverStandings.size() > 2) {
-                    info.append(" • 🥉 ")
+                    info.append("🥉 ")
                             .append(driverStandings.get(2).getDriver().getGivenName())
                             .append(" ")
                             .append(driverStandings.get(2).getDriver().getFamilyName())
-                            .append(" (")
+                            .append("\n")
+                            .append("   └ ")
                             .append(driverStandings.get(2).getPoints())
-                            .append(" pt)");
+                            .append(" pt \n");
                 }
-                info.append("\n");
             }
 
             //Costruttore vincente
             if (!constructorStandings.isEmpty()) {
-                info.append("🏁 <b>Costruttore:</b> ")
+                info.append("\n<b>🏁 CAMPIONE COSTRUTTORI</b>\n");
+                info.append("━━━━━━━━━━━━━━━━━━━━\n");
+                info.append("🏆 <b>")
                         .append(constructorStandings.get(0).getConstructor().getName())
-                        .append(" (")
+                        .append("</b>\n")
+                        .append("   └ ")
                         .append(constructorStandings.get(0).getPoints())
-                        .append(" pt)");
+                        .append(" pt \n\n");
             }
 
             return info.toString();
