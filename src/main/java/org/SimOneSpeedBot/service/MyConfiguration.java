@@ -27,6 +27,13 @@ public class MyConfiguration {
     }
 
     public String getProperty(String key) {
+        //1. Prima prova da variabile d'ambiente (Render)
+        String envValue = System.getenv(key);
+        if (envValue != null && !envValue.isEmpty()) {
+            return envValue;
+        }
+
+        //2. Se non c'è, usa il file di config (per uso locale)
         return config.getString(key);
     }
 }
