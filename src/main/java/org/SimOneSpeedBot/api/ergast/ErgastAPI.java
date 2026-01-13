@@ -346,6 +346,10 @@ public class ErgastAPI {
             if (response.statusCode() == 200) {
                 Gson gson = new Gson();
                 RootResponse rootResponse = gson.fromJson(response.body(), RootResponse.class);
+                System.out.println("1. rootResponse null? " + (rootResponse == null));
+                System.out.println("2. MRData null? " + (rootResponse.getMRData() == null));
+                System.out.println("3. StandingsTable null? " + (rootResponse.getMRData() == null ? "skip" : rootResponse.getMRData().getStandingsTable() == null));
+                System.out.println("4. StandingsLists null? " + (rootResponse.getMRData() == null || rootResponse.getMRData().getStandingsTable() == null ? "skip" : rootResponse.getMRData().getStandingsTable().getStandingsLists() == null));
 
                 if (rootResponse != null &&
                         rootResponse.getMRData() != null &&
@@ -385,6 +389,10 @@ public class ErgastAPI {
                 Gson gson = new Gson();
                 RootResponse rootResponse = gson.fromJson(response.body(), RootResponse.class);
                 System.out.println("rootResponse null? " + (rootResponse == null)); //DEBUG
+                System.out.println("1. rootResponse null? " + (rootResponse == null));
+                System.out.println("2. MRData null? " + (rootResponse.getMRData() == null));
+                System.out.println("3. StandingsTable null? " + (rootResponse.getMRData() == null ? "skip" : rootResponse.getMRData().getStandingsTable() == null));
+                System.out.println("4. StandingsLists null? " + (rootResponse.getMRData() == null || rootResponse.getMRData().getStandingsTable() == null ? "skip" : rootResponse.getMRData().getStandingsTable().getStandingsLists() == null));
 
                 if (rootResponse != null &&
                         rootResponse.getMRData() != null &&

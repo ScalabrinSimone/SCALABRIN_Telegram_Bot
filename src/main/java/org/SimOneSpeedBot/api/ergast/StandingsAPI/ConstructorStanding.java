@@ -7,7 +7,7 @@ public class ConstructorStanding {
 
     private String wins;
 
-    private Constructor constructor;
+    private Constructor Constructor;
 
     public String getPosition() {
         return position;
@@ -34,10 +34,10 @@ public class ConstructorStanding {
     }
 
     public Constructor getConstructor() {
-        return constructor;
+        return Constructor;
     }
 
-    public void setConstructor(Constructor constructor) {
-        this.constructor = constructor;
+    public void setConstructor(Constructor Constructor) {
+        this.Constructor = Constructor;
     }
 }

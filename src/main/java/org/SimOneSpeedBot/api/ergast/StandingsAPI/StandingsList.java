@@ -5,9 +5,9 @@ import java.util.List;
 public class StandingsList {
     private String season;
 
-    private List<DriverStanding> driverStandings;
+    private List<DriverStanding> DriverStandings;
 
-    private List<ConstructorStanding> constructorStandings;
+    private List<ConstructorStanding> ConstructorStandings;
 
     public String getSeason() {
         return season;
@@ -18,18 +18,18 @@ public class StandingsList {
     }
 
     public List<DriverStanding> getDriverStandings() {
-        return driverStandings;
+        return DriverStandings;
     }
 
-    public void setDriverStandings(List<DriverStanding> driverStandings) {
-        this.driverStandings = driverStandings;
+    public void setDriverStandings(List<DriverStanding> DriverStandings) {
+        this.DriverStandings = DriverStandings;
     }
 
     public List<ConstructorStanding> getConstructorStandings() {
-        return constructorStandings;
+        return ConstructorStandings;
     }
 
-    public void setConstructorStandings(List<ConstructorStanding> constructorStandings) {
-        this.constructorStandings = constructorStandings;
+    public void setConstructorStandings(List<ConstructorStanding> ConstructorStandings) {
+        this.ConstructorStandings = ConstructorStandings;
     }
 }

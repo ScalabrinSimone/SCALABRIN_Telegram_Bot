@@ -9,9 +9,9 @@ public class DriverStanding {
 
     private String wins;
 
-    private Driver driver;
+    private Driver Driver;
 
-    private List<Constructor> constructors;
+    private List<Constructor> Constructors;
 
     public String getPosition() {
         return position;
@@ -38,18 +38,18 @@ public class DriverStanding {
     }
 
     public Driver getDriver() {
-        return driver;
+        return Driver;
     }
 
-    public void setDriver(Driver driver) {
-        this.driver = driver;
+    public void setDriver(Driver Driver) {
+        this.Driver = Driver;
     }
 
     public List<Constructor> getConstructors() {
-        return constructors;
+        return Constructors;
     }
 
-    public void setConstructors(List<Constructor> constructors) {
-        this.constructors = constructors;
+    public void setConstructors(List<Constructor> Constructors) {
+        this.Constructors = Constructors;
     }
 }
