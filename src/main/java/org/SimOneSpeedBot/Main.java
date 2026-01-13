@@ -12,20 +12,24 @@ import java.net.InetSocketAddress;
 
 public class Main {
     public static void main(String[] args) {
-        //Recupero la configurazione
-        MyConfiguration myConfiguration = MyConfiguration.getInstance();
+        System.out.println("Main starting..."); //Debug per server https
 
         //Avvia server HTTP per keep-alive (Render)
         startHealthCheckServer();
 
-        //Registro il bot Telegram
+        //Recupero la configurazione
+        MyConfiguration myConfiguration = MyConfiguration.getInstance();
+
+        //Registro bot
         try {
-            String botToken = myConfiguration.getProperty("BOT_TOKEN"); //Recupero il contenuto dalla configuration.
+            String botToken = myConfiguration.getProperty("BOT_TOKEN");
+            System.out.println("BOT_TOKEN length: " + (botToken != null ? botToken.length() : -1));
+
             TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication();
             botsApplication.registerBot(botToken, new SimOneSpeedBot());
             System.out.println("SimOneSpeedBot successfully started!");
-        } catch (TelegramApiException e) {
-            System.err.println("Errore avvio bot: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Errore in Main:");
             e.printStackTrace();
         }
     }
@@ -36,12 +40,18 @@ public class Main {
             int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "8080"));
             HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
+            //Gestione del server hhtps -> generato da AI
             server.createContext("/health", exchange -> {
-                String response = "SimOneSpeedBot is running!";
-                exchange.sendResponseHeaders(200, response.length());
-                OutputStream os = exchange.getResponseBody();
-                os.write(response.getBytes());
-                os.close();
+                String response = "SimOneSpeedBot is running!"; //Risposta al ping bot
+                boolean isHead = "HEAD".equalsIgnoreCase(exchange.getRequestMethod());
+                if (isHead) {
+                    exchange.sendResponseHeaders(200, -1);
+                } else {
+                    exchange.sendResponseHeaders(200, response.length());
+                    try (OutputStream os = exchange.getResponseBody()) {
+                        os.write(response.getBytes());
+                    }
+                }
             });
 
             server.setExecutor(null);

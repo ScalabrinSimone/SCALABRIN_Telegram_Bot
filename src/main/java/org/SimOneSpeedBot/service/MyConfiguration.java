@@ -11,10 +11,9 @@ public class MyConfiguration {
     private MyConfiguration() {
         try {
             Configurations configs = new Configurations();
-            //Nome file: mettilo in src/main/resources/config.properties SOLO in locale
             config = configs.properties("config.properties");
         } catch (Exception e) {
-            //Su Render il file non esiste: va bene così, useremo solo le variabili d'ambiente
+            //Su Render il file non esiste: va bene così, uso solo le variabili d'ambiente
             config = null;
         }
     }
@@ -37,7 +36,7 @@ public class MyConfiguration {
             return config.getString(key);
         }
 
-        //3. Se non trovato da nessuna parte -> errore chiaro
+        //3. Se non trovato da nessuna parte -> errore
         throw new RuntimeException("Configurazione mancante per chiave: " + key);
     }
 }

@@ -62,6 +62,7 @@ public class SimOneSpeedBot implements LongPollingSingleThreadUpdateConsumer {
 
     @Override
     public void consume(Update update) {
+        System.out.println("Ricevuto update: " + update); //Debug per https server
         //Se l'update ha un callback
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
