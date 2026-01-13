@@ -72,13 +72,13 @@ public class BookmarkCallbackHandler implements CallbackHandler {
         };
 
         String text = String.format("""
-        <b>%s Salvati</b>
-        
-        📄 Pagina <b>%d/%d</b> (10 per pagina)
-        📊 Totale: <b>%d</b> elementi <i>(slvati in ordine cronologico discendente)</i>
-        
-        <i>Clicca su un elemento per visualizzarlo:</i>
-        """, categoryName, page, totalPages, allBookmarks.size());
+                <b>%s Salvati</b>
+                
+                📄 Pagina <b>%d/%d</b> (10 per pagina)
+                📊 Totale: <b>%d</b> elementi <i>(slvati in ordine cronologico discendente)</i>
+                
+                <i>Clicca su un elemento per visualizzarlo:</i>
+                """, categoryName, page, totalPages, allBookmarks.size());
 
         List<InlineKeyboardRow> rows = new ArrayList<>();
 

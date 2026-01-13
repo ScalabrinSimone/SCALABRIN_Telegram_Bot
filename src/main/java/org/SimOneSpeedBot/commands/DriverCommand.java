@@ -19,14 +19,14 @@ public class DriverCommand implements Command {
     private final Map<Long, String> userStates; //chatId -> stato attuale. Serve per aspettare un
     //input dall'utente.
     private final String textToSend = """
-                <b>🔍 Cerca un pilota</b>
-                
-                <i>Inserisci il cognome (<b>obbligatorio</b>), nome cognome o cognome nome per cercare:</i>
-                
-                💡 <b>Esempio:</b> <code>Lewis Hamilton</code> per <i>Lewis Hamilton</i>, <code>Max Verstappen</code> per <i>Max Verstappen</i>.
-                ⚠ <b>Per piloti che hanno un cognome comune (come verstappen con quello del padre), é <u>obbligatorio</u> inserire anche il nome</b>.
-                ℹ <i>Per concludere l'inserimento <b>dal menu</b>, premere il pulsante "Back to Race Menu"</i>.
-                """;
+            <b>🔍 Cerca un pilota</b>
+            
+            <i>Inserisci il cognome (<b>obbligatorio</b>), nome cognome o cognome nome per cercare:</i>
+            
+            💡 <b>Esempio:</b> <code>Lewis Hamilton</code> per <i>Lewis Hamilton</i>, <code>Max Verstappen</code> per <i>Max Verstappen</i>.
+            ⚠ <b>Per piloti che hanno un cognome comune (come verstappen con quello del padre), é <u>obbligatorio</u> inserire anche il nome</b>.
+            ℹ <i>Per concludere l'inserimento <b>dal menu</b>, premere il pulsante "Back to Race Menu"</i>.
+            """;
 
     public DriverCommand(TelegramClient client, Map<Long, String> userStates) {
         this.client = client;
@@ -135,8 +135,7 @@ public class DriverCommand implements Command {
                             .text("⚠ Driver " + driver.getFamilyName() + " " + driver.getGivenName() + " giá salvato")
                             .callbackData("saved") //Non da errori
                             .build();
-                }
-                else {
+                } else {
                     saveButton = InlineKeyboardButton.builder()
                             .text("💾 Salva Driver")
                             .callbackData("save:driver:" + driver.getDriverId() + ":" + driver.getGivenName() + " " + driver.getFamilyName()) //Formato: save:tipo:if:nome cognome

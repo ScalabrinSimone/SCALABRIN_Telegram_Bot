@@ -94,7 +94,7 @@ public class SaveCallbackHandler implements CallbackHandler {
                     ))
                     .build();
 
-            EditMessageText edit = EditMessageText .builder()
+            EditMessageText edit = EditMessageText.builder()
                     .chatId(chatId)
                     .messageId(messageId)
                     .text(messageText)

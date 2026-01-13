@@ -11,23 +11,23 @@ public class StartCommand implements Command {
     private final TelegramClient client;
     private final Map<Long, Integer> menuMessageIds; //Mappa per memorizzare il primo comando mandato
     private final String messageToSend = """
-                                 <b>🏁 Benvenuto in <a href="t.me/SimOneSpeedBot">@SimOneSpeedBot</a>!</b>
+            <b>🏁 Benvenuto in <a href="t.me/SimOneSpeedBot">@SimOneSpeedBot</a>!</b>
             
-                                 <i>Il tuo assistente personale per le statistiche della Formula 1</i>
+            <i>Il tuo assistente personale per le statistiche della Formula 1</i>
             
-                                 ━━━━━━━━━━━━━━━━━━━━
-                                 
-                                 📊 <b>Cosa puoi fare:</b>
-                                 • <i>Cerca informazioni</i> su piloti, costruttori e stagioni
-                                 • <i>Salva i tuoi preferiti</i> con i Bookmarks
-                                 • <i>Esplora statistiche</i> dettagliate
+            ━━━━━━━━━━━━━━━━━━━━
             
-                                 ⚙️ <b>Comandi disponibili:</b>
-                                 <code>/start</code> - Mostra questo messaggio
-                                 <code>/info</code> - Guida completa
+            📊 <b>Cosa puoi fare:</b>
+            • <i>Cerca informazioni</i> su piloti, costruttori e stagioni
+            • <i>Salva i tuoi preferiti</i> con i Bookmarks
+            • <i>Esplora statistiche</i> dettagliate
             
-                                 👇 Usa il menu qui sotto per iniziare (ha piú funzionalitá, come bookmarks e inserimento continuo 😉)!
-                                 """;
+            ⚙️ <b>Comandi disponibili:</b>
+            <code>/start</code> - Mostra questo messaggio
+            <code>/info</code> - Guida completa
+            
+            👇 Usa il menu qui sotto per iniziare (ha piú funzionalitá, come bookmarks e inserimento continuo 😉)!
+            """;
 
     public StartCommand(TelegramClient client, Map<Long, Integer> menuMessageIds) {
         this.menuMessageIds = menuMessageIds;

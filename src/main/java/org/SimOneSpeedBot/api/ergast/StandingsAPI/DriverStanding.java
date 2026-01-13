@@ -13,10 +13,6 @@ public class DriverStanding {
 
     private List<Constructor> Constructors;
 
-    public String getPosition() {
-        return position;
-    }
-
     public void setPosition(String position) {
         this.position = position;
     }
@@ -29,10 +25,6 @@ public class DriverStanding {
         this.points = points;
     }
 
-    public String getWins() {
-        return wins;
-    }
-
     public void setWins(String wins) {
         this.wins = wins;
     }
@@ -43,10 +35,6 @@ public class DriverStanding {
 
     public void setDriver(Driver Driver) {
         this.Driver = Driver;
-    }
-
-    public List<Constructor> getConstructors() {
-        return Constructors;
     }
 
     public void setConstructors(List<Constructor> Constructors) {

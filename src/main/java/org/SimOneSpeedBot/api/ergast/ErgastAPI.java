@@ -4,8 +4,10 @@ package org.SimOneSpeedBot.api.ergast;
 import com.google.gson.Gson;
 import org.SimOneSpeedBot.api.ergast.ConstructorAPI.Constructor;
 import org.SimOneSpeedBot.api.ergast.DriverAPI.Driver;
+import org.SimOneSpeedBot.api.ergast.StandingsAPI.ConstructorStanding;
+import org.SimOneSpeedBot.api.ergast.StandingsAPI.DriverStanding;
+import org.SimOneSpeedBot.api.ergast.StandingsAPI.RootResponse;
 import org.SimOneSpeedBot.service.MyConfiguration;
-import org.SimOneSpeedBot.api.ergast.StandingsAPI.*;
 
 import java.io.IOException;
 import java.net.URI;

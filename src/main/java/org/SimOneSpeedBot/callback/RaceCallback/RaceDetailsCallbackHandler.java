@@ -74,7 +74,9 @@ public class RaceDetailsCallbackHandler implements CallbackHandler {
             case "grid" -> showStartingGrid(chatId, year, round, fromBookmark);
             case "results" -> showRaceResults(chatId, year, round, fromBookmark);
             case "qualy" -> showQualifying(chatId, year, round, fromBookmark);
-            default -> { return false; }
+            default -> {
+                return false;
+            }
         }
 
         answerCallback(callbackQuery);

@@ -9,10 +9,6 @@ public class Constructor {
 
     private String url;
 
-    public String getConstructorId() {
-        return constructorId;
-    }
-
     public void setConstructorId(String constructorId) {
         this.constructorId = constructorId;
     }
@@ -23,10 +19,6 @@ public class Constructor {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getNationality() {
-        return nationality;
     }
 
     public void setNationality(String nationality) {

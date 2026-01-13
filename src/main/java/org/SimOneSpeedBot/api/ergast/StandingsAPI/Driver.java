@@ -39,32 +39,16 @@ public class Driver {
         this.familyName = familyName;
     }
 
-    public String getCode() {
-        return code;
-    }
-
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public String getPermanentNumber() {
-        return permanentNumber;
     }
 
     public void setPermanentNumber(String permanentNumber) {
         this.permanentNumber = permanentNumber;
     }
 
-    public String getNationality() {
-        return nationality;
-    }
-
     public void setNationality(String nationality) {
         this.nationality = nationality;
-    }
-
-    public String getDateOfBirth() {
-        return dateOfBirth;
     }
 
     public void setDateOfBirth(String dateOfBirth) {

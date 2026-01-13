@@ -132,8 +132,7 @@ public class ConstructorCommand implements Command {
                             .text("⚠ Costruttore " + constructor.getName() + " giá salvato")
                             .callbackData("saved") //Non da errori
                             .build();
-                }
-                else {
+                } else {
                     saveButton = InlineKeyboardButton.builder()
                             .text("💾 Salva Constructor")
                             .callbackData("save:constructor:" + constructor.getConstructorId() + ":" + constructor.getName()) //Formato: save:tipo:id:nome

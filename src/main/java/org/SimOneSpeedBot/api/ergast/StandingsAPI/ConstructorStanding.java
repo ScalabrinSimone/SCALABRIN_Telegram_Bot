@@ -9,10 +9,6 @@ public class ConstructorStanding {
 
     private Constructor Constructor;
 
-    public String getPosition() {
-        return position;
-    }
-
     public void setPosition(String position) {
         this.position = position;
     }
@@ -23,10 +19,6 @@ public class ConstructorStanding {
 
     public void setPoints(String points) {
         this.points = points;
-    }
-
-    public String getWins() {
-        return wins;
     }
 
     public void setWins(String wins) {

@@ -291,7 +291,7 @@ public class SeasonCommand implements Command {
         InlineKeyboardButton saveButton;
         if (alreadySaved) {
             saveButton = InlineKeyboardButton.builder()
-                    .text("⚠ Stagione " + year+ " giá salvata")
+                    .text("⚠ Stagione " + year + " giá salvata")
                     .callbackData("saved") //Non da errori
                     .build();
         } else {
