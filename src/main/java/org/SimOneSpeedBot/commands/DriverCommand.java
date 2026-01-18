@@ -107,7 +107,7 @@ public class DriverCommand implements Command {
         //StringUtils.capitalize(*stringa*) rende la prima lettera maiuscola.
         Driver driver = new ErgastAPI().fetchDriver(driverName, driverSurname);
 
-        String driverInfo = (driver != null) ? driver.toString() : "❌ <b>Pilota " + (!driverName.equals("") ? StringUtils.capitalize(driverName) + " " : "") + StringUtils.capitalize(driverSurname) + " non trovato</b>\n\nℹ️ <i>Controlla di aver scritto <u>correttamente</u> il nome e cognome</i>.";
+        String driverInfo = (driver != null) ? driver.toString() : "❌ <b>Pilota " + (!driverName.equals("") ? StringUtils.capitalize(driverName) + " " : "") + StringUtils.capitalize(driverSurname) + " non trovato</b>\n\nℹ️ <i>Controlla di aver scritto <u>correttamente</u> il nome e cognome</i> (es: Charles Leclerc, Leclerc o Leclerc Charles).";
 
         if (messageId != null) {
             //Menu -> edita il messaggio con bottone back
@@ -125,7 +125,7 @@ public class DriverCommand implements Command {
             InlineKeyboardMarkup keyboard;
 
             //Si puó salvare solo se esiste il pilota e solo se nel menu
-            if (!driverInfo.contains("❌ Pilota")) {
+            if (!driverInfo.contains("❌ <b>Pilota")) {
 
                 //Controllo se é giá salvato e crea un pulsante di conseguenza
                 boolean alreadySaved = BookmarkManager.bookmarkExists(chatId, "driver", driver.getDriverId());

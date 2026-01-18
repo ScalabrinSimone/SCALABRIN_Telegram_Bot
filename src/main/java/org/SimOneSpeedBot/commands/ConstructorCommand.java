@@ -105,7 +105,7 @@ public class ConstructorCommand implements Command {
         secondName = secondName.toLowerCase();
 
         Constructor constructor = new ErgastAPI().fetchConstructor(firstName, secondName);
-        String constructorInfo = constructor != null ? constructor.toString() : "❌ Scuderia " + (StringUtils.capitalize(firstName) + (!secondName.equals("") ? StringUtils.capitalize(secondName) + " " : "")) + " non trovato\n\nℹ️ Controlla di aver scritto correttamente il nome (es: ferrari, Alfa romeo o aston Martin).";
+        String constructorInfo = constructor != null ? constructor.toString() : "❌ <b>Scuderia " + (StringUtils.capitalize(firstName) + (!secondName.equals("") ? StringUtils.capitalize(secondName) + " " : "")) + " non trovata</b>\n\nℹ️ <i>Controlla di aver scritto <u>correttamente</u> il nome</i> (es: ferrari, Alfa romeo o aston Martin).";
 
         if (messageId != null) {
             //Menu -> edita il messaggio con bottone back
